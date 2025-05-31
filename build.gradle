@@ -21,6 +21,8 @@ repositories {
 	maven { url 'https://maven.quiltmc.org/repository/release/' }
 	maven { url 'https://maven.terraformersmc.com/releases/' }
 	maven { url 'https://maven.shedaniel.me/' }
+	maven { url 'https://maven.ladysnake.org/releases' }
+
 
 }
 
@@ -51,7 +53,11 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
+	//modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
+	//modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
+
+
+
 }
 
 processResources {
