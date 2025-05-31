@@ -95,10 +95,14 @@ public class PersonnalWorldItem extends Item {
                 if (server.getWorld(worldKey) == null) {
                     DimensionOptions dimOptions = new DimensionOptions(dimTypeEntry, server.getOverworld().getChunkManager().getChunkGenerator());
                     DimensionAPI.addDimensionDynamically(server, dimId, dimOptions);
-                    serverPlayer.sendMessage(Text.literal("Création de votre monde personnel..."), false);
+
+                    // Sécurité : attend brièvement que le monde se charge effectivement (max 10 essais)
+                    int retry = 0;
+                    while (server.getWorld(worldKey) == null && retry++ < 50) {
+                        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                    }
                 }
 
-                // Téléportation au spawn du monde perso
                 ServerWorld persoWorld = server.getWorld(worldKey);
                 if (persoWorld != null) {
                     BlockPos spawn = persoWorld.getSpawnPos();
