@@ -1,11 +1,14 @@
 package fr.galsaxx;
 
+
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Rarity;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;   // ← toujours le bon import
+import net.minecraft.util.Identifier;
+
+
 
 public class PersonnalWorldMod implements ModInitializer {
 	public static final Item PERSONNAL_WORLD_ITEM = new PersonnalWorldItem(
@@ -22,4 +25,5 @@ public class PersonnalWorldMod implements ModInitializer {
 				PERSONNAL_WORLD_ITEM
 		);
 	}
+
 }
