@@ -11,24 +11,33 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.minecraft.text.Text;
 
-import qouteall.dimlib.api.DimensionAPI;
-import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.chunk.FlatChunkGenerator;
+import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.nbt.NbtCompound;
-import fr.galsaxx.util.ReturnPositionSaver; // Ton interface de mixin
+import fr.galsaxx.util.ReturnPositionSaver;
+import fr.galsaxx.util.IslandGenerator;
+
+import qouteall.dimlib.api.DimensionAPI;
 
 public class PersonnalWorldItem extends Item {
     public PersonnalWorldItem(Settings settings) {
         super(settings);
     }
+
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
@@ -91,12 +100,23 @@ public class PersonnalWorldItem extends Item {
                     ((ReturnPositionSaver) serverPlayer).setReturnPosition(posNbt);
                 }
 
-                // Création dynamique de la dimension si besoin
                 if (server.getWorld(worldKey) == null) {
-                    DimensionOptions dimOptions = new DimensionOptions(dimTypeEntry, server.getOverworld().getChunkManager().getChunkGenerator());
+                    // Récupère le biome du spawn de l'overworld pour le générateur flat
+                    RegistryEntry<Biome> biome = server.getOverworld().getBiomeAccess().getBiome(server.getOverworld().getSpawnPos());
+
+                    // Crée la configuration flat 100% vide (void)
+                    FlatChunkGeneratorConfig flatConfig = new FlatChunkGeneratorConfig(
+                            Optional.empty(), // Pas de structures
+                            biome,            // Le biome
+                            List.of()         // PAS de features, donc 100% air
+                    );
+                    FlatChunkGenerator flatChunkGen = new FlatChunkGenerator(flatConfig);
+
+                    // Crée la dimension avec ce générateur vide
+                    DimensionOptions dimOptions = new DimensionOptions(dimTypeEntry, flatChunkGen);
                     DimensionAPI.addDimensionDynamically(server, dimId, dimOptions);
 
-                    // Sécurité : attend brièvement que le monde se charge effectivement (max 10 essais)
+                    // Attend que le monde soit prêt
                     int retry = 0;
                     while (server.getWorld(worldKey) == null && retry++ < 50) {
                         try { Thread.sleep(50); } catch (InterruptedException ignored) {}
@@ -104,19 +124,34 @@ public class PersonnalWorldItem extends Item {
                 }
 
                 ServerWorld persoWorld = server.getWorld(worldKey);
+
+
+
+
+
+
+                // Forcer le chargement du chunk avant de placer l'île
                 if (persoWorld != null) {
-                    BlockPos spawn = persoWorld.getSpawnPos();
-                    float yaw = persoWorld.getSpawnAngle();
-                    serverPlayer.teleport(
-                            persoWorld,
-                            spawn.getX() + 0.5,
-                            spawn.getY(),
-                            spawn.getZ() + 0.5,
-                            Set.of(),
-                            yaw,
-                            0.0F
-                    );
-                    serverPlayer.sendMessage(Text.literal("Bienvenue dans votre monde perso !"), false);
+                    System.out.println("[personnalworld] Scheduling island generation + teleport in 1 second");
+                    persoWorld.getServer().submit(() -> {
+                        System.out.println("[personnalworld] Appel à IslandGenerator dans PersonnalWorldItem (tâche différée)");
+                        BlockPos center = new BlockPos(24, 68, 17);
+                        persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
+                        IslandGenerator.generateIsland(persoWorld);
+
+                        // Recherche de la laine blanche dans l'île, sinon fallback au centre
+                        BlockPos spawnPos = new BlockPos(24, 68, 17); // pivot+1
+                        serverPlayer.teleport(
+                                persoWorld,
+                                spawnPos.getX() + 0.5,
+                                spawnPos.getY(),
+                                spawnPos.getZ() + 0.5,
+                                Set.of(),
+                                0.0F,
+                                0.0F
+                        );
+                        serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
+                    });
                 } else {
                     serverPlayer.sendMessage(Text.literal("Erreur : monde perso inaccessible."), false);
                 }
