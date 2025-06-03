@@ -38,6 +38,7 @@ public class PersonnalWorldItem extends Item {
         super(settings);
     }
 
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
@@ -124,35 +125,33 @@ public class PersonnalWorldItem extends Item {
 
                 ServerWorld persoWorld = server.getWorld(worldKey);
 
+
+
+
+
+
                 // Forcer le chargement du chunk avant de placer l'île
                 if (persoWorld != null) {
-                    System.out.println("[personnalworld] Scheduling island generation in 1 second");
-                    // Programme la génération dans 20 ticks (1 seconde)
+                    System.out.println("[personnalworld] Scheduling island generation + teleport in 1 second");
                     persoWorld.getServer().submit(() -> {
                         System.out.println("[personnalworld] Appel à IslandGenerator dans PersonnalWorldItem (tâche différée)");
-                        BlockPos center = new BlockPos(0, 100, 0);
+                        BlockPos center = new BlockPos(24, 68, 17);
                         persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
                         IslandGenerator.generateIsland(persoWorld);
-                        
-                    }); // 20 ticks = 1 seconde
-                }
 
-
-
-
-                // Puis téléporter le joueur
-                if (persoWorld != null) {
-                    BlockPos ileCenter = new BlockPos(0, 100, 0); // même coord que l’île
-                    serverPlayer.teleport(
-                            persoWorld,
-                            ileCenter.getX() + 0.5,
-                            ileCenter.getY() + 2.0, // +2 pour être sûr d’être au-dessus du sol
-                            ileCenter.getZ() + 0.5,
-                            Set.of(),
-                            0.0F,
-                            0.0F
-                    );
-                    serverPlayer.sendMessage(Text.literal("Bienvenue dans votre monde perso !"), false);
+                        // Recherche de la laine blanche dans l'île, sinon fallback au centre
+                        BlockPos spawnPos = new BlockPos(24, 68, 17); // pivot+1
+                        serverPlayer.teleport(
+                                persoWorld,
+                                spawnPos.getX() + 0.5,
+                                spawnPos.getY(),
+                                spawnPos.getZ() + 0.5,
+                                Set.of(),
+                                0.0F,
+                                0.0F
+                        );
+                        serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
+                    });
                 } else {
                     serverPlayer.sendMessage(Text.literal("Erreur : monde perso inaccessible."), false);
                 }

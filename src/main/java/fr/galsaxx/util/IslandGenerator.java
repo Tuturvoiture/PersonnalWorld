@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class IslandGenerator {
     public static void generateIsland(ServerWorld world) {
-        BlockPos center = new BlockPos(0, 150, 0); // Hauteur 150 = sûr dans le vide
+        BlockPos center = new BlockPos(0, 50, 0); // Hauteur 150 = sûr dans le vide
         // Place l’île uniquement si ce n’est pas déjà fait
         if (world.getBlockState(center).isAir()) {
             StructureTemplateManager mgr = world.getServer().getStructureTemplateManager();
