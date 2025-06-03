@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"id": "personnaldimension",
+	"id": "personnalworld",
 	"version": "${version}",
-	"name": "PersonnalDimension",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "PersonnalWorld",
+	"description": "your own personal world at your fingertips ",
 	"authors": [
-		"Me!"
+		"GalsaxX"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -17,18 +17,12 @@
 	"entrypoints": {
 		"main": [
 			"fr.galsaxx.PersonnalWorldMod"
-		],
-		"client": [
-			"fr.galsaxx.PersonnalDimensionClient"
-		],
-		"fabric-datagen": [
-			"fr.galsaxx.PersonnalDimensionDataGenerator"
 		]
 	},
 	"mixins": [
-		"personnaldimension.mixins.json",
+		"personnalworld.mixins.json",
 		{
-			"config": "personnaldimension.client.mixins.json",
+			"config": "personnalworld.client.mixins.json",
 			"environment": "client"
 		}
 	],
