@@ -38,7 +38,6 @@ public class PersonnalWorldItem extends Item {
         super(settings);
     }
 
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
@@ -62,9 +61,8 @@ public class PersonnalWorldItem extends Item {
             String nether = World.NETHER.getValue().toString();
             String end = World.END.getValue().toString();
 
-            // Lecture/sauvegarde de position via NBT joueur (ReturnPositionSaver)
+            // Gestion du retour
             if (currentWorldId.equals(worldKey.getValue().toString())) {
-                // Déjà dans le monde perso : ramener à la dernière position connue dans un monde classique
                 NbtCompound posNbt = ((ReturnPositionSaver) serverPlayer).getReturnPosition();
                 if (posNbt != null && posNbt.contains("x")) {
                     Identifier dimIdReturn = Identifier.tryParse(posNbt.getString("dim"));
@@ -88,7 +86,7 @@ public class PersonnalWorldItem extends Item {
                     serverPlayer.sendMessage(Text.literal("Aucune position sauvegardée trouvée !"), false);
                 }
             } else {
-                // Si on est dans l'overworld, nether ou end : sauvegarde la position avant d'aller dans le monde perso
+                // On sauvegarde la position avant d'aller dans le monde perso
                 if (currentWorldId.equals(overworld) || currentWorldId.equals(nether) || currentWorldId.equals(end)) {
                     NbtCompound posNbt = new NbtCompound();
                     posNbt.putDouble("x", serverPlayer.getX());
@@ -100,58 +98,52 @@ public class PersonnalWorldItem extends Item {
                     ((ReturnPositionSaver) serverPlayer).setReturnPosition(posNbt);
                 }
 
+                // Si la dimension perso n'existe pas encore, on la crée + île NBT une seule fois
                 if (server.getWorld(worldKey) == null) {
-                    // Récupère le biome du spawn de l'overworld pour le générateur flat
+                    // Générateur plat 100% air
                     RegistryEntry<Biome> biome = server.getOverworld().getBiomeAccess().getBiome(server.getOverworld().getSpawnPos());
-
-                    // Crée la configuration flat 100% vide (void)
                     FlatChunkGeneratorConfig flatConfig = new FlatChunkGeneratorConfig(
-                            Optional.empty(), // Pas de structures
-                            biome,            // Le biome
-                            List.of()         // PAS de features, donc 100% air
+                            Optional.empty(),
+                            biome,
+                            List.of()
                     );
                     FlatChunkGenerator flatChunkGen = new FlatChunkGenerator(flatConfig);
-
-                    // Crée la dimension avec ce générateur vide
                     DimensionOptions dimOptions = new DimensionOptions(dimTypeEntry, flatChunkGen);
+
+                    // Ajoute la dimension dynamiquement
                     DimensionAPI.addDimensionDynamically(server, dimId, dimOptions);
 
-                    // Attend que le monde soit prêt
+                    // Attend que la dimension soit prête
                     int retry = 0;
                     while (server.getWorld(worldKey) == null && retry++ < 50) {
                         try { Thread.sleep(50); } catch (InterruptedException ignored) {}
                     }
+
+                    // Génère l'île une seule fois
+                    ServerWorld persoWorld = server.getWorld(worldKey);
+                    if (persoWorld != null) {
+                        persoWorld.getServer().submit(() -> {
+                            BlockPos center = new BlockPos(0, 50, 0); // Pivot identique à /structure save
+                            persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
+                            IslandGenerator.generateIsland(persoWorld); // Place la structure SEULEMENT ICI
+                        });
+                    }
                 }
 
+                // Téléporte le joueur toujours sur le pivot (+1 pour arriver sur la laine par exemple)
                 ServerWorld persoWorld = server.getWorld(worldKey);
-
-
-
-
-
-
-                // Forcer le chargement du chunk avant de placer l'île
                 if (persoWorld != null) {
-                    System.out.println("[personnalworld] Scheduling island generation + teleport in 1 second");
-                    persoWorld.getServer().submit(() -> {
-                        System.out.println("[personnalworld] Appel à IslandGenerator dans PersonnalWorldItem (tâche différée)");
-                        BlockPos center = new BlockPos(24, 68, 17);
-                        persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
-                        IslandGenerator.generateIsland(persoWorld);
-
-                        // Recherche de la laine blanche dans l'île, sinon fallback au centre
-                        BlockPos spawnPos = new BlockPos(24, 68, 17); // pivot+1
-                        serverPlayer.teleport(
-                                persoWorld,
-                                spawnPos.getX() + 0.5,
-                                spawnPos.getY(),
-                                spawnPos.getZ() + 0.5,
-                                Set.of(),
-                                0.0F,
-                                0.0F
-                        );
-                        serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
-                    });
+                    BlockPos spawnPos = new BlockPos(24, 68, 17); // Adapter selon le pivot/structure !
+                    serverPlayer.teleport(
+                            persoWorld,
+                            spawnPos.getX() + 0.5,
+                            spawnPos.getY(),
+                            spawnPos.getZ() + 0.5,
+                            Set.of(),
+                            0.0F,
+                            0.0F
+                    );
+                    serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
                 } else {
                     serverPlayer.sendMessage(Text.literal("Erreur : monde perso inaccessible."), false);
                 }
