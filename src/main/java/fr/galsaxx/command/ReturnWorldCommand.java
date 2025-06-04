@@ -21,7 +21,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 public class ReturnWorldCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(literal("retourmonde")
+        dispatcher.register(literal("returnworld")
                 .requires(source -> source.getEntity() instanceof ServerPlayerEntity)
                 .executes(context -> {
                     ServerPlayerEntity player = context.getSource().getPlayer();
