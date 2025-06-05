@@ -30,7 +30,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"personnaldimension" {
+		"personnalworld" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

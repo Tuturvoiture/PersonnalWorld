@@ -125,7 +125,7 @@ public class PersonnalWorldItem extends Item {
                         persoWorld.getServer().submit(() -> {
                             BlockPos center = new BlockPos(0, 50, 0); // Pivot identique à /structure save
                             persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
-                            IslandGenerator.generateIsland(persoWorld); // Place la structure SEULEMENT ICI
+                            IslandGenerator.generateIsland(persoWorld, serverPlayer); // Place la structure SEULEMENT ICI
                         });
                     }
                 }
@@ -149,6 +149,7 @@ public class PersonnalWorldItem extends Item {
                 }
             }
         }
+        user.getItemCooldownManager().set(this, 40); // 40 ticks = 2 secondes
         return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
     }
 }
