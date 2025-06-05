@@ -19,7 +19,7 @@ public class IslandGenerator {
         // Place l’île uniquement si ce n’est pas déjà fait
         if (world.getBlockState(center).isAir()) {
             StructureTemplateManager mgr = world.getServer().getStructureTemplateManager();
-            Optional<StructureTemplate> optionalTemplate = mgr.getTemplate(Identifier.of("minecraft", "ile_24"));
+            Optional<StructureTemplate> optionalTemplate = mgr.getTemplate(Identifier.of("minecraft", "ile_1"));
             if (optionalTemplate.isPresent()) {
                 StructureTemplate template = optionalTemplate.get();
                 template.place(
