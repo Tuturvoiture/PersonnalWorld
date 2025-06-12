@@ -51,7 +51,7 @@ public class PersonnalWorldItem extends Item {
             RegistryEntry<DimensionType> dimTypeEntry = server.getRegistryManager().get(RegistryKeys.DIMENSION_TYPE).getEntry(dimTypeKey).orElse(null);
 
             if (dimTypeEntry == null) {
-                serverPlayer.sendMessage(Text.literal("Erreur : Impossible de récupérer le type de dimension !"), false);
+                serverPlayer.sendMessage(Text.translatable("message.personnalworld.cannot_get_dimension_type"), false);
                 return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
             }
 
@@ -78,12 +78,12 @@ public class PersonnalWorldItem extends Item {
                                 posNbt.getFloat("yaw"),
                                 posNbt.getFloat("pitch")
                         );
-                        serverPlayer.sendMessage(Text.literal("Retour à votre position d'origine !"), false);
+                        serverPlayer.sendMessage(Text.translatable("message.personnalworld.return_to_origin"), false);
                     } else {
-                        serverPlayer.sendMessage(Text.literal("Dimension d'origine introuvable !"), false);
+                        serverPlayer.sendMessage(Text.translatable("message.personnalworld.origin_dimension_not_found"), false);
                     }
                 } else {
-                    serverPlayer.sendMessage(Text.literal("Aucune position sauvegardée trouvée !"), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.no_saved_position"), false);
                 }
             } else {
                 // On sauvegarde la position avant d'aller dans le monde perso
@@ -143,9 +143,9 @@ public class PersonnalWorldItem extends Item {
                             0.0F,
                             0.0F
                     );
-                    serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.welcome_island"), false);
                 } else {
-                    serverPlayer.sendMessage(Text.literal("Erreur : monde perso inaccessible."), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.personal_world_unavailable"), false);
                 }
             }
         }

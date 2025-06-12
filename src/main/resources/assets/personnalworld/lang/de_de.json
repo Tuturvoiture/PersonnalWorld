@@ -1,0 +1,24 @@
+{
+  "item.personnalworld.personnal_world_item": "Persönlicher Weltstock",
+
+  "message.personnalworld.island_generated": "[personnalworld] NBT-Insel erfolgreich generiert!",
+  "message.personnalworld.nbt_file_not_found": "[personnalworld] Fehler: NBT-Datei nicht gefunden!",
+  "message.personnalworld.island_load_error": "Warnung, Fehler beim Laden der Insel",
+  "message.personnalworld.island_exists": "[personnalworld] Die Insel existiert an dieser Position bereits.",
+
+  "message.personnalworld.welcome_island": "Willkommen auf deiner Insel!",
+  "message.personnalworld.personal_world_unavailable": "Fehler: Persönliche Welt nicht verfügbar.",
+  "message.personnalworld.return_to_origin": "Zurück zu deiner ursprünglichen Position!",
+  "message.personnalworld.origin_dimension_not_found": "Ursprungsdimension nicht gefunden!",
+  "message.personnalworld.no_saved_position": "Keine gespeicherte Position gefunden!",
+  "message.personnalworld.cannot_get_dimension_type": "Fehler: Dimensionstyp kann nicht abgerufen werden!",
+
+  "message.personnalworld.structure_copied": "[NBT_Copi] Struktur kopiert:",
+  "message.personnalworld.structure_already_exists": "[NBT_Copi] Struktur bereits vorhanden:",
+  "message.personnalworld.read_error": "Lesefehler:",
+
+  "message.personnalworld.command_only_in_personal_world": "§cDieser Befehl kann nur aus deiner persönlichen Welt verwendet werden!",
+  "message.personnalworld.returned_to_origin": "Zurück zu deinem ursprünglichen Standort!",
+  "message.personnalworld.origin_dimension_gone": "Die Ursprungsdimension existiert nicht mehr.",
+  "message.personnalworld.no_return_position": "Keine Rückkehrposition gespeichert."
+}

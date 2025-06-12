@@ -30,13 +30,13 @@ public class IslandGenerator {
                         world.getRandom(),
                         2
                 );
-                System.out.println("[personnalworld] Île NBT générée avec succès !");
+                System.out.println("[personnalworld] NBT island generated successfully!");
             } else {
-                System.out.println("[personnalworld] Erreur : le fichier NBT n’a pas été trouvé !");
+                System.out.println("[personnalworld] Error: NBT file not found!");
                 // Exemple pour placer une plate-forme 3x3 de blocs sous les pieds du joueur
                 BlockPos center2 = new BlockPos(24, 66, 17);; // position centrale où le joueur va spawn
 
-                player.sendMessage(Text.literal("Attention, erreur dans le chargement de l'ile"), false);
+                player.sendMessage(Text.translatable("message.personnalworld.island_load_error"), false);
                 BlockState block = Blocks.STONE.getDefaultState(); // Ou un autre bloc de ton choix
 
                 for (int dx = -1; dx <= 1; dx++) {
@@ -48,7 +48,7 @@ public class IslandGenerator {
 
             }
         } else {
-            System.out.println("[personnalworld] L’île existe déjà à cette position.");
+            System.out.println("[personnalworld] The island already exists at this position.");
         }
     }
 }

@@ -43,10 +43,7 @@ public class StructureCopier {
                                 try (InputStream in = jar.getInputStream(entry);
                                      OutputStream out = Files.newOutputStream(target)) {
                                     in.transferTo(out);
-                                    System.out.println("[NBT_Copi] Structure copiée : " + fileName);
                                 }
-                            } else {
-                                System.out.println("[NBT_Copi] Structure déjà présente : " + fileName);
                             }
                         }
                     }
@@ -56,7 +53,7 @@ public class StructureCopier {
                 try {
                     Files.list(devStructs).forEach(p -> System.out.println("  " + p));
                 } catch (Exception e) {
-                    System.out.println("  (erreur de lecture : " + e.getMessage() + ")");
+                    System.out.println("  (error : " + e.getMessage() + ")");
                 }
                 if (Files.exists(devStructs)) {
                     Files.list(devStructs)
