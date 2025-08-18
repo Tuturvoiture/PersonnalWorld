@@ -1,7 +1,7 @@
 package fr.galsaxx;
 
 
-import fr.galsaxx.util.TestCopieNBT;
+import fr.galsaxx.util.StructureCopier;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.item.Item;
@@ -32,7 +32,7 @@ public class PersonnalWorldMod implements ModInitializer {
 			ReturnWorldCommand.register(dispatcher);
 		});
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-			TestCopieNBT.run(server);
+			StructureCopier.run(server);
 		});
 	}
 

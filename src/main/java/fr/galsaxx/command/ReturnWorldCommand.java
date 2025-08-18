@@ -29,7 +29,7 @@ public class ReturnWorldCommand {
                     // Vérification : le joueur doit être dans son monde perso
                     String currentWorldId = player.getWorld().getRegistryKey().getValue().toString();
                     if (!currentWorldId.startsWith("personnalworld:perso_")) {
-                        player.sendMessage(Text.literal("§cCette commande ne peut être utilisée que depuis votre monde perso !"), false);
+                        player.sendMessage(Text.translatable("message.personnalworld.command_only_in_personal_world"), false);
                         return Command.SINGLE_SUCCESS;
                     }
 
@@ -50,12 +50,12 @@ public class ReturnWorldCommand {
                                     posNbt.getFloat("yaw"),
                                     posNbt.getFloat("pitch")
                             );
-                            player.sendMessage(Text.literal("Retour à votre emplacement d'origine !"), false);
+                            player.sendMessage(Text.translatable("message.personnalworld.returned_to_origin"), false);
                         } else {
-                            player.sendMessage(Text.literal("La dimension d'origine n'existe plus."), false);
+                            player.sendMessage(Text.translatable("message.personnalworld.origin_dimension_gone"), false);
                         }
                     } else {
-                        player.sendMessage(Text.literal("Aucune position de retour sauvegardée."), false);
+                        player.sendMessage(Text.translatable("message.personnalworld.no_return_position"), false);
                     }
                     return Command.SINGLE_SUCCESS;
                 })

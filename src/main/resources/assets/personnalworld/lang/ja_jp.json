@@ -1,0 +1,24 @@
+{
+  "item.personnalworld.personnal_world_item": "パーソナルワールドの杖",
+
+  "message.personnalworld.island_generated": "[personnalworld] NBTアイランドが正常に生成されました！",
+  "message.personnalworld.nbt_file_not_found": "[personnalworld] エラー：NBTファイルが見つかりません！",
+  "message.personnalworld.island_load_error": "警告、アイランドの読み込みエラー",
+  "message.personnalworld.island_exists": "[personnalworld] この位置にはすでにアイランドがあります。",
+
+  "message.personnalworld.welcome_island": "あなたの島へようこそ！",
+  "message.personnalworld.personal_world_unavailable": "エラー：パーソナルワールドにアクセスできません。",
+  "message.personnalworld.return_to_origin": "元の位置に戻りました！",
+  "message.personnalworld.origin_dimension_not_found": "元のディメンションが見つかりません！",
+  "message.personnalworld.no_saved_position": "保存された位置が見つかりません！",
+  "message.personnalworld.cannot_get_dimension_type": "エラー：ディメンションタイプを取得できません！",
+
+  "message.personnalworld.structure_copied": "[NBT_Copi] 構造体をコピーしました：",
+  "message.personnalworld.structure_already_exists": "[NBT_Copi] 構造体はすでに存在します：",
+  "message.personnalworld.read_error": "読み込みエラー：",
+
+  "message.personnalworld.command_only_in_personal_world": "§cこのコマンドはあなたのパーソナルワールドからのみ使用できます！",
+  "message.personnalworld.returned_to_origin": "元の場所に戻りました！",
+  "message.personnalworld.origin_dimension_gone": "元のディメンションは存在しません。",
+  "message.personnalworld.no_return_position": "リターンポジションが保存されていません。"
+}

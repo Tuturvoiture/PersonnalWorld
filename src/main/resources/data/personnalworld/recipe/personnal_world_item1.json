@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " SS",
+    " SG",
+    "S  "
+  ],
+  "key": {
+    "S": { "item": "minecraft:stick" },
+    "G": {"item": "minecraft:grass_block"}
+  },
+
+  "result": {
+    "id": "personnalworld:personnal_world_item",
+    "count": 1
+  }
+}

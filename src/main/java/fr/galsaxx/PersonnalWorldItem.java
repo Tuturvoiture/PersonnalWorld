@@ -2,6 +2,7 @@ package fr.galsaxx;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,6 +18,10 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.FlatChunkGenerator;
 import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig;
+import net.minecraft.world.gen.FlatLevelGeneratorPreset;
+import net.minecraft.util.Identifier;
+
+
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.server.MinecraftServer;
@@ -42,7 +47,9 @@ public class PersonnalWorldItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
             MinecraftServer server = serverPlayer.getServer();
-            if (server == null) return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
+            if (server == null) {
+                return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
+            }
 
             String dimPath = "perso_" + user.getUuidAsString();
             Identifier dimId = Identifier.of("personnalworld", dimPath);
@@ -51,7 +58,7 @@ public class PersonnalWorldItem extends Item {
             RegistryEntry<DimensionType> dimTypeEntry = server.getRegistryManager().get(RegistryKeys.DIMENSION_TYPE).getEntry(dimTypeKey).orElse(null);
 
             if (dimTypeEntry == null) {
-                serverPlayer.sendMessage(Text.literal("Erreur : Impossible de récupérer le type de dimension !"), false);
+                serverPlayer.sendMessage(Text.translatable("message.personnalworld.cannot_get_dimension_type"), false);
                 return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
             }
 
@@ -61,7 +68,7 @@ public class PersonnalWorldItem extends Item {
             String nether = World.NETHER.getValue().toString();
             String end = World.END.getValue().toString();
 
-            // Gestion du retour
+            // Retour au monde d'origine
             if (currentWorldId.equals(worldKey.getValue().toString())) {
                 NbtCompound posNbt = ((ReturnPositionSaver) serverPlayer).getReturnPosition();
                 if (posNbt != null && posNbt.contains("x")) {
@@ -78,15 +85,18 @@ public class PersonnalWorldItem extends Item {
                                 posNbt.getFloat("yaw"),
                                 posNbt.getFloat("pitch")
                         );
-                        serverPlayer.sendMessage(Text.literal("Retour à votre position d'origine !"), false);
+                        serverPlayer.sendMessage(Text.translatable("message.personnalworld.return_to_origin"), false);
                     } else {
-                        serverPlayer.sendMessage(Text.literal("Dimension d'origine introuvable !"), false);
+                        serverPlayer.sendMessage(Text.translatable("message.personnalworld.origin_dimension_not_found"), false);
                     }
                 } else {
-                    serverPlayer.sendMessage(Text.literal("Aucune position sauvegardée trouvée !"), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.no_saved_position"), false);
                 }
-            } else {
-                // On sauvegarde la position avant d'aller dans le monde perso
+                user.getItemCooldownManager().set(this, 40);
+                return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
+            }
+            else {
+                // Sauvegarde la position
                 if (currentWorldId.equals(overworld) || currentWorldId.equals(nether) || currentWorldId.equals(end)) {
                     NbtCompound posNbt = new NbtCompound();
                     posNbt.putDouble("x", serverPlayer.getX());
@@ -98,19 +108,27 @@ public class PersonnalWorldItem extends Item {
                     ((ReturnPositionSaver) serverPlayer).setReturnPosition(posNbt);
                 }
 
-                // Si la dimension perso n'existe pas encore, on la crée + île NBT une seule fois
-                if (server.getWorld(worldKey) == null) {
-                    // Générateur plat 100% air
-                    RegistryEntry<Biome> biome = server.getOverworld().getBiomeAccess().getBiome(server.getOverworld().getSpawnPos());
-                    FlatChunkGeneratorConfig flatConfig = new FlatChunkGeneratorConfig(
-                            Optional.empty(),
-                            biome,
-                            List.of()
+                // Création du monde perso s'il n'existe pas
+                /**if (server.getWorld(worldKey) == null) {
+                    // ==== Générateur basé sur preset vanilla "the_void" ====
+                    var registryManager = server.getRegistryManager();
+                    var presetRegistry = registryManager.get(RegistryKeys.FLAT_LEVEL_GENERATOR_PRESET);
+
+                    var voidPresetKey = RegistryKey.of(
+                            RegistryKeys.FLAT_LEVEL_GENERATOR_PRESET,
+                            Identifier.of("minecraft", "the_void")
                     );
+
+                    var voidPresetEntry = presetRegistry.getEntry(voidPresetKey).orElse(null);
+                    if (voidPresetEntry == null) {
+                        serverPlayer.sendMessage(Text.literal("[personnalworld] Erreur : preset 'minecraft:the_void' introuvable."), false);
+                        return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
+                    }
+
+                    FlatChunkGeneratorConfig flatConfig = voidPresetEntry.value().settings();
                     FlatChunkGenerator flatChunkGen = new FlatChunkGenerator(flatConfig);
                     DimensionOptions dimOptions = new DimensionOptions(dimTypeEntry, flatChunkGen);
 
-                    // Ajoute la dimension dynamiquement
                     DimensionAPI.addDimensionDynamically(server, dimId, dimOptions);
 
                     // Attend que la dimension soit prête
@@ -119,23 +137,32 @@ public class PersonnalWorldItem extends Item {
                         try { Thread.sleep(50); } catch (InterruptedException ignored) {}
                     }
 
-                    // Génère l'île une seule fois
+                    // Génère l'île
                     ServerWorld persoWorld = server.getWorld(worldKey);
                     if (persoWorld != null) {
                         persoWorld.getServer().submit(() -> {
-                            BlockPos center = new BlockPos(0, 50, 0); // Pivot identique à /structure save
+                            BlockPos center = new BlockPos(0, 50, 0);
                             persoWorld.getChunk(center.getX() >> 4, center.getZ() >> 4);
-                            IslandGenerator.generateIsland(persoWorld); // Place la structure SEULEMENT ICI
+                            IslandGenerator.generateIsland(persoWorld, serverPlayer);
                         });
                     }
                 }
+                **/
 
-                // Téléporte le joueur toujours sur le pivot (+1 pour arriver sur la laine par exemple)
-                ServerWorld persoWorld = server.getWorld(worldKey);
-                if (persoWorld != null) {
-                    BlockPos spawnPos = new BlockPos(24, 68, 17); // Adapter selon le pivot/structure !
+                ServerWorld persoWorld = fr.galsaxx.util.PersonnalWorldUtil.ensurePersonalWorld(
+                        server,
+                        dimTypeEntry,
+                        worldKey,
+                        dimId,
+                        serverPlayer
+                );
+
+                // Téléportation vers le monde perso
+                ServerWorld persoWorld2 = server.getWorld(worldKey);
+                if (persoWorld2 != null) {
+                    BlockPos spawnPos = new BlockPos(24, 68, 17);
                     serverPlayer.teleport(
-                            persoWorld,
+                            persoWorld2,
                             spawnPos.getX() + 0.5,
                             spawnPos.getY(),
                             spawnPos.getZ() + 0.5,
@@ -143,9 +170,12 @@ public class PersonnalWorldItem extends Item {
                             0.0F,
                             0.0F
                     );
-                    serverPlayer.sendMessage(Text.literal("Bienvenue sur votre île !"), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.welcome_island"), false);
+                    user.getItemCooldownManager().set(this, 40);
+                    return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
                 } else {
-                    serverPlayer.sendMessage(Text.literal("Erreur : monde perso inaccessible."), false);
+                    serverPlayer.sendMessage(Text.translatable("message.personnalworld.personal_world_unavailable"), false);
+                    return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
                 }
             }
         }

@@ -1,7 +1,6 @@
 package fr.galsaxx.util;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.WorldSavePath;
 
 import java.io.IOException;
@@ -17,9 +16,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 public class StructureCopier {
-    // Appel à chaque chargement du serveur (SERVER_STARTED)
-    public static void ensureIslandsCopied(MinecraftServer server) {
-        // Chemin du dossier où copier les NBT
+    public static void run(MinecraftServer server) {
         Path structuresFolder = server.getSavePath(WorldSavePath.ROOT)
                 .resolve("generated")
                 .resolve("minecraft")
@@ -27,14 +24,11 @@ public class StructureCopier {
         try {
             Files.createDirectories(structuresFolder);
         } catch (IOException e) {
-            System.out.println("[personnalworld] Erreur création dossier structures : " + e.getMessage());
             return;
         }
 
-        // Pattern pour trouver les ile_***.nbt dans le JAR
-        Pattern pattern = Pattern.compile("data/personnalworld/structures/ile_.*\\.nbt");
+        Pattern pattern = Pattern.compile("data/personnalworld/structures/.*\\.nbt");
         try {
-            // Récupère le chemin du JAR courant
             URL url = StructureCopier.class.getProtectionDomain().getCodeSource().getLocation();
             if (url.getPath().endsWith(".jar")) {
                 try (JarFile jar = new JarFile(url.toURI().getPath())) {
@@ -49,34 +43,36 @@ public class StructureCopier {
                                 try (InputStream in = jar.getInputStream(entry);
                                      OutputStream out = Files.newOutputStream(target)) {
                                     in.transferTo(out);
-                                    System.out.println("[personnalworld] Structure copiée : " + fileName);
                                 }
                             }
                         }
                     }
                 }
             } else {
-                // En dev, on peut lire depuis le filesystem
                 Path devStructs = Path.of("src/main/resources/data/personnalworld/structures");
+                try {
+                    Files.list(devStructs).forEach(p -> System.out.println("  " + p));
+                } catch (Exception e) {
+                    System.out.println("  (error : " + e.getMessage() + ")");
+                }
                 if (Files.exists(devStructs)) {
                     Files.list(devStructs)
-                            .filter(p -> p.getFileName().toString().matches("ile_.*\\.nbt"))
+                            .filter(p -> p.getFileName().toString().endsWith(".nbt"))
                             .forEach(p -> {
                                 Path target = structuresFolder.resolve(p.getFileName().toString());
                                 if (!Files.exists(target)) {
                                     try (InputStream in = Files.newInputStream(p);
                                          OutputStream out = Files.newOutputStream(target)) {
                                         in.transferTo(out);
-                                        System.out.println("[personnalworld] (Dev) Structure copiée : " + p.getFileName());
                                     } catch (IOException e) {
-                                        System.out.println("[personnalworld] Erreur copie (Dev) : " + e.getMessage());
                                     }
+                                } else {
                                 }
                             });
+                } else {
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            System.out.println("[personnalworld] Erreur lors de la copie des îles : " + e.getMessage());
         }
     }
 }
