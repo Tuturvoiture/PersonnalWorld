@@ -4,7 +4,10 @@ package fr.galsaxx;
 import fr.galsaxx.util.StructureCopier;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.util.Rarity;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.Registries;
@@ -33,6 +36,9 @@ public class PersonnalWorldMod implements ModInitializer {
 		});
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			StructureCopier.run(server);
+		});
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
+			entries.add(PERSONNAL_WORLD_ITEM);
 		});
 	}
 
