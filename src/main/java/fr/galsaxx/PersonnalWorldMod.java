@@ -24,6 +24,10 @@ public class PersonnalWorldMod implements ModInitializer {
 					.rarity(Rarity.RARE)
 	);
 
+	//? if >=1.21.1 {
+	public static final String STONECUTTER_TARGET = "1.21.1";
+	//?}
+
 	@Override
 	public void onInitialize() {
 		Registry.register(
