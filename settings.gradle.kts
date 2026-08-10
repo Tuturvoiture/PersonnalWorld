@@ -1,6 +1,8 @@
 pluginManagement {
 	repositories {
 		maven("https://maven.fabricmc.net/")
+		maven("https://maven.architectury.dev")
+		maven("https://maven.neoforged.net/releases/")
 		maven("https://maven.kikugie.dev/releases")
 		maven("https://maven.kikugie.dev/snapshots")
 		mavenCentral()
@@ -21,6 +23,8 @@ stonecutter {
 		// 2) create versions/<mc>/gradle.properties (copy keys from 1.21.1)
 		// 3) introduce //? if <condition> { ... //?} blocks where APIs diverge
 		versions("1.21.1")
+		branch("fabric")
+		branch("neoforge")
 	}
 }
 

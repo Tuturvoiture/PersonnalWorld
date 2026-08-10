@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"fr.galsaxx.PersonnalWorldMod"
+			"fr.galsaxx.fabric.PersonnalWorldFabric"
 		]
 	},
 	"mixins": [
@@ -28,13 +28,13 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.1",
+		"minecraft": "${minecraft}",
 		"java": ">=21",
 		"fabric-api": "*",
+		"architectury": "*",
 		"dimlib": ">=1.1.0+mc1.21.1"
 	},
 	"suggests": {
-		"dimlib": "v1.1.0-mc1.21.1",
-		"another-mod": "*"
+		"dimlib": "v1.1.0-mc1.21.1"
 	}
 }
