@@ -27,14 +27,11 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.16.14",
+		"fabricloader": ">=0.18.4",
 		"minecraft": "${minecraft}",
 		"java": ">=21",
 		"fabric-api": "*",
 		"architectury": "*",
-		"dimlib": ">=1.1.0+mc1.21.1"
-	},
-	"suggests": {
-		"dimlib": "v1.1.0-mc1.21.1"
+		"darchitect": ">=0.0.42"
 	}
 }

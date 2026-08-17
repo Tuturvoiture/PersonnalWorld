@@ -51,7 +51,7 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${common.mod.dep("fabric_api")}")
 	modImplementation("dev.architectury:architectury-fabric:${mod.dep("architectury")}")
-	modImplementation(files(rootProject.file("libs/dimlib-1.1.0+mc1.21.1.jar")))
+	modImplementation(files(rootProject.file("libs/darchitect-fabric.jar")))
 
 	commonBundle(project(path = common.path, configuration = "namedElements")) { isTransitive = false }
 	shadowBundle(project(path = common.path, configuration = "transformProductionFabric")) { isTransitive = false }

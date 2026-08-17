@@ -30,3 +30,10 @@ type = "required"
 versionRange = "[13.0.8,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.${id}]]
+modId = "darchitect"
+type = "required"
+versionRange = "[0.0.42,)"
+ordering = "NONE"
+side = "BOTH"
