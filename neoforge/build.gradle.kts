@@ -54,6 +54,7 @@ dependencies {
 	})
 	"neoForge"("net.neoforged:neoforge:${common.mod.dep("neoforge_loader")}")
 	modImplementation("dev.architectury:architectury-neoforge:${mod.dep("architectury")}")
+	modImplementation(files(rootProject.file("libs/darchitect-neoforge.jar")))
 
 	commonBundle(project(path = common.path, configuration = "namedElements")) { isTransitive = false }
 	shadowBundle(project(path = common.path, configuration = "transformProductionNeoForge")) { isTransitive = false }

@@ -25,6 +25,7 @@ dependencies {
 	mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
 	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
 	modCompileOnly("dev.architectury:architectury:${mod.dep("architectury")}")
+	modCompileOnly(files(rootProject.file("libs/darchitect-fabric.jar")))
 }
 
 loom {
