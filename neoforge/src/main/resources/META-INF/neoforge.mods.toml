@@ -10,6 +10,9 @@ authors = "GalsaxX"
 description = "your own personal world at your fingertips"
 logoFile = "assets/personnalworld/icon.jpg"
 
+[[mixins]]
+config = "personnalworld.mixins.json"
+
 [[dependencies.${id}]]
 modId = "neoforge"
 type = "required"
@@ -34,6 +37,13 @@ side = "BOTH"
 [[dependencies.${id}]]
 modId = "darchitect"
 type = "required"
-versionRange = "[0.0.42,)"
+versionRange = "[0.0.59,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${id}]]
+modId = "geckolib"
+type = "optional"
+versionRange = "[4.7,)"
 ordering = "NONE"
 side = "BOTH"

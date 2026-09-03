@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "fr.galsaxx.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"refmap": "personnalworld-common-refmap.json",
+	"mixins": [
+		"PlayerEntityMixin"
+	],
+	"client": [],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

@@ -1,0 +1,33 @@
+---
+description: Journal prompts + BDD — lire la BDD seulement en tour d'implémentation
+alwaysApply: true
+---
+
+# Prompts + BDD
+
+## Tour d'implémentation (code à écrire ou modifier)
+
+1. Lire [`docs/historique/bdd/INDEX.md`](docs/historique/bdd/INDEX.md) puis les fiches « lire d'abord ».
+2. Lire [`docs/historique/prompts/INDEX.md`](docs/historique/prompts/INDEX.md) et le fichier de **cette** conversation (`docs/historique/prompts/<slug>.md`).
+3. Grep / sous-agents seulement si la BDD n'a pas le pointeur.
+
+## Tour de conversation (question, explication, sans modification de code)
+
+Ne pas relire la BDD. Répondre directement, sauf si la question porte sur l'historique ou l'état du projet.
+
+## Après chaque prompt utilisateur
+
+Incrémenter `P00N` (demande, livré, pointeurs, suite). Mettre à jour l'INDEX (`Dernier P`).
+Fait réutilisable → `docs/historique/bdd/` (une phrase + un chemin).
+
+`prompts/` + `bdd/` = chaque message. `sessions/` + version + WIP = livraison fonctionnelle.
+
+Slug = titre de conversation en kebab-case ASCII. Si le titre change : renommer le fichier + l'index.
+
+## Seuil
+
+Si `etat-courant.md` ou `fichiers.md` dépasse ~40 lignes : archiver vers `decisions.md` au lieu de laisser grossir.
+
+## Interdit
+
+Secrets, chemins perso, transcripts complets, dumps de code.

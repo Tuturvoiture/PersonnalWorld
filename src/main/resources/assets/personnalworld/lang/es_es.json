@@ -1,0 +1,25 @@
+{
+  "block.personnalworld.spawn_marker": "Personnal World Spawn Block",
+  "item.personnalworld.personnal_world_item": "Palo del mundo personal",
+
+  "message.personnalworld.island_generated": "[personnalworld] ¡Isla NBT generada con éxito!",
+  "message.personnalworld.nbt_file_not_found": "[personnalworld] Error: ¡Archivo NBT no encontrado!",
+  "message.personnalworld.island_load_error": "Advertencia, error al cargar la isla",
+  "message.personnalworld.island_exists": "[personnalworld] La isla ya existe en esta posición.",
+
+  "message.personnalworld.welcome_island": "¡Bienvenido a tu isla!",
+  "message.personnalworld.personal_world_unavailable": "Error: mundo personal no disponible.",
+  "message.personnalworld.return_to_origin": "¡Has vuelto a tu posición original!",
+  "message.personnalworld.origin_dimension_not_found": "¡Dimensión original no encontrada!",
+  "message.personnalworld.no_saved_position": "¡No se encontró ninguna posición guardada!",
+  "message.personnalworld.cannot_get_dimension_type": "Error: ¡No se puede recuperar el tipo de dimensión!",
+
+  "message.personnalworld.structure_copied": "[NBT_Copi] Estructura copiada:",
+  "message.personnalworld.structure_already_exists": "[NBT_Copi] Estructura ya presente:",
+  "message.personnalworld.read_error": "error de lectura:",
+
+  "message.personnalworld.command_only_in_personal_world": "§c¡Este comando solo puede usarse desde tu mundo personal!",
+  "message.personnalworld.returned_to_origin": "¡Has vuelto a tu ubicación original!",
+  "message.personnalworld.origin_dimension_gone": "La dimensión original ya no existe.",
+  "message.personnalworld.no_return_position": "No hay posición de retorno guardada."
+}

@@ -43,6 +43,11 @@ repositories {
 	maven("https://maven.architectury.dev/")
 	maven("https://api.modrinth.com/maven")
 	maven("https://maven.fabricmc.net/")
+	maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/") {
+		name = "GeckoLib"
+		content { includeGroup("software.bernie.geckolib") }
+	}
+	mavenCentral()
 }
 
 dependencies {
@@ -52,6 +57,8 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${common.mod.dep("fabric_api")}")
 	modImplementation("dev.architectury:architectury-fabric:${mod.dep("architectury")}")
 	modImplementation(files(rootProject.file("libs/darchitect-fabric.jar")))
+	modCompileOnly("software.bernie.geckolib:geckolib-fabric-1.21.1:${common.mod.dep("geckolib")}")
+	modLocalRuntime("software.bernie.geckolib:geckolib-fabric-1.21.1:${common.mod.dep("geckolib")}")
 
 	commonBundle(project(path = common.path, configuration = "namedElements")) { isTransitive = false }
 	shadowBundle(project(path = common.path, configuration = "transformProductionFabric")) { isTransitive = false }

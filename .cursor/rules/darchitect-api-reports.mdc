@@ -1,0 +1,30 @@
+---
+description: Crash, contrat ou jar DimensionArchitect — rapport API, ne pas patcher le dépôt sœur
+globs:
+  - docs/historique/api-darchitect/**
+  - src/main/java/fr/galsaxx/PersonnalWorld.java
+  - src/main/java/fr/galsaxx/util/PersonnalWorldUtil.java
+  - libs/**
+alwaysApply: false
+---
+
+# Rapports API DimensionArchitect
+
+PersonnalWorld est une **surcouche**. Création / cycle de vie des dimensions = DimensionArchitect (`darchitect`, dépôt sœur `DimensionArchitectAPI`).
+
+## Si le problème est côté API
+
+1. **Ne pas** modifier le dépôt DimensionArchitect depuis ce workspace (sauf demande explicite).
+2. Contournement **minimal** dans PersonnalWorld seulement si le joueur / le `runClient` est bloqué ; commenter `TODO darchitect: …`.
+3. Rapport autonome (copiable dans le Cursor de l'API) :
+   - `docs/historique/api-darchitect/YYYY-MM-DD_slug.md`
+   - une ligne dans [`docs/historique/api-darchitect/INDEX.md`](../../docs/historique/api-darchitect/INDEX.md)
+4. Template : sévérité, version API, repro, cause, correctif attendu (fichiers + vérif), contournement PW, hors-sujet.
+
+**Interdit dans les rapports :** secrets, chemins personnels, transcripts de chat.
+
+## Si le problème est côté PersonnalWorld
+
+Gameplay (item, île NBT, `/returnworld`, mixin retour) → corriger ici, pas de rapport API.
+
+En doute : rapport court « à confirmer » plutôt que de patcher l'API à l'aveugle.

@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"fr.galsaxx.fabric.PersonnalWorldFabric"
+		],
+		"client": [
+			"fr.galsaxx.PersonnalWolrdClient"
 		]
 	},
 	"mixins": [
@@ -32,6 +35,9 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"architectury": "*",
-		"darchitect": ">=0.0.42"
+		"darchitect": ">=0.0.59"
+	},
+	"suggests": {
+		"geckolib": "*"
 	}
 }
