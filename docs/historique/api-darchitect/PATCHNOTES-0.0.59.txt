@@ -1,0 +1,95 @@
+DimensionArchitect API — PATCHNOTES
+mod_version: 0.0.59
+minecraft: 1.21.1
+loaders: fabric, neoforge
+identity: darchitect
+generated_utc: 2026-08-31T02:55:06.839795500Z
+---
+
+# Unreleased — depuis la dernière mise en ligne
+
+**Depuis la publication :** jamais (aucun cut « en ligne » encore)  
+**Cycle commencé :** 2026-08-16  
+**mod_version courante :** 0.0.59
+
+Accumule tout ce qui doit figurer dans les notes joueurs / CurseForge au prochain cut.  
+Ne pas y mettre de noms d’outils / agents.
+
+## Ajouté
+
+- 0.0.59 : `docs/internal/GUIDE-AUTEUR.md` (carte mainteneur, PersonnalWorld, checklist upgrade).
+- 0.0.59 : `docs/releases/API_ANNOTATIONS.md` + `@since` sur API chaude (Builder, Config, facade, SPI ext).
+- Script `reset-dev-sessions` (`.bat` / `.ps1` / `.sh`) : nettoie **uniquement** les JVM Loom/Gradle de ce dépôt (CurseForge / launchers ignorés) ; après GameTest et smoke.
+- Ores MVP Nether : `nether_quartz_ore`, `nether_gold_ore`, `ancient_debris` (même motif copies locales `PlacedFeature`).
+- Cycle de publication long terme : `docs/releases/` (UNRELEASED → cut figé), CAPABILITIES, COMMANDS.
+- PATCHNOTES générés au build (`writePatchNotes`) et archive locale `dist/builds/<version>/` (jars + MANIFEST + checksums).
+- Journal interne des prompts (`docs/internal/prompt-log/`) pour contributeurs / agents.
+- Gros `darchitect-config.toml` multi-sections (schema 2), commentaires EN, catalogue commandes, recovery.
+- Identité API immuable (`Identity`) : blacklist TOML, self-check boot, ArchUnit anti-rebrand.
+- Résilience conf : fichier cassé → `.bad-<timestamp>` + defaults ; `/darchitect reset-config confirm` → `.bak-<timestamp>` + apply darchitect-only.
+- Sections conf branchées : access, persistence, seeds, creation, generation, teleport, lifecycle, safety, api, compat, logging, inspection.
+- Structures désactivables sur Flat **et** Noise (`StructureFilterNoiseChunkGenerator`) ; biomes multi / `--no-oceans` ; terrain + ores MVP.
+- Commandes : `--preset`, `--no-structures` / `--with-structures`, `--no-oceans`, `--amplify`, `--ore-multiplier`, `unload -force`, `list -all`, `info -verbose`, `reset-config`.
+- Accès MANAGED strict (GUEST sans JOIN) ; visibilité cross-mod ; quotas `registerMod` ; gamerules isolées par dimension.
+- Plateforme SKYBLOCK à Y=100 (spawn Y=101).
+- CLI `--amplify` / `--ore-multiplier` ; `autoIncrement` ; inventaire isolé `players/<uuid>.dat`.
+- Plafond effectif = somme des quotas `registerMod` (borné par `max_simultaneous`).
+- Extensions : argument string greedy ; mixins BUILD/INTERACT ; XP/ender/effets isolés ; backup_on_delete ; marqueur `.creating`.
+
+## Modifié
+
+- 0.0.59 : process doc API (`API_ANNOTATIONS`, rules `api-consumers` / `domaine-packages`).
+- 0.0.58 : `persistence.isolate_player_data` défaut **false** (inventaire partagé) ; override par dimension (`isolatePlayerData` / `--isolate-inventory` / `--shared-inventory`, persisté dans `metadata.json`).
+- 0.0.56 : CAVE tagué **fonctionnel / incomplet (WIP)** dans CAPABILITIES / LIMITATIONS / world-preset (EN+FR) — manque biomes dédiés, plantes, structures curatées, ambiance.
+- 0.0.56 : docs alignées (Gate1 R11, INTERNALS §10–11, generation-rules, COMMANDS, session livraison).
+- Chemin conf documenté : `<game>/config/darchitect-config.toml`.
+- Tree commandes : `commands.enabled` évalué à chaud ; OP dédiés `load` / `unload` / `reset_config`.
+- `mod_version` en pré-bêta `0.0.x` (pas de `0.1.0` tant que Gates non verts).
+- Installation documentée via jars `dist/builds/` / `files(...)` (pas de Maven publié).
+
+## Corrigé
+
+- 0.0.57 : `chiseled-build` Windows — wipe NeoForge `build/generated` + build séquentiel sans daemon ; i18n 10 langues alignées.
+- 0.0.56 : retrait instrumentation debug session (`AgentDebugLog`).
+- 0.0.55 : mixin constructeur `ServerChunkLoadingManager` en `static` (plus de crash boot `InvalidInjectionException`).
+- 0.0.54 : mixin `ServerChunkLoadingManager` — récupère les `ChunkGeneratorSettings` du délégué quand le générateur est `StructureFilterNoiseChunkGenerator` (sinon vanilla `createMissingSettings` → monde vide/eau/lave). Corrige CAVE et `--no-structures`.
+- CAVE : retour au preset `cave_tall` + Overworld multi-noise (spawn Y=160, plateforme 1re visite).
+- CAVE 0.0.53 : rewrite tenté (obsolète, remplacé par 0.0.54).
+- CAVE : sea_level -54 + dripstone + plateforme sécu (plus d’océan).
+- Horloge dim : départ matin ; cycle jour OK.
+- `--ore-multiplier` : plus de crash (règles non appliquées tant que FeatureIndexer unsafe).
+- CAVE 0.0.52 : restauration `cave_tall` + Overworld multi-noise (f527d5a) ; sea_level 32.
+- TP répété : plus de montée Y (bug `topY+1`).
+- CAVE : terrain vanilla `CAVES` + spawn naturel (plus de plateforme cobble à Y=160).
+- Horloge locale mutable (lits / mods temps) ; Overworld non accéléré par les dims.
+- Gamerules liées à l’Overworld par défaut ; overrides create + `/darchitect info`.
+- Feedback create/info pour flags génération (`--no-structures`, `--no-oceans`, `--amplify`, `--ore-multiplier`).
+- `reset-dev-sessions` ne cible plus CurseForge / clients NeoForge réels (régression de l’option `--launcher`) ; plus de reset auto après `run-client`.
+- Runs de test : plus de JVM Minecraft orphelines en fond qui empêchent d’ouvrir le launcher.
+- Torche SKYBLOCK au-dessus du 3×3 (ne remplace plus un bloc stone).
+- CLI `--no-structures` effective sur SURVIVAL/AMPLIFIED/CAVE (plus seulement Flat).
+- Jars release autonomes : Tomlj + ANTLR **shadowés** (relocatés `net.darchitect.shadow.*`) dans les classes du jar — fonctionne en prod (`mods/`) **et** en dev Loom `files(jar)`. Plus de `NoClassDefFoundError` Tomlj.
+- NeoForge Loom `runServer` : Tomlj + ANTLR en `localRuntime` (classpath FML dev) ; jar remap shadow inchangé.
+- `DimensionAlreadyExistsException` levée à la création / au load (runtime).
+- CAVE `has_ceiling: true` ; `forceBiome` → `FixedBiomeSource` ; amplify continu ; `frequencyMultiplier` structures (RandomSpread).
+- Smoke create→reload→delete via RCON (plus de stdin Gradle).
+- Client RCON : paquet envoyé en un seul write (Minecraft ferme sinon).
+- Smoke Linux : kill Gradle 45 s après `stop` ; `setblock` dans `darchitect:testdim`.
+- `unload` puis `load` : plus de faux « already exists » à cause de `metadata.json` ; AutoIncrement sur ids storage sans `:`.
+- `WorldType.NORMAL` sans profil : chaîne SURVIVAL ; `forceBiome` non écrasé par les biome rules ; CAVE sans skylight.
+- GameTest isolation inventaire enregistrée ; plus de fuite des dims concurrentes (`addFinalTask` tick 0).
+
+## Commandes
+
+- Voir [COMMANDS.md](COMMANDS.md) pour le catalogue complet de la version courante.
+
+## Limites connues
+
+- Ores moddés / hors sous-ensemble (overworld 16 + deepslate + 3 Nether) : WARN.
+- GameTests required Vague 2 rejoués (27/27 Fabric, 2026-08-21 R9) ; Gate 1 manuel : à jouer avant `0.1.0`.
+- Clés conf dépréciées no-op : `tick_time_isolated` (isolation toujours on) ; `parallel_bootstrap` (WARN si true).
+- `frequencyMultiplier` sur placements concentric-rings : **non-objectif** (WARN ; RandomSpread seulement).
+
+## Breaking
+
+- MANAGED : sans rôle, plus d’entrée (GUEST n’a plus JOIN). Comportement voulu vs anciennes attentes « open guest ».

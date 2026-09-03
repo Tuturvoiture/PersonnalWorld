@@ -42,6 +42,11 @@ configurations {
 repositories {
 	maven("https://maven.neoforged.net/releases/")
 	maven("https://maven.architectury.dev/")
+	maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/") {
+		name = "GeckoLib"
+		content { includeGroup("software.bernie.geckolib") }
+	}
+	mavenCentral()
 }
 
 dependencies {
@@ -55,6 +60,8 @@ dependencies {
 	"neoForge"("net.neoforged:neoforge:${common.mod.dep("neoforge_loader")}")
 	modImplementation("dev.architectury:architectury-neoforge:${mod.dep("architectury")}")
 	modImplementation(files(rootProject.file("libs/darchitect-neoforge.jar")))
+	modCompileOnly("software.bernie.geckolib:geckolib-neoforge-1.21.1:${common.mod.dep("geckolib")}")
+	modLocalRuntime("software.bernie.geckolib:geckolib-neoforge-1.21.1:${common.mod.dep("geckolib")}")
 
 	commonBundle(project(path = common.path, configuration = "namedElements")) { isTransitive = false }
 	shadowBundle(project(path = common.path, configuration = "transformProductionNeoForge")) { isTransitive = false }

@@ -1,0 +1,25 @@
+{
+  "block.personnalworld.spawn_marker": "Personnal World Spawn Block",
+  "item.personnalworld.personnal_world_item": "个人世界法杖",
+
+  "message.personnalworld.island_generated": "[personnalworld] NBT 岛屿生成成功！",
+  "message.personnalworld.nbt_file_not_found": "[personnalworld] 错误：未找到 NBT 文件！",
+  "message.personnalworld.island_load_error": "警告，加载岛屿时出错",
+  "message.personnalworld.island_exists": "[personnalworld] 此位置已存在岛屿。",
+
+  "message.personnalworld.welcome_island": "欢迎来到你的岛屿！",
+  "message.personnalworld.personal_world_unavailable": "错误：个人世界无法访问。",
+  "message.personnalworld.return_to_origin": "返回到你原来的位置！",
+  "message.personnalworld.origin_dimension_not_found": "未找到原始维度！",
+  "message.personnalworld.no_saved_position": "未找到保存的位置！",
+  "message.personnalworld.cannot_get_dimension_type": "错误：无法获取维度类型！",
+
+  "message.personnalworld.structure_copied": "[NBT_Copi] 结构已复制：",
+  "message.personnalworld.structure_already_exists": "[NBT_Copi] 结构已存在：",
+  "message.personnalworld.read_error": "读取错误：",
+
+  "message.personnalworld.command_only_in_personal_world": "§c此命令只能在你的个人世界中使用！",
+  "message.personnalworld.returned_to_origin": "返回到你原来的位置！",
+  "message.personnalworld.origin_dimension_gone": "原始维度不再存在。",
+  "message.personnalworld.no_return_position": "没有保存返回位置。"
+}
