@@ -103,6 +103,26 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Livré :** Migration CustomPayload Architectury 13 ; fix book ; bump 1.4.0-alpha.1. Cache Loom local encore verrouillé côté agent — relancer `run-client-rebuild.bat` après `gradlew --stop` + purge `.gradle/loom-cache`.  
 **Suite :** Validation en jeu par l'utilisateur.
 
+## P018 — Notif compile 772588
+**Demande :** Résultat tâche shell compile (Java 17).  
+**Livré :** Info brief — échec précoce JVM ; fix code déjà en 1.4.0-alpha.1.  
+**Suite :** Relancer `run-client-rebuild.bat` côté user.
+
+## P019 — Terminal loom-cache + rmdir PowerShell
+**Demande :** Logs L629–676 (erreurs Java + rmdir fail + access wideners).  
+**Livré :** Fix Java déjà présent ; purge Loom via junction `C:\Temp\personnalworld-loom-cache` ; compile OK (`:1.21.1:compileJava` + `:fabric:1.21.1:compileJava`).  
+**Suite :** User lance `.\script\run-client-rebuild.bat` (ou runClient).
+
+## P020 — Notif compile OK
+**Demande :** Résultat tâche compile 772598.  
+**Livré :** Confirmé BUILD SUCCESSFUL ; user peut lancer le client.  
+**Suite :** —
+
+## P021 — Crash client open_adventure_book already registered
+**Demande :** Crash runClient (logs terminal).  
+**Livré :** Cause = double register S2C ; `registerS2CPayloadType` uniquement Env.SERVER ; bump 1.4.0-alpha.2.  
+**Suite :** Relancer client.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
