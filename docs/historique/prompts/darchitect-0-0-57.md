@@ -393,8 +393,18 @@
 
 **Demande :** commit + pull request (sans attribution assistant).
 
-**Livre :** En cours — commit auteur GalsaxX_FR, push, PR vers main.
+**Livre :** Commit `0bcdd37` auteur GalsaxX_FR (sans Co-authored Cursor) ; push ; PR #4 mise a jour.
 
-**Pointeurs :** branche `feature/multi-version-multi-loader`
+**Pointeurs :** https://github.com/Tuturvoiture/PersonnalWorld/pull/4
+
+**Suite :** —
+
+## P043
+
+**Demande :** Pourquoi pas tout committe ?
+
+**Livre :** Commit journal prompts restant ; exclus body/headers/debug (dumps MCP/debug).
+
+**Pointeurs :** docs/historique/prompts/
 
 **Suite :** —
