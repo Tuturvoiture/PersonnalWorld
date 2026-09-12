@@ -26,16 +26,16 @@ Regarder ici **avant** un grep projet.
 - Placement + anim GeckoLib : `models/item/personnal_world_item_geckolib.json` + geo/anims
 - MCP `docs/BLOCKBENCH_MCP_SETUP.md`
 
-## Carnet d'aventurier (1.4.0-alpha.0)
+## Carnet d'aventurier (1.4.0-alpha.1)
 
-- Item commun : `AdventureBookItem.java` (pas de TP)
-- Item GeckoLib : `compat/geckolib/AdventureBookGeoItem.java` (animations + paquets réseau)
+- Item commun : `AdventureBookItem.java` (envoie Open payload)
+- Item GeckoLib : `compat/geckolib/AdventureBookGeoItem.java` (animations + Open payload)
+- Réseau : `network/OpenAdventureBookPayload.java`, `network/CloseAdventureBookPayload.java` (CustomPayload)
 - GeckoLibHooks : `createBookItem()` via Class.forName
 - Assets : `geo/item/adventure_book.geo.json`, `animations/item/adventure_book.animation.json`, `textures/item/adventure_book.png`
 - Models : `models/item/adventure_book.json` (fallback), `models/item/adventure_book_geckolib.json` (builtin/entity)
 - Référence Blockbench : `docs/reference/blockbench/adventure_book.bbmodel`
-- Screen placeholder : `fabric/…/client/AdventureBookScreen.java` (fermeture → CLOSE_BOOK_PACKET)
-- Paquets réseau : `PersonnalWorld.OPEN_BOOK_PACKET` (S→C), `CLOSE_BOOK_PACKET` (C→S)
+- Screen placeholder : `fabric/…/client/AdventureBookScreen.java` (fermeture → Close payload)
 
 - Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
 - Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`

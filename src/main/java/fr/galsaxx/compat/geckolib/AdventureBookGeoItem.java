@@ -3,6 +3,7 @@ package fr.galsaxx.compat.geckolib;
 import dev.architectury.networking.NetworkManager;
 import fr.galsaxx.AdventureBookItem;
 import fr.galsaxx.PersonnalWorld;
+import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -41,11 +42,6 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
     private static final RawAnimation IDLE_CLOSED = RawAnimation.begin().thenLoop("idle_closed");
     private static final RawAnimation OPEN        = RawAnimation.begin().thenPlay("open").thenLoop("idle_open");
     private static final RawAnimation CLOSE       = RawAnimation.begin().thenPlay("close").thenLoop("idle_closed");
-
-    /** Paquet envoyé du serveur → client pour ouvrir l'interface (= {@link PersonnalWorld#OPEN_BOOK_PACKET}). */
-    public static final Identifier OPEN_BOOK_PACKET  = PersonnalWorld.OPEN_BOOK_PACKET;
-    /** Paquet envoyé du client → serveur pour déclencher close (= {@link PersonnalWorld#CLOSE_BOOK_PACKET}). */
-    public static final Identifier CLOSE_BOOK_PACKET = PersonnalWorld.CLOSE_BOOK_PACKET;
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -100,24 +96,25 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
-            // Déclencher animation open
             triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld) world), "book", "open");
-            // Ouvrir l'interface côté client via paquet réseau
-            NetworkManager.sendToPlayer(serverPlayer, OPEN_BOOK_PACKET, buf -> {});
+            NetworkManager.sendToPlayer(serverPlayer, new OpenAdventureBookPayload());
         }
         return TypedActionResult.success(stack);
     }
 
     /**
-     * Appelé depuis le client (handler du paquet CLOSE_BOOK_PACKET) pour fermer proprement.
-     * Doit être invoqué côté serveur uniquement.
+     * Appelé depuis le handler C2S {@link fr.galsaxx.network.CloseAdventureBookPayload}.
+     * Serveur uniquement.
      */
     public static void handleCloseFromClient(ServerPlayerEntity player) {
         ItemStack stack = player.getMainHandStack();
-        if (!(stack.getItem() instanceof AdventureBookGeoItem book)) {
+        AdventureBookGeoItem book = stack.getItem() instanceof AdventureBookGeoItem b ? b : null;
+        if (book == null) {
             stack = player.getOffHandStack();
-            if (!(stack.getItem() instanceof AdventureBookGeoItem book2)) return;
-            book = book2;
+            if (!(stack.getItem() instanceof AdventureBookGeoItem b2)) {
+                return;
+            }
+            book = b2;
         }
         book.triggerAnim(player, GeoItem.getOrAssignId(stack, player.getServerWorld()), "book", "close");
     }

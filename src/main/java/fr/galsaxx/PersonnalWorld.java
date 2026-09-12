@@ -1,12 +1,13 @@
 package fr.galsaxx;
 
 import dev.architectury.networking.NetworkManager;
+import fr.galsaxx.network.CloseAdventureBookPayload;
+import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.darchitect.api.ext.DArchitectServices;
 import net.darchitect.api.ext.SpawnPoint;
 import net.darchitect.api.ext.SpawnRequest;
 import net.darchitect.api.ext.SpawnResolver;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +18,6 @@ import org.slf4j.LoggerFactory;
 public final class PersonnalWorld {
 	public static final String MOD_ID = "personnalworld";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
-	/** Paquet S→C : ouvrir l'interface du carnet d'aventurier. */
-	public static final Identifier OPEN_BOOK_PACKET  = Identifier.of(MOD_ID, "open_adventure_book");
-	/** Paquet C→S : le joueur ferme l'interface du carnet. */
-	public static final Identifier CLOSE_BOOK_PACKET = Identifier.of(MOD_ID, "close_adventure_book");
 	public static final int DARCHITECT_QUOTA = 64;
 	/** Origine du NBT : l’ancien spawn (24,68,17) relatif à (0,50,0) arrive en (0,90,0). */
 	public static final int ISLAND_NBT_ORIGIN_X = -24;
@@ -47,16 +43,21 @@ public final class PersonnalWorld {
 	}
 
 	private static void registerNetwork() {
-		// Paquet C→S : fermeture de l'interface carnet → trigger anim "close" (via Class.forName)
+		// S2C : type déclaré côté serveur (receiver client dans PersonnalWolrdClient)
+		NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC);
+		// C2S : fermeture GUI → anim close (via Class.forName, pas d'import GeckoLib)
 		NetworkManager.registerReceiver(
 				NetworkManager.Side.C2S,
-				CLOSE_BOOK_PACKET,
-				(buf, ctx) -> ctx.queue(() -> {
+				CloseAdventureBookPayload.ID,
+				CloseAdventureBookPayload.CODEC,
+				(payload, ctx) -> ctx.queue(() -> {
 					if (ctx.getPlayer() instanceof ServerPlayerEntity sp) {
 						try {
 							Class<?> clazz = Class.forName("fr.galsaxx.compat.geckolib.AdventureBookGeoItem");
 							clazz.getMethod("handleCloseFromClient", ServerPlayerEntity.class).invoke(null, sp);
-						} catch (Throwable ignored) {}
+						} catch (Throwable ignored) {
+							// GeckoLib absent ou classe non chargée : pas d'anim close
+						}
 					}
 				})
 		);
