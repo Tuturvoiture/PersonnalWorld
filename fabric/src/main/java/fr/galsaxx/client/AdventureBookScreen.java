@@ -1,7 +1,7 @@
 package fr.galsaxx.client;
 
 import dev.architectury.networking.NetworkManager;
-import fr.galsaxx.PersonnalWorld;
+import fr.galsaxx.network.CloseAdventureBookPayload;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -43,7 +43,7 @@ public class AdventureBookScreen extends Screen {
     public void close() {
         super.close();
         // Prévenir le serveur pour déclencher l'anim de fermeture
-        NetworkManager.sendToServer(PersonnalWorld.CLOSE_BOOK_PACKET, buf -> {});
+        NetworkManager.sendToServer(new CloseAdventureBookPayload());
     }
 
     @Override

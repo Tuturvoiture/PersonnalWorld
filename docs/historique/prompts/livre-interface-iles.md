@@ -88,6 +88,21 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 
 ---
 
+## P015 — Présent en jeu ?
+**Demande :** Si je lance le jeu, l'item est-il présent ?  
+**Livré :** Oui après rebuild ; créatif Outils ; GeckoLib pour 3D.  
+**Suite :** —
+
+## P016 — Comment récupérer l'item ?
+**Demande :** Comment récupérer l'item ?  
+**Livré :** Créatif Outils ou `/give @s personnalworld:adventure_book` ; pas de craft.  
+**Suite :** —
+
+## P017 — Erreurs compile terminal
+**Demande :** Logs compile L518–632 (sendToPlayer + variable book).  
+**Livré :** Migration CustomPayload Architectury 13 ; fix book ; bump 1.4.0-alpha.1. Cache Loom local encore verrouillé côté agent — relancer `run-client-rebuild.bat` après `gradlew --stop` + purge `.gradle/loom-cache`.  
+**Suite :** Validation en jeu par l'utilisateur.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
