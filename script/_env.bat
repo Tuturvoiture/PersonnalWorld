@@ -1,14 +1,11 @@
 @echo off
-setlocal EnableExtensions
-rem Lance le client Fabric de dev (Minecraft 1.21.1) via Gradle, avec Java 21.
-rem Gradle lit JAVA_HOME, pas le "java" du PATH : un JAVA_HOME=17 casse Stonecutter.
-rem Usage: run-client.bat
-rem        run-client.bat --offline
-rem        run-client.bat :neoforge:1.21.1:runClient
+rem Shared env for scripts under script\ — sets project root + Java 21.
+rem Called via: call "%~dp0_env.bat"
 
-cd /d "%~dp0"
+set "ROOT=%~dp0.."
+cd /d "%ROOT%"
 if errorlevel 1 (
-  echo Failed to cd to project root.
+  echo ERROR: cannot cd to project root: %ROOT%
   exit /b 1
 )
 
@@ -17,40 +14,6 @@ if errorlevel 1 exit /b 1
 
 echo JAVA_HOME=%JAVA_HOME%
 set "PATH=%JAVA_HOME%\bin;%PATH%"
-
-call gradlew.bat --stop >nul 2>&1
-call :UnlockBuildDirs
-
-if "%~1"=="" (
-  call gradlew.bat :fabric:1.21.1:runClient
-) else (
-  echo.%~1 | findstr /b ":" >nul
-  if not errorlevel 1 (
-    call gradlew.bat %*
-  ) else (
-    call gradlew.bat :fabric:1.21.1:runClient %*
-  )
-)
-exit /b %ERRORLEVEL%
-
-:UnlockBuildDirs
-rem OneDrive / ancien daemon Gradle peut verrouiller build/ (classes, resources → processResources stale outputs).
-for %%P in (
-  "versions\1.21.1\build"
-  "fabric\versions\1.21.1\build"
-  "neoforge\versions\1.21.1\build"
-) do (
-  if exist %%P (
-    attrib -r -s -h %%P /s /d >nul 2>&1
-    rmdir /s /q %%P 2>nul
-    if exist %%P (
-      echo WARNING: Impossible de supprimer %%P
-      echo Ferme un autre runClient / pause la synchro OneDrive sur ce dossier, puis relance.
-    ) else (
-      echo Pre-run: nettoyage %%P
-    )
-  )
-)
 exit /b 0
 
 :EnsureJava21

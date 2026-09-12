@@ -3,7 +3,7 @@
 Ce qui est **jouable** / disponible pour une version donnée.  
 Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pas à chaque patch cosmétique).
 
-## Courante — `1.3.0-alpha.20`
+## Courante — `1.3.0-beta.0`
 
 | Capacité | Détail |
 |----------|--------|
@@ -16,13 +16,14 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 | TP monde perso | Priorité marqueur Y+1 ; sinon scan 50 blocs ; bedrock Y=87 en dernier recours |
 | NeoForge | Parité item / commande / assets avec Fabric |
 | Minecraft | `1.21.1` (Stonecutter) |
-| Artefacts | `personnalworld-{fabric\|neoforge}-1.3.0-alpha.20+1.21.1.jar` |
+| Artefacts | `personnalworld-{fabric\|neoforge}-1.3.0-beta.0+1.21.1.jar` |
 | Migration DimLib | **Non automatique** — procédure manuelle (monde neuf + copie) : [`MIGRATION_DIMLIB.md`](MIGRATION_DIMLIB.md) |
 
 ## Historique
 
 | Version | Notes |
 |----------|--------|
+| 1.3.0-beta.0 | Première beta 1.3.0 (contenu alpha.32) |
 | 1.3.0-alpha.20 | `spawn_marker` Y=88 ; texture BB à jour |
 | 1.3.0-alpha.19 | Bloc `spawn_marker` référence spawn par dimension |
 | 1.3.0-alpha.17 | Sécurité TP : sol sous spawn ou bedrock Y=87 |

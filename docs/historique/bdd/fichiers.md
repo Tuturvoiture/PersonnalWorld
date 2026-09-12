@@ -21,13 +21,16 @@ Regarder ici **avant** un grep projet.
 ## Bâton / GeckoLib
 
 - Skill `.cursor/skills/minecraft-geckolib/` ; compat `src/main/java/fr/galsaxx/compat/`
-- Geo / anims / modèles item + pack `resourcepacks/geckolib_staff/` ; MCP `docs/BLOCKBENCH_MCP_SETUP.md`
+- Placement sans GeckoLib : `models/item/personnal_world_item.json` (+ `_3d.json`)
+- Placement + anim GeckoLib : `models/item/personnal_world_item_geckolib.json` + geo/anims ; pack `resourcepacks/geckolib_staff/`
+- MCP `docs/BLOCKBENCH_MCP_SETUP.md`
 
 ## Docs process
 
 - Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
-- Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `CAPABILITIES.md`
+- Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`
 - DoD / hors-scope / commandes / env : `docs/DEFINITION_OF_DONE.md`, `HORS_SCOPE.md`, `COMMANDS.md`, `ENVIRONMENTS.md`
+- Scripts : `script/` (`build-all.bat`, `build-fabric.bat`, `build-neoforge.bat`, `run-client.bat`, `run-client-rebuild.bat`, `_env.bat`)
 - Migration DimLib (manuelle) : `docs/MIGRATION_DIMLIB.md`
 - Sessions / API : `docs/historique/sessions/INDEX.md`, `docs/historique/api-darchitect/INDEX.md`
 - Rules : `.cursor/rules/` — always = git-attribution, versioning, prompt-bdd

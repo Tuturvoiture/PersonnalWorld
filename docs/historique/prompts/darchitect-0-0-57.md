@@ -248,3 +248,153 @@
 **Pointeurs :** `docs/reference/personnalworld-logo-sans-contour.png`, `docs/reference/personnalworld-logo.png`
 
 **Suite :** Validation ; integration comme icone si souhaitee.
+
+## P028
+
+**Demande :** Restaurer placements baton sans GeckoLib depuis personnal_world_item_sansgeckolib.json (Blockbench lance, MCP HS).
+
+**Livre :** `personnal_world_item.json` + `_3d.json` avec display d origine ; textures remappees ; alpha.29.
+
+**Pointeurs :** `models/item/personnal_world_item.json`, `docs/reference/blockbench/personnal_world_item_sansgeckolib.json`
+
+**Suite :** Rebuild jar Fabric + F3+T / test sans GeckoLib.
+
+## P029
+
+**Demande :** Dossier script/ ; deplacer scripts ; build-all + build-fabric + build-neoforge.
+
+**Livre :** `script/_env.bat`, `run-client.bat` (deplace), `build-all.bat`, `build-fabric.bat`, `build-neoforge.bat` ; `docs/COMMANDS.md` a jour ; ancien `run-client.bat` racine supprime.
+
+**Pointeurs :** `script/`, `docs/COMMANDS.md`
+
+**Suite :** —
+
+## P030
+
+**Demande :** Hauteur du baton incorrecte lorsque GeckoLib est present.
+
+**Livre :** Diagnostic : second JSON display gecko (`personnal_world_item_geckolib`) diverge du placement sans GeckoLib.
+
+**Pointeurs :** `models/item/personnal_world_item.json`, clients Fabric/NeoForge
+
+**Suite :** Unifier placement sans + animation gecko.
+
+## P031
+
+**Demande :** Un seul placement (sans GeckoLib) + animation GeckoLib ; supprimer le double JSON.
+
+**Livre :** Suppresssion `personnal_world_item_geckolib.json` ; wrap `isBuiltin()` sur le JSON classique ; pack resource displays = sans ; alpha.30.
+
+**Pointeurs :** `PersonnalWolrdClient.java`, `PersonnalWorldNeoForgeClient.java`, `BuiltinStaffModelWrapper.java`
+
+**Suite :** Test en jeu avec / sans GeckoLib (mains + idle).
+
+## P032
+
+**Demande :** run-client semble tout rebuild (MC inclus) pour peu de changements — est-ce necessaire ?
+
+**Livre :** Explication : `script/run-client.bat` fait `--stop` + `rmdir` des `build/` → rebuild force ; pas requis pour un petit delta.
+
+**Pointeurs :** `script/run-client.bat` (`UnlockBuildDirs`), `gradlew :fabric:1.21.1:runClient`
+
+**Suite :** Relancer sans nettoyage si OneDrive ne bloque pas ; sinon garder le bat.
+
+## P033
+
+**Demande :** Baton mal place avec GeckoLib (placement unique ne marche pas).
+
+**Livre :** Retabli `personnal_world_item_geckolib.json` (displays calibrés builtin/entity) ; clients swap + wrap ; JSON classique pour sans GeckoLib ; alpha.31.
+
+**Pointeurs :** `personnal_world_item_geckolib.json`, `PersonnalWolrdClient.java`, `PersonnalWorldNeoForgeClient.java`
+
+**Suite :** F3+T / test 1P 3P GUI avec GeckoLib.
+
+## P034
+
+**Demande :** Erreur terminal (ref L509-L530) — `gradlew.bat` non reconnu en PowerShell.
+
+**Livre :** Explication : sous PS il faut `.\gradlew.bat` (pas `gradlew.bat` nu).
+
+**Pointeurs :** `.\gradlew.bat :fabric:1.21.1:runClient`, `script\run-client.bat`
+
+**Suite :** —
+
+## P035
+
+**Demande :** run-client : un mode sans rebuild MC, un avec rebuild.
+
+**Livre :** Defaut = incremental ; `--rebuild` / `run-client-rebuild.bat` = --stop + wipe build/ ; `docs/COMMANDS.md` a jour.
+
+**Pointeurs :** `script/run-client.bat`, `script/run-client-rebuild.bat`, `docs/COMMANDS.md`
+
+**Suite :** —
+
+## P036
+
+**Demande :** `.\script\run-client.bat` → erreur « . etait inattendu ».
+
+**Livre :** Fix echo : parentheses dans un bloc `else (` cassaient le parsing cmd.
+
+**Pointeurs :** `script/run-client.bat`
+
+**Suite :** Relancer `.\script\run-client.bat`
+
+## P037
+
+**Demande :** Terminal L573-L647 — compile fail `ctx.id()` introuvable.
+
+**Livre :** `PersonnalWolrdClient` utilise `resourceId()` / `topLevelId()` (Fabric model-loading 2.x) ; alpha.32.
+
+**Pointeurs :** `fabric/.../PersonnalWolrdClient.java`
+
+**Suite :** `.\script\run-client.bat` puis test bâton + GeckoLib.
+
+## P038
+
+**Demande :** Fichier MD anglais pour changelog sorties publiques / beta.
+
+**Livre :** `docs/RELEASE_NOTES_EN.md` (notes storefront EN + template) ; pointeur dans `VERSIONING.md`.
+
+**Pointeurs :** `docs/RELEASE_NOTES_EN.md`
+
+**Suite :** Coller la section voulue sur Modrinth/CurseForge au cut beta/public.
+
+## P039
+
+**Demande :** RELEASE_NOTES_EN sans GitHub / NeoForge ; fichier pret a copier-coller.
+
+**Livre :** `docs/RELEASE_NOTES_EN.md` reduit a un bloc storefront Fabric-only.
+
+**Pointeurs :** `docs/RELEASE_NOTES_EN.md`
+
+**Suite :** —
+
+## P040
+
+**Demande :** Jar fabric alpha.32 passe en beta.
+
+**Livre :** `mod.version` = `1.3.0-beta.0` ; WIP ; `RELEASE_NOTES_EN.md` ; capacités / README / session.
+
+**Pointeurs :** `gradle.properties`, `docs/RELEASE_NOTES_EN.md`
+
+**Suite :** `script\build-fabric.bat` puis publier le jar `…-1.3.0-beta.0+1.21.1.jar` ; dire « c'est en ligne » pour cut changelog FR.
+
+## P041
+
+**Demande :** Beta en ligne pour sortie utilisable + retours joueurs.
+
+**Livre :** `RELEASE_NOTES_EN.md` : bandeau beta / feedback ; WIP precise beta publique.
+
+**Pointeurs :** `docs/RELEASE_NOTES_EN.md`
+
+**Suite :** Build + publish ; puis « c'est en ligne » pour archiver le changelog FR.
+
+## P042
+
+**Demande :** commit + pull request (sans attribution assistant).
+
+**Livre :** En cours — commit auteur GalsaxX_FR, push, PR vers main.
+
+**Pointeurs :** branche `feature/multi-version-multi-loader`
+
+**Suite :** —

@@ -8,6 +8,7 @@
 - TP monde perso : marqueur `spawn_marker` (**Y=88**, pieds Y=89) ; scan 50 blocs ; bedrock Y=87 = secours ultime.
 - Item / assets / `/returnworld` / mixins gameplay = module **common** (parité NeoForge).
 - GeckoLib **optionnel** : sans le mod, modèle JSON statique, pas de crash.
+- Bâton : JSON classique = display sans GeckoLib ; avec GeckoLib → `personnal_world_item_geckolib.json` (displays espace `builtin/entity`) + geo/anims.
 - `mod.version` sans suffixe `+1.21.1` ; `${version}` dans les métadonnées loader.
 - Always-apply Cursor : `git-attribution.mdc`, `versioning.mdc`, `prompt-bdd.mdc` (BDD seulement en tour d’implémentation). WIP / sessions / release-cut / DArchitect = glob ou agent-requested.
 - Nouveaux dépôts Cursor : copier / remplir `docs/kit-nouveau-projet.md` (process générique). Ne pas recopier Gradle / GeckoLib / DArchitect hors mod MC.
