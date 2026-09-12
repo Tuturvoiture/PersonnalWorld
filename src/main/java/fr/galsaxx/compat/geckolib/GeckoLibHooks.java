@@ -11,7 +11,8 @@ import net.minecraft.item.Item;
  */
 public final class GeckoLibHooks {
 	public static final String GECKOLIB_MOD_ID = "geckolib";
-	private static final String GEO_ITEM_CLASS = "fr.galsaxx.compat.geckolib.PersonnalWorldGeoItem";
+	private static final String GEO_ITEM_CLASS      = "fr.galsaxx.compat.geckolib.PersonnalWorldGeoItem";
+	private static final String GEO_BOOK_CLASS       = "fr.galsaxx.compat.geckolib.AdventureBookGeoItem";
 
 	private static boolean animationsActive;
 
@@ -24,6 +25,25 @@ public final class GeckoLibHooks {
 	/** {@code true} seulement si l’item Geo a bien été créé (GeckoLib + classe OK). */
 	public static boolean animationsActive() {
 		return animationsActive;
+	}
+
+	public static Item createBookItem(Item.Settings settings) {
+		if (!isModLoaded()) {
+			PersonnalWorld.LOGGER.info("GeckoLib absent : carnet en item statique.");
+			return new fr.galsaxx.AdventureBookItem(settings);
+		}
+		try {
+			Class<?> clazz = Class.forName(GEO_BOOK_CLASS);
+			Item item = (Item) clazz.getConstructor(Item.Settings.class).newInstance(settings);
+			PersonnalWorld.LOGGER.info("GeckoLib détecté : animations du carnet activées.");
+			return item;
+		} catch (Throwable t) {
+			PersonnalWorld.LOGGER.warn(
+					"GeckoLib est présent mais le carnet animé n'a pas pu être chargé.",
+					t
+			);
+			return new fr.galsaxx.AdventureBookItem(settings);
+		}
 	}
 
 	public static Item createStaffItem(Item.Settings settings) {

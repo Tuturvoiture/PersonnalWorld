@@ -1,9 +1,12 @@
 package fr.galsaxx;
 
+import dev.architectury.networking.NetworkManager;
+import fr.galsaxx.client.AdventureBookScreen;
 import fr.galsaxx.compat.geckolib.GeckoLibHooks;
 import fr.galsaxx.compat.geckolib.client.BuiltinStaffModelWrapper;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
@@ -17,6 +20,13 @@ public class PersonnalWolrdClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		// Réception paquet ouverture carnet (S→C)
+		NetworkManager.registerReceiver(
+				NetworkManager.Side.S2C,
+				PersonnalWorld.OPEN_BOOK_PACKET,
+				(buf, ctx) -> ctx.queue(() -> MinecraftClient.getInstance().setScreen(new AdventureBookScreen()))
+		);
+
 		if (!GeckoLibHooks.animationsActive()) {
 			return;
 		}

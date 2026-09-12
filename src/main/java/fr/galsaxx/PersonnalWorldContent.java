@@ -32,6 +32,11 @@ public final class PersonnalWorldContent {
 			() -> GeckoLibHooks.createStaffItem(new Item.Settings().maxCount(1).rarity(Rarity.RARE))
 	);
 
+	public static final RegistrySupplier<Item> ADVENTURE_BOOK = ITEMS.register(
+			"adventure_book",
+			() -> GeckoLibHooks.createBookItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON))
+	);
+
 	private PersonnalWorldContent() {}
 
 	@SuppressWarnings("unchecked")
@@ -39,6 +44,7 @@ public final class PersonnalWorldContent {
 		BLOCKS.register();
 		ITEMS.register();
 		CreativeTabRegistry.append(ItemGroups.TOOLS, PERSONNAL_WORLD_ITEM);
+		CreativeTabRegistry.append(ItemGroups.TOOLS, ADVENTURE_BOOK);
 		CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, environment) ->
 				ReturnWorldCommand.register(dispatcher));
 		LifecycleEvent.SERVER_STARTING.register(server -> PersonnalWorldConfig.load());

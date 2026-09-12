@@ -6,6 +6,9 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.0 — Carnet d'aventurier (`adventure_book`) : modèle 3D GeckoLib (couverture cuir, 4 coins laiton, 3 crêtes reliure, sangle/boucle, double marque-page bordeaux, ouverture en deux).
+- 1.4.0-alpha.0 — 4 animations GeckoLib : `idle_closed` (boucle, oscillation + ruban), `open` (1s, cover_front pivote 160°), `idle_open` (boucle, pages flottent), `close` (inverse).
+- 1.4.0-alpha.0 — Interface placeholder (`AdventureBookScreen`) : clic droit ouvre une fenêtre, fermeture déclenche `close`; réseau Architectury S→C / C→S.
 - 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.
 - 1.3.0 — Première release Fabric stable (ligne 1.3 DArchitect ; NeoForge reporté).
 - 1.3.0 — Config `personnalworld.toml` : `noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory` (commentaires EN + exemples).

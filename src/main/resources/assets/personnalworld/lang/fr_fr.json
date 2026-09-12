@@ -1,6 +1,9 @@
 {
   "block.personnalworld.spawn_marker": "Bloc d'apparition Personnal World",
   "item.personnalworld.personnal_world_item": "Bâton du monde perso",
+  "item.personnalworld.adventure_book": "Carnet d'aventurier",
+  "screen.personnalworld.adventure_book": "Carnet d'aventurier",
+  "screen.personnalworld.adventure_book.wip": "[Interface à venir]",
 
   "message.personnalworld.island_generated": "[personnalworld] Île NBT générée avec succès !",
   "message.personnalworld.nbt_file_not_found": "[personnalworld] Erreur : le fichier NBT n’a pas été trouvé !",
