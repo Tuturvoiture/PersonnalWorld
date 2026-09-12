@@ -6,6 +6,11 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.3.0-beta.0 — Première **beta** publique Fabric (retours joueurs) : contenu alpha.32, notes EN storefront.
+- 1.3.0-alpha.32 — Client Fabric : fix compile `modifyModelOnLoad` (`resourceId` / `topLevelId`, plus `id()`).
+- 1.3.0-alpha.31 — Bâton + GeckoLib : displays calibrés `personnal_world_item_geckolib` (espace `builtin/entity`) ; JSON classique inchangé sans GeckoLib.
+- 1.3.0-alpha.30 — Bâton + GeckoLib : un seul placement (JSON classique) ; le wrapper ne force plus un second JSON display — animation geo conservée.
+- 1.3.0-alpha.29 — Bâton sans GeckoLib : placements Display restaurés depuis `personnal_world_item_sansgeckolib.json` (mains / GUI / sol / fixed).
 - 1.3.0-alpha.28 — `spawn_marker` : tuile **32×32** haut-gauche par frame (32×480, source 128).
 - 1.3.0-alpha.27 — `spawn_marker` : PNG recadré strict 16×240 (tuile **haut-gauche** par frame) + `cube_all` sans UV inversées.
 - 1.3.0-alpha.26 — `spawn_marker` : UV BB `[0,0,16,16]` + `texture_size` 64 (1 tuile 16×16 étirée sur la face, plus de grille 2×2).

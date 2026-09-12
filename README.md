@@ -1,6 +1,6 @@
 # Personnal World Mod
 
-**Version : 1.3.0-alpha.20**
+**Version : 1.3.0-beta.0**
 **Compatibilité : Minecraft 1.21.1 (Fabric / NeoForge)**
 
 ---

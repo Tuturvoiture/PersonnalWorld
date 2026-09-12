@@ -13,7 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Force {@code isBuiltin()} pour que GeckoLib / le BEWLR prenne le relais du JSON statique.
+ * Force {@code isBuiltin()} pour que GeckoLib / le BEWLR anime le bâton.
+ * Les {@link ModelTransformation} viennent du modèle wrappé
+ * (typiquement {@code personnal_world_item_geckolib.json}).
  */
 public final class BuiltinStaffModelWrapper implements BakedModel {
 	private final BakedModel wrapped;

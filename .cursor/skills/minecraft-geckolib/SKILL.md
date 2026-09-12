@@ -38,12 +38,12 @@ description: >-
 2. Éditer Animate ; exporter `.geo.json`, `.animation.json`, texture PNG.
 3. Remplacer les fichiers assets ci-dessus (garder les noms de fichiers `personnal_world_item.*` sauf décision contraire + bump version).
 4. Vérifier `texture_width` / `texture_height` du geo = taille PNG.
-5. `run-client.bat` ou F3+T.
+5. `script\run-client.bat` ou F3+T.
 
 ## Soft-dep (rappels)
 
 - `fabric.mod.json` → `suggests.geckolib` ; NeoForge → `optional`.
-- Renderer : modèle bake wrappé `isBuiltin()` (Fabric `ModelLoadingPlugin` / NeoForge `ModelEvent.ModifyBakingResult`).
+- Renderer : si GeckoLib → bake `personnal_world_item_geckolib.json` (displays espace geo) + wrap `isBuiltin()` ; sinon JSON classique seul.
 - Ne pas exiger GeckoLib 4.9.x tant que Loom reste 1.10 (incompatible remap).
 
 ## Blockbench MCP (si connecté)

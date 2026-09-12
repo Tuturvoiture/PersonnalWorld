@@ -45,7 +45,8 @@ Ne pas sauter de patch « pour plus tard ».
 | Métadonnées Fabric | [`fabric/src/main/resources/fabric.mod.json`](../fabric/src/main/resources/fabric.mod.json) (`${version}`) |
 | Métadonnées NeoForge | [`neoforge/src/main/resources/META-INF/neoforge.mods.toml`](../neoforge/src/main/resources/META-INF/neoforge.mods.toml) (`${version}`) |
 | Journal vivant (non publié) | [`docs/CHANGELOG_WIP.md`](CHANGELOG_WIP.md) |
-| Releases archivées | [`docs/CHANGELOG.md`](CHANGELOG.md) |
+| Releases archivées (FR) | [`docs/CHANGELOG.md`](CHANGELOG.md) |
+| Notes storefront beta/public (EN) | [`docs/RELEASE_NOTES_EN.md`](RELEASE_NOTES_EN.md) |
 | Capacités jouables | [`docs/CAPABILITIES.md`](CAPABILITIES.md) |
 | Mémoire agent (prompts) | [`docs/historique/sessions/`](historique/sessions/) |
 | Archive builds durable | [`builds/`](../builds/) (notes + META en Git ; jars locaux ignorés) |
