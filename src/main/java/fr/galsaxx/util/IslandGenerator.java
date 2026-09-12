@@ -34,10 +34,7 @@ public class IslandGenerator {
 		}
 
 		StructureTemplateManager mgr = world.getServer().getStructureTemplateManager();
-		Optional<StructureTemplate> optionalTemplate = mgr.getTemplate(Identifier.of("minecraft", "ile_1"));
-		if (optionalTemplate.isEmpty()) {
-			optionalTemplate = mgr.getTemplate(Identifier.of("personnalworld", "ile_1"));
-		}
+		Optional<StructureTemplate> optionalTemplate = mgr.getTemplate(Identifier.of("personnalworld", "ile_1"));
 		if (optionalTemplate.isEmpty()) {
 			optionalTemplate = loadFromClasspath(world);
 		}

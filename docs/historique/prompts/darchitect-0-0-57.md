@@ -408,3 +408,73 @@
 **Pointeurs :** docs/historique/prompts/
 
 **Suite :** —
+
+## P046
+
+**Demande :** Confirmer 3-4-5-6 encore a faire mais accessibles (smoke OK).
+
+**Livre :** Oui — deps/notes quasi prets (README a nettoyer NeoForge) ; build + cut = actions.
+
+**Pointeurs :** `RELEASE_NOTES_EN.md`, `README.md`, `script/build-fabric.bat`
+
+**Suite :** —
+
+## P047
+
+**Demande :** Laisser tomber NeoForge pour l'instant ; completer Fabric d'abord.
+
+**Livre :** Decision Fabric-only 1.3.x ; docs README/HORS_SCOPE/COMMANDS/CAPABILITIES/BDD ; module NF reste dans le repo mais hors priorite.
+
+**Pointeurs :** `docs/HORS_SCOPE.md`, `docs/historique/bdd/decisions.md`, `README.md`
+
+**Suite :** Build Fabric + cut 1.3.0 quand pret.
+
+## P048
+
+**Demande :** Implementer plan v1.3.0 officielle Fabric.
+
+**Livre :** Docs EN/README/capa ; bump 1.3.0 ; build Fabric ; publish = handoff ; cut apres « c'est en ligne ».
+
+**Pointeurs :** `gradle.properties`, `docs/RELEASE_NOTES_EN.md`, `script/build-fabric.bat`
+
+**Suite :** Upload storefront puis « c'est en ligne ».
+
+## P050
+
+**Demande :** Verif code risques futurs + bizarreries a refaire.
+
+**Livre :** Fix race init ile async + null dim retour + canStand 2 blocs ; rapport bizarreries (typo client, StructureCopier, messages hardcodes, etc.).
+
+**Pointeurs :** `PersonnalWorldUtil.java`, `PersonnalWorldItem.java`, `PersonalWorldSpawnSafety.java`
+
+**Suite :** Rebuild jar 1.3.0 avant publish.
+
+## P051
+
+**Demande :** Implémenter plan correctifs retour / messages / île (config TOML, ReturnTeleport, StructureCopier off, IslandGenerator).
+
+**Livré :** `personnalworld.toml` (4 clés) ; save/retour/cooldown/`shareInventory` ; messages traduits ; plus de StructureCopier ; île `personnalworld` puis classpath ; rebuild 1.3.0.
+
+**Pointeurs :** `config/PersonnalWorldConfig.java`, `util/ReturnTeleport.java`, `PersonnalWorldItem.java`, `IslandGenerator.java`
+
+**Suite :** Upload storefront puis « c'est en ligne ».
+
+## P052
+
+**Demande :** Check pré-sortie publique (problèmes + correctitude).
+
+**Livré :** Audit — code GO avec réserves (junk jar, depends `*`) ; docs NO-GO (README `/returnworld` faux, toml/inventaire absents notes).
+
+**Pointeurs :** `README.md`, `docs/RELEASE_NOTES_EN.md`, `TestCopieNBT.java`, `resourcepacks/geckolib_staff/`
+
+**Suite :** Corriger docs + nettoyer jar avant upload, ou publier avec réserves.
+
+## P053
+
+**Demande :** Passer en 1.3.1 sortie avec tous les correctifs audit.
+
+**Livré :** Bump 1.3.1 ; docs README/notes/capa ; nettoyage jar ; depends resserrées ; rebuild.
+
+**Pointeurs :** `gradle.properties`, `docs/RELEASE_NOTES_EN.md`, `fabric.mod.json`
+
+**Suite :** Upload storefront puis « c'est en ligne » → tag `v1.3.1`.

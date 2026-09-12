@@ -8,7 +8,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import fr.galsaxx.block.PersonalSpawnMarkerBlock;
 import fr.galsaxx.command.ReturnWorldCommand;
 import fr.galsaxx.compat.geckolib.GeckoLibHooks;
-import fr.galsaxx.util.StructureCopier;
+import fr.galsaxx.config.PersonnalWorldConfig;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -16,7 +16,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Rarity;
 
 /**
- * Item, onglet créatif, commande et copie NBT — communs Fabric / NeoForge.
+ * Item, onglet créatif, commande — communs Fabric / NeoForge.
  */
 public final class PersonnalWorldContent {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(PersonnalWorld.MOD_ID, RegistryKeys.BLOCK);
@@ -41,6 +41,6 @@ public final class PersonnalWorldContent {
 		CreativeTabRegistry.append(ItemGroups.TOOLS, PERSONNAL_WORLD_ITEM);
 		CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, environment) ->
 				ReturnWorldCommand.register(dispatcher));
-		LifecycleEvent.SERVER_STARTED.register(StructureCopier::run);
+		LifecycleEvent.SERVER_STARTING.register(server -> PersonnalWorldConfig.load());
 	}
 }

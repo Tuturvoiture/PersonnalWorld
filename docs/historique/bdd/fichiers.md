@@ -8,24 +8,23 @@ Regarder ici **avant** un grep projet.
 - Fabric / NeoForge : `fabric/build.gradle.kts`, `neoforge/build.gradle.kts` ; métadonnées `${version}`
 - Jars API : `libs/darchitect-fabric.jar`, `libs/darchitect-neoforge.jar` (≥ 0.0.59)
 - PATCHNOTES API : `docs/historique/api-darchitect/PATCHNOTES-0.0.59.txt`
-- Inventaire mondes perso : `PersonnalWorldUtil` → `DimensionBuilder.isolatePlayerData(false)`
+- Inventaire mondes perso : `PersonnalWorldUtil` → `isolatePlayerData(!shareInventory)` via `PersonnalWorldConfig`
+- Config serveur : `config/PersonnalWorldConfig.java` → `config/personnalworld.toml`
 - Bloc spawn : `PersonnalWorldContent.SPAWN_MARKER` ; `PersonalWorldSpawnReference` ; assets `textures/block/spawn_marker.*`
 
 ## Gameplay (`src/`)
 
 - Entrée / item / bloc : `PersonnalWorld.java`, `PersonnalWorldContent.java`, `block/PersonalSpawnMarkerBlock.java`, `PersonnalWorldItem.java`
-- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `StructureCopier.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`
+- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`
 - Mixin : `mixin/PlayerEntityMixin.java`, `personnalworld.mixins.json` ; NBT `data/personnalworld/structure/ile_1.nbt`
 - Loaders : `fabric/…/PersonnalWorldFabric.java`, `PersonnalWolrdClient.java` ; `neoforge/…/PersonnalWorldNeoForge.java`
 
 ## Bâton / GeckoLib
 
 - Skill `.cursor/skills/minecraft-geckolib/` ; compat `src/main/java/fr/galsaxx/compat/`
-- Placement sans GeckoLib : `models/item/personnal_world_item.json` (+ `_3d.json`)
-- Placement + anim GeckoLib : `models/item/personnal_world_item_geckolib.json` + geo/anims ; pack `resourcepacks/geckolib_staff/`
+- Placement sans GeckoLib : `models/item/personnal_world_item.json`
+- Placement + anim GeckoLib : `models/item/personnal_world_item_geckolib.json` + geo/anims
 - MCP `docs/BLOCKBENCH_MCP_SETUP.md`
-
-## Docs process
 
 - Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
 - Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`

@@ -3,13 +3,14 @@
 	"id": "personnalworld",
 	"version": "${version}",
 	"name": "PersonnalWorld",
-	"description": "your own personal world at your fingertips ",
+	"description": "Your own personal world at your fingertips.",
 	"authors": [
 		"GalsaxX"
 	],
 	"contact": {
-		"homepage": "https://www.curseforge.com/minecraft/mc-mods/personnal-world",
-		"sources": "https://modrinth.com/mod/personnal-world"
+		"homepage": "https://modrinth.com/mod/personnal-world",
+		"sources": "https://github.com/Tuturvoiture/PersonnalWorld",
+		"issues": "https://github.com/Tuturvoiture/PersonnalWorld/issues"
 	},
 	"license": "LGPL-3.0-or-later",
 	"icon": "assets/personnalworld/icon.jpg",
@@ -23,18 +24,14 @@
 		]
 	},
 	"mixins": [
-		"personnalworld.mixins.json",
-		{
-			"config": "personnalworld.client.mixins.json",
-			"environment": "client"
-		}
+		"personnalworld.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "${minecraft}",
 		"java": ">=21",
-		"fabric-api": "*",
-		"architectury": "*",
+		"fabric-api": ">=0.116.0",
+		"architectury": ">=13.0.8",
 		"darchitect": ">=0.0.59"
 	},
 	"suggests": {

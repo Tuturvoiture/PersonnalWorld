@@ -21,5 +21,12 @@
   "message.personnalworld.command_only_in_personal_world": "§c此命令只能在你的个人世界中使用！",
   "message.personnalworld.returned_to_origin": "返回到你原来的位置！",
   "message.personnalworld.origin_dimension_gone": "原始维度不再存在。",
-  "message.personnalworld.no_return_position": "没有保存返回位置。"
+  "message.personnalworld.no_return_position": "没有保存返回位置。",
+
+  "message.personnalworld.teleport_blocked_in_dimension": "You cannot open your personal world from this dimension.",
+  "message.personnalworld.returned_to_player_spawn": "No saved return position — sent to your spawn.",
+  "message.personnalworld.dimension_already_exists_error": "[personnalworld] Error: %s",
+  "message.personnalworld.dimension_create_error": "[personnalworld] Dimension creation error: %s",
+  "message.personnalworld.dimension_unavailable_after_create": "[personnalworld] Error: personal world unavailable after creation.",
+  "message.personnalworld.island_generate_failed": "[personnalworld] Warning: island generation failed (%s)."
 }
