@@ -14,7 +14,6 @@
   "message.personnalworld.no_saved_position": "No saved position found!",
   "message.personnalworld.cannot_get_dimension_type": "Error: Unable to retrieve the dimension type!",
 
-
   "message.personnalworld.structure_copied": "[NBT_Copi] Structure copied:",
   "message.personnalworld.structure_already_exists": "[NBT_Copi] Structure already present:",
   "message.personnalworld.read_error": "read error:",
@@ -22,5 +21,12 @@
   "message.personnalworld.command_only_in_personal_world": "§cThis command can only be used from your personal world!",
   "message.personnalworld.returned_to_origin": "Returned to your original location!",
   "message.personnalworld.origin_dimension_gone": "The original dimension no longer exists.",
-  "message.personnalworld.no_return_position": "No return position saved."
+  "message.personnalworld.no_return_position": "No return position saved.",
+
+  "message.personnalworld.teleport_blocked_in_dimension": "You cannot open your personal world from this dimension.",
+  "message.personnalworld.returned_to_player_spawn": "No saved return position — sent to your spawn.",
+  "message.personnalworld.dimension_already_exists_error": "[personnalworld] Error: %s",
+  "message.personnalworld.dimension_create_error": "[personnalworld] Dimension creation error: %s",
+  "message.personnalworld.dimension_unavailable_after_create": "[personnalworld] Error: personal world unavailable after creation.",
+  "message.personnalworld.island_generate_failed": "[personnalworld] Warning: island generation failed (%s)."
 }

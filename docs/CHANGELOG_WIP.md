@@ -6,6 +6,11 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.
+- 1.3.0 — Première release Fabric stable (ligne 1.3 DArchitect ; NeoForge reporté).
+- 1.3.0 — Config `personnalworld.toml` : `noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory` (commentaires EN + exemples).
+- 1.3.0 — Retour : save depuis toute dim hors perso (sauf denylist) ; sans NBT → spawn joueur puis Overworld ; messages traduits ; plus de `StructureCopier` ; île `personnalworld:ile_1` puis classpath.
+- 1.3.0 — Fix : init île **synchrone** avant TP ; garde null sur dim de retour ; espace libre 2 blocs au fallback spawn.
 - 1.3.0-beta.0 — Première **beta** publique Fabric (retours joueurs) : contenu alpha.32, notes EN storefront.
 - 1.3.0-alpha.32 — Client Fabric : fix compile `modifyModelOnLoad` (`resourceId` / `topLevelId`, plus `id()`).
 - 1.3.0-alpha.31 — Bâton + GeckoLib : displays calibrés `personnal_world_item_geckolib` (espace `builtin/entity`) ; JSON classique inchangé sans GeckoLib.

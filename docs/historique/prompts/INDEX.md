@@ -4,7 +4,8 @@ Un fichier par **conversation** Cursor. Incrémenter à **chaque** message utili
 
 | Slug | Titre | Dernier P | Fichier |
 |------|-------|-----------|---------|
-| darchitect-0-0-57 | DArchitect 0.0.57 | P043 | [darchitect-0-0-57.md](darchitect-0-0-57.md) |
+| co-creator-correction-across-branches | Co-creator correction across branches | P001 | [co-creator-correction-across-branches.md](co-creator-correction-across-branches.md) |
+| darchitect-0-0-57 | DArchitect 0.0.57 | P053 | [darchitect-0-0-57.md](darchitect-0-0-57.md) |
 | kit-nouveau-projet | Kit nouveau projet | P002 | [kit-nouveau-projet.md](kit-nouveau-projet.md) |
 | reprise-contexte-regles | Reprise contexte + règles | P004 | [reprise-contexte-regles.md](reprise-contexte-regles.md) |
 

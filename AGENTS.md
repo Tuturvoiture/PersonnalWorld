@@ -1,6 +1,6 @@
 # PersonnalWorld
 
-Mod Minecraft 1.21.1 (Fabric / NeoForge) : un monde personnel par joueur. Surcouche de DimensionArchitect.
+Mod Minecraft 1.21.1 (**Fabric** publié ; NeoForge reporté) : un monde personnel par joueur. Surcouche de DimensionArchitect.
 
 - Kit (paramètres remplis) : [`docs/kit-nouveau-projet.md`](docs/kit-nouveau-projet.md)
 - Version : `gradle.properties` → `mod.version`

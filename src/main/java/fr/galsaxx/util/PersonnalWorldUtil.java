@@ -1,6 +1,7 @@
 package fr.galsaxx.util;
 
 import fr.galsaxx.PersonnalWorld;
+import fr.galsaxx.config.PersonnalWorldConfig;
 import net.darchitect.api.DimensionAlreadyExistsException;
 import net.darchitect.api.DimensionArchitectRuntime;
 import net.darchitect.api.ModCallContext;
@@ -48,8 +49,8 @@ public final class PersonnalWorldUtil {
                 if (!api.hasDimension(id)) {
                     api.builder(id)
                             .type(WorldType.VOID)
-                            // Inventaire partagé avec l’Overworld (DArchitect ≥ 0.0.58).
-                            .isolatePlayerData(false)
+                            // shareInventory=true → isolatePlayerData(false) (DArchitect ≥ 0.0.58).
+                            .isolatePlayerData(!PersonnalWorldConfig.get().shareInventory())
                             // VOID API 0.0.44 : Optional.empty() = structures vanilla. SKYBLOCK les coupe.
                             .worldProfile(WorldProfile.builder()
                                     .preset(WorldPreset.SKYBLOCK)
@@ -64,13 +65,13 @@ public final class PersonnalWorldUtil {
             String msg = already.getMessage();
             if (msg == null || !msg.contains("already exists")) {
                 if (owner != null) {
-                    owner.sendMessage(Text.literal("[personnalworld] Erreur : " + already.getMessage()), false);
+                    owner.sendMessage(Text.translatable("message.personnalworld.dimension_already_exists_error", already.getMessage()), false);
                 }
                 return null;
             }
         } catch (RuntimeException e) {
             if (owner != null) {
-                owner.sendMessage(Text.literal("[personnalworld] Erreur création dimension : " + e.getMessage()), false);
+                owner.sendMessage(Text.translatable("message.personnalworld.dimension_create_error", e.getMessage()), false);
             }
             return null;
         }
@@ -78,7 +79,7 @@ public final class PersonnalWorldUtil {
         ServerWorld persoWorld = server.getWorld(worldKey);
         if (persoWorld == null) {
             if (owner != null) {
-                owner.sendMessage(Text.literal("[personnalworld] Erreur : monde perso indisponible après création."), false);
+                owner.sendMessage(Text.translatable("message.personnalworld.dimension_unavailable_after_create"), false);
             }
             return null;
         }
@@ -91,40 +92,42 @@ public final class PersonnalWorldUtil {
         return PWWorldState.get(world);
     }
 
-    /** Génère l’île NBT une seule fois par monde. */
-    private static void runOneTimeInitIfNeeded(ServerWorld world, ServerPlayerEntity owner) {
-        PWWorldState state = PWWorldState.get(world);
-        if (state.initialized) {
-            return;
-        }
+	/** Génère l’île NBT une seule fois par monde (synchrone — avant le TP). */
+	private static void runOneTimeInitIfNeeded(ServerWorld world, ServerPlayerEntity owner) {
+		PWWorldState state = PWWorldState.get(world);
+		if (state.initialized || state.initializing) {
+			return;
+		}
+		state.initializing = true;
 
-        world.getServer().submit(() -> {
-            BlockPos origin = new BlockPos(
-                    PersonnalWorld.ISLAND_NBT_ORIGIN_X,
-                    PersonnalWorld.ISLAND_NBT_ORIGIN_Y,
-                    PersonnalWorld.ISLAND_NBT_ORIGIN_Z);
-            world.getChunk(origin.getX() >> 4, origin.getZ() >> 4);
+		BlockPos origin = new BlockPos(
+				PersonnalWorld.ISLAND_NBT_ORIGIN_X,
+				PersonnalWorld.ISLAND_NBT_ORIGIN_Y,
+				PersonnalWorld.ISLAND_NBT_ORIGIN_Z);
+		world.getChunk(origin.getX() >> 4, origin.getZ() >> 4);
 
-            try {
-                IslandGenerator.generateIsland(world, owner);
-            } catch (Throwable t) {
-                if (owner != null) {
-                    owner.sendMessage(Text.literal("[personnalworld] Avertissement : échec génération île (" + t.getClass().getSimpleName() + ")."), false);
-                }
-            }
+		try {
+			IslandGenerator.generateIsland(world, owner);
+		} catch (Throwable t) {
+			if (owner != null) {
+				owner.sendMessage(Text.translatable("message.personnalworld.island_generate_failed", t.getClass().getSimpleName()), false);
+			}
+		}
 
-            PersonalWorldSpawnReference.ensureMarker(world);
+		PersonalWorldSpawnReference.ensureMarker(world);
 
-            world.setSpawnPos(new BlockPos(PersonnalWorld.ISLAND_SPAWN_X, PersonnalWorld.ISLAND_SPAWN_Y, PersonnalWorld.ISLAND_SPAWN_Z), 0.0F);
+		world.setSpawnPos(new BlockPos(PersonnalWorld.ISLAND_SPAWN_X, PersonnalWorld.ISLAND_SPAWN_Y, PersonnalWorld.ISLAND_SPAWN_Z), 0.0F);
 
-            state.initialized = true;
-            state.markDirty();
-        });
-    }
+		state.initialized = true;
+		state.initializing = false;
+		state.markDirty();
+	}
 
-    static final class PWWorldState extends PersistentState {
-        boolean initialized = false;
-        private boolean hasSpawnMarker = false;
+	static final class PWWorldState extends PersistentState {
+		boolean initialized = false;
+		/** Évite une double génération si ensurePersonalWorld est rappelé pendant l’init. */
+		transient boolean initializing = false;
+		private boolean hasSpawnMarker = false;
         private int spawnMarkerX;
         private int spawnMarkerY;
         private int spawnMarkerZ;

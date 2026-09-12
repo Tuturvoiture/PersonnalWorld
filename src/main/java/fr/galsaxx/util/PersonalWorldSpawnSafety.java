@@ -53,8 +53,10 @@ public final class PersonalWorldSpawnSafety {
         return !state.getCollisionShape(world, pos).isEmpty();
     }
 
-    private static boolean canStandAt(ServerWorld world, int x, int feetY, int z) {
-        BlockPos feet = new BlockPos(x, feetY, z);
-        return world.getBlockState(feet).getCollisionShape(world, feet).isEmpty();
-    }
+	private static boolean canStandAt(ServerWorld world, int x, int feetY, int z) {
+		BlockPos feet = new BlockPos(x, feetY, z);
+		BlockPos head = new BlockPos(x, feetY + 1, z);
+		return world.getBlockState(feet).getCollisionShape(world, feet).isEmpty()
+				&& world.getBlockState(head).getCollisionShape(world, head).isEmpty();
+	}
 }
