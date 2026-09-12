@@ -1,6 +1,8 @@
 package fr.galsaxx;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import fr.galsaxx.network.CloseAdventureBookPayload;
 import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.darchitect.api.ext.DArchitectServices;
@@ -43,8 +45,10 @@ public final class PersonnalWorld {
 	}
 
 	private static void registerNetwork() {
-		// S2C : type déclaré côté serveur (receiver client dans PersonnalWolrdClient)
-		NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC);
+		// S2C : type côté serveur uniquement — le client l'enregistre via registerReceiver
+		// (sinon double register → crash « already registered »).
+		EnvExecutor.runInEnv(Env.SERVER, () -> () ->
+				NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC));
 		// C2S : fermeture GUI → anim close (via Class.forName, pas d'import GeckoLib)
 		NetworkManager.registerReceiver(
 				NetworkManager.Side.C2S,
