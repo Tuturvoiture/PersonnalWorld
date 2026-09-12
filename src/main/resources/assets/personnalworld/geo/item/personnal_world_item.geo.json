@@ -1,0 +1,108 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.personnalworld.personnal_world_item",
+				"texture_width": 48,
+				"texture_height": 48,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 4,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "staff",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-1, -12, -1],
+							"size": [2, 23, 2],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [3, 33.99999]},
+								"east": {"uv": [3, 0], "uv_size": [3, 33.99999]},
+								"south": {"uv": [9, 0], "uv_size": [3, 33.99999]},
+								"west": {"uv": [6, 0], "uv_size": [3, 33.99999]},
+								"up": {"uv": [16, 34], "uv_size": [-3, -3]},
+								"down": {"uv": [16, 34], "uv_size": [-3, -3]}
+							}
+						},
+						{
+							"origin": [-1, 10, -8],
+							"size": [2, 2, 8],
+							"pivot": [1, 10, -2],
+							"rotation": [-22.5, 0, 0],
+							"uv": {
+								"north": {"uv": [13, 31], "uv_size": [3, 3]},
+								"east": {"uv": [0, 0], "uv_size": [3, 12], "uv_rotation": 90},
+								"south": {"uv": [13, 31], "uv_size": [3, 3]},
+								"west": {"uv": [6, 0], "uv_size": [3, 12], "uv_rotation": 90},
+								"up": {"uv": [12, 12], "uv_size": [-3, -12]},
+								"down": {"uv": [6, 15.99999], "uv_size": [-3, -12]}
+							}
+						},
+						{
+							"origin": [-1, 12, -7],
+							"size": [2, 9, 2],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [3, 12.99999]},
+								"east": {"uv": [3, 0], "uv_size": [3, 12.99999]},
+								"south": {"uv": [6, 0], "uv_size": [3, 12.99999]},
+								"west": {"uv": [9, 0], "uv_size": [3, 12.99999]},
+								"up": {"uv": [3, 20.00001], "uv_size": [-3, -3]},
+								"down": {"uv": [9.99999, 18.99999], "uv_size": [-3, -3]}
+							}
+						},
+						{
+							"origin": [-1, 21, -7],
+							"size": [2, 2, 8],
+							"pivot": [1, 21, -1],
+							"rotation": [22.5, 0, 0],
+							"uv": {
+								"north": {"uv": [6, 3.99999], "uv_size": [3, 3]},
+								"east": {"uv": [0, 12.99999], "uv_size": [3, 12], "uv_rotation": 90},
+								"south": {"uv": [2.00001, 6], "uv_size": [3, 3]},
+								"west": {"uv": [9, 12.99999], "uv_size": [3, 12], "uv_rotation": 90},
+								"up": {"uv": [9, 24.99999], "uv_size": [-3, -12]},
+								"down": {"uv": [6, 24.99999], "uv_size": [-3, -12]}
+							}
+						},
+						{
+							"origin": [-1, 21, -1],
+							"size": [2, 4, 2],
+							"uv": {
+								"north": {"uv": [6, 11.00001], "uv_size": [3, 6]},
+								"east": {"uv": [8.00001, 0], "uv_size": [3, 6]},
+								"south": {"uv": [3, 0], "uv_size": [3, 6]},
+								"west": {"uv": [0, 0], "uv_size": [3, 6]},
+								"up": {"uv": [12, 18], "uv_size": [-3, -3]},
+								"down": {"uv": [3, 15], "uv_size": [-3, -3]}
+							}
+						}
+					]
+				},
+				{
+					"name": "gem",
+					"parent": "staff",
+					"pivot": [0, 16, 0],
+					"cubes": [
+						{
+							"origin": [-2, 14, -2],
+							"size": [4, 4, 4],
+							"pivot": [0, 16, 0],
+							"rotation": [45, 0, 0],
+							"uv": {
+								"north": {"uv": [36, 24], "uv_size": [12, 12], "uv_rotation": 180},
+								"east": {"uv": [0, 36], "uv_size": [12, 12], "uv_rotation": 270},
+								"south": {"uv": [24, 24], "uv_size": [12, 12]},
+								"west": {"uv": [36, 36], "uv_size": [12, 12], "uv_rotation": 90},
+								"up": {"uv": [24, 48], "uv_size": [-12, -12], "uv_rotation": 180},
+								"down": {"uv": [36, 48], "uv_size": [-12, -12]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

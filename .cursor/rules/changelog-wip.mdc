@@ -1,0 +1,14 @@
+---
+description: Changelog WIP — appliquer lors d'une livraison fonctionnelle, bump de version, ou mention de changelog
+alwaysApply: false
+---
+
+# Changelog WIP
+
+Après **chaque correction ou amélioration fonctionnelle** livrée dans le code (pas refactor cosmétique ni debug temporaire) :
+
+1. Bumper `mod.version` selon [`docs/VERSIONING.md`](docs/VERSIONING.md).
+2. Ajouter 1 à 3 bullets sous `## Pending` dans [`docs/CHANGELOG_WIP.md`](docs/CHANGELOG_WIP.md), version mentionnée (ex. `1.2.3 — …`).
+3. Formuler l'effet joueur, pas un dump de fichiers.
+4. Pas de secrets ni chemins personnels.
+5. Vider le Pending **seulement** au cut release (phrase « c'est en ligne ») : Pending → [`docs/CHANGELOG.md`](docs/CHANGELOG.md), mettre à jour « Dernière version en ligne », proposer tag `vX.Y.Z`.

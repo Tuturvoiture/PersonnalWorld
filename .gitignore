@@ -28,9 +28,16 @@ bin/
 
 *.DS_Store
 
-# fabric
+# secrets
+
+.env
+.env.*
+!.env.example
+
+# fabric / neoforge
 
 run/
+**/run/
 
 # java
 
