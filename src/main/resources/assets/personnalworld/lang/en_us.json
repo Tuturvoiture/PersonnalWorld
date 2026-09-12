@@ -1,6 +1,9 @@
 {
   "block.personnalworld.spawn_marker": "Personnal World Spawn Block",
   "item.personnalworld.personnal_world_item": "Personnal world stick",
+  "item.personnalworld.adventure_book": "Adventure Journal",
+  "screen.personnalworld.adventure_book": "Adventure Journal",
+  "screen.personnalworld.adventure_book.wip": "[Interface coming soon]",
 
   "message.personnalworld.island_generated": "[personnalworld] NBT island generated successfully!",
   "message.personnalworld.nbt_file_not_found": "[personnalworld] Error: NBT file not found!",
