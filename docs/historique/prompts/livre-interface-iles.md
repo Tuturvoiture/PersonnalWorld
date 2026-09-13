@@ -133,6 +133,16 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Livré :** Cause = client ne basculait que le bâton vers builtin/entity ; book branché comme le staff ; anims en noms courts ; texture BB réassignée ; bump 1.4.0-alpha.3.  
 **Suite :** Relancer client + F3+T.
 
+## P024 — Notif compile OK rendu GeckoLib
+**Demande :** Résultat compile après fix atlas plat.  
+**Livré :** COMPILE_OK confirmé.  
+**Suite :** Relancer run-client-rebuild.
+
+## P025 — Fix anims après placements Display user
+**Demande :** Placements faits ; corriger anims buggées.  
+**Livré :** Sync Display BB → gecko JSON ; open/close Y=-165 ; contrôleur PlayState.CONTINUE (plus de force idle) ; délai GUI 20 ticks ; bump 1.4.0-alpha.4.  
+**Suite :** Tester en jeu.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
