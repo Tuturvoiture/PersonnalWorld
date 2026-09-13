@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  * Ne jamais référencer hors de {@code compat/geckolib/} (chargé via Class.forName).
  * <p>
  * Flux : idle_closed → (use) open → idle_open → (close GUI) close → idle_closed.
- * La GUI s'ouvre après {@link #OPEN_GUI_DELAY_TICKS} pour laisser jouer {@code open}.
+ * Bras levés via {@link fr.galsaxx.AdventureBookItem#getUseAction} pendant l'usage.
  */
 public final class AdventureBookGeoItem extends AdventureBookItem implements GeoItem {
 
@@ -43,10 +43,9 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	private static final RawAnimation OPEN = RawAnimation.begin().thenPlay("open").thenLoop("idle_open");
 	private static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("close").thenLoop("idle_closed");
 
-	/** ~durée de l'anim {@code open} (1 s). */
-	private static final int OPEN_GUI_DELAY_TICKS = 20;
+	/** ~durée anim {@code open} (0.35 s ≈ 7 ticks). */
+	private static final int OPEN_GUI_DELAY_TICKS = 7;
 
-	/** Joueur → ticks restants avant envoi du paquet d'ouverture GUI. */
 	private static final Map<UUID, Integer> PENDING_GUI_OPEN = new ConcurrentHashMap<>();
 
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -75,7 +74,7 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "book", 2, state -> {
+		controllers.add(new AnimationController<>(this, "book", 1, state -> {
 			if (state.getController().getCurrentRawAnimation() == null) {
 				return state.setAndContinue(IDLE_CLOSED);
 			}
@@ -112,15 +111,17 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
+		user.setCurrentHand(hand);
 		if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
 			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld) world), "book", "open");
 			PENDING_GUI_OPEN.put(serverPlayer.getUuid(), OPEN_GUI_DELAY_TICKS);
 		}
-		return TypedActionResult.success(stack);
+		return TypedActionResult.consume(stack);
 	}
 
 	public static void handleCloseFromClient(ServerPlayerEntity player) {
 		PENDING_GUI_OPEN.remove(player.getUuid());
+		player.clearActiveItem();
 		ItemStack stack = player.getMainHandStack();
 		AdventureBookGeoItem book = stack.getItem() instanceof AdventureBookGeoItem b ? b : null;
 		if (book == null) {

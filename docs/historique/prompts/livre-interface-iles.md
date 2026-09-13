@@ -143,6 +143,16 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Livré :** Sync Display BB → gecko JSON ; open/close Y=-165 ; contrôleur PlayState.CONTINUE (plus de force idle) ; délai GUI 20 ticks ; bump 1.4.0-alpha.4.  
 **Suite :** Tester en jeu.
 
+## P026 — Notif compile OK anims
+**Demande :** Résultat compile 772602.  
+**Livré :** COMPILE_OK.  
+**Suite :** Tester run-client-rebuild.
+
+## P027 — Sens open + durée + bras avant
+**Demande :** Anims toujours sens contraire, trop longues ; bras en avant en 3P.  
+**Livré :** open/close 0.4s Y=+165 ; UseAction.BLOCK + setCurrentHand ; délai GUI 8 ticks ; alpha.5.  
+**Suite :** Tester en jeu.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

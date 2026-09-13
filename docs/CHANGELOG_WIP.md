@@ -6,6 +6,8 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.6 — Ouverture carnet plafonnée à **100°** (plus de dépassement à 165°).
+- 1.4.0-alpha.5 — Anims open/close 0.4s, sens Y=+165 ; bras en avant (`UseAction.BLOCK` + `setCurrentHand`) pendant lecture ; GUI après 8 ticks.
 - 1.4.0-alpha.4 — Fix anims carnet : contrôleur ne force plus idle_closed pendant open ; GUI après 20 ticks ; open/close Y=-165 (sens Blockbench) ; displays sync depuis BB.
 - 1.4.0-alpha.3 — Fix rendu carnet : bascule client vers `adventure_book_geckolib` (`builtin/entity` + `isBuiltin`) comme le bâton ; noms d'anims courts (`idle_closed`…).
 - 1.4.0-alpha.2 — Fix crash client : paquet `open_adventure_book` enregistré une seule fois (S2C type serveur / receiver client).
