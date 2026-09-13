@@ -7,6 +7,6 @@ Un fichier par **conversation** Cursor. Incrémenter à **chaque** message utili
 | co-creator-correction-across-branches | Co-creator correction across branches | P001 | [co-creator-correction-across-branches.md](co-creator-correction-across-branches.md) |
 | darchitect-0-0-57 | DArchitect 0.0.57 | P054 | [darchitect-0-0-57.md](darchitect-0-0-57.md) |
 | kit-nouveau-projet | Kit nouveau projet | P002 | [kit-nouveau-projet.md](kit-nouveau-projet.md) |
-| livre-interface-iles | Livre interface îles | P021 | [livre-interface-iles.md](livre-interface-iles.md) |
+| livre-interface-iles | Livre interface îles | P023 | [livre-interface-iles.md](livre-interface-iles.md) |
 | reprise-contexte-regles | Reprise contexte + règles | P004 | [reprise-contexte-regles.md](reprise-contexte-regles.md) |
 

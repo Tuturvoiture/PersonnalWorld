@@ -123,6 +123,16 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Livré :** Cause = double register S2C ; `registerS2CPayloadType` uniquement Env.SERVER ; bump 1.4.0-alpha.2.  
 **Suite :** Relancer client.
 
+## P022 — Notif compile OK après fix packet
+**Demande :** Résultat compile 772599.  
+**Livré :** COMPILE_OK confirmé.  
+**Suite :** Relancer run-client-rebuild.
+
+## P023 — Livre = atlas plat en jeu
+**Demande :** Gros problème : pas de livre 3D, juste la texture atlas ; Blockbench sans texture (cadrillage).  
+**Livré :** Cause = client ne basculait que le bâton vers builtin/entity ; book branché comme le staff ; anims en noms courts ; texture BB réassignée ; bump 1.4.0-alpha.3.  
+**Suite :** Relancer client + F3+T.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
