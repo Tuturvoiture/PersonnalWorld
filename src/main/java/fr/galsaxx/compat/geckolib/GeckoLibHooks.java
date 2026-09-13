@@ -35,6 +35,7 @@ public final class GeckoLibHooks {
 		try {
 			Class<?> clazz = Class.forName(GEO_BOOK_CLASS);
 			Item item = (Item) clazz.getConstructor(Item.Settings.class).newInstance(settings);
+			animationsActive = true;
 			PersonnalWorld.LOGGER.info("GeckoLib détecté : animations du carnet activées.");
 			return item;
 		} catch (Throwable t) {

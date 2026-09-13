@@ -6,6 +6,7 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.3 — Fix rendu carnet : bascule client vers `adventure_book_geckolib` (`builtin/entity` + `isBuiltin`) comme le bâton ; noms d'anims courts (`idle_closed`…).
 - 1.4.0-alpha.2 — Fix crash client : paquet `open_adventure_book` enregistré une seule fois (S2C type serveur / receiver client).
 - 1.4.0-alpha.1 — Fix compile : réseau carnet migré vers `CustomPayload` Architectury 13 (`OpenAdventureBookPayload` / `CloseAdventureBookPayload`).
 - 1.4.0-alpha.0 — Carnet d'aventurier (`adventure_book`) : modèle 3D GeckoLib (couverture cuir, 4 coins laiton, 3 crêtes reliure, sangle/boucle, double marque-page bordeaux, ouverture en deux).
