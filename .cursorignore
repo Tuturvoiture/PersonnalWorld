@@ -1,0 +1,12 @@
+﻿.gradle/
+build/
+**/build/
+out/
+run/
+**/run/
+.idea/
+*.iml
+*.hprof
+hs_err_*.log
+replay_*.log
+builds/**/jars/

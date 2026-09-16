@@ -1,4 +1,5 @@
 {
+  "block.personnalworld.spawn_marker": "Personnal World Spawn Block",
   "item.personnalworld.personnal_world_item": "パーソナルワールドの杖",
 
   "message.personnalworld.island_generated": "[personnalworld] NBTアイランドが正常に生成されました！",
@@ -20,5 +21,12 @@
   "message.personnalworld.command_only_in_personal_world": "§cこのコマンドはあなたのパーソナルワールドからのみ使用できます！",
   "message.personnalworld.returned_to_origin": "元の場所に戻りました！",
   "message.personnalworld.origin_dimension_gone": "元のディメンションは存在しません。",
-  "message.personnalworld.no_return_position": "リターンポジションが保存されていません。"
+  "message.personnalworld.no_return_position": "リターンポジションが保存されていません。",
+
+  "message.personnalworld.teleport_blocked_in_dimension": "You cannot open your personal world from this dimension.",
+  "message.personnalworld.returned_to_player_spawn": "No saved return position — sent to your spawn.",
+  "message.personnalworld.dimension_already_exists_error": "[personnalworld] Error: %s",
+  "message.personnalworld.dimension_create_error": "[personnalworld] Dimension creation error: %s",
+  "message.personnalworld.dimension_unavailable_after_create": "[personnalworld] Error: personal world unavailable after creation.",
+  "message.personnalworld.island_generate_failed": "[personnalworld] Warning: island generation failed (%s)."
 }

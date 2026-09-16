@@ -1,0 +1,19 @@
+---
+description: Incrémenter mod.version à chaque livraison fonctionnelle
+alwaysApply: true
+---
+
+# Versionnement
+
+Suivre [`docs/VERSIONING.md`](docs/VERSIONING.md).
+
+Après **chaque** correction / amélioration fonctionnelle livrée :
+
+1. Incrémenter `mod.version` dans [`gradle.properties`](gradle.properties) :
+   - petit changement → patch (`1.2.2` → `1.2.3`, ou `1.3.0-alpha.0` → `1.3.0-alpha.1`)
+   - gros ajout → alpha de la mineure suivante (`1.3.0-alpha.0`, puis `.1`…) ; beta → `1.3.0-beta.0` ; stabilisation → `1.3.0`
+2. Ne **pas** hardcoder la version dans `fabric.mod.json` / `neoforge.mods.toml` (garder `${version}`).
+3. Ne **pas** coller le suffixe `+1.21.1` dans `mod.version`.
+4. Ajouter 1–3 bullets dans [`docs/CHANGELOG_WIP.md`](docs/CHANGELOG_WIP.md).
+
+Ne pas sauter de patch « pour plus tard ». La majeure `2.0` uniquement sur demande explicite.

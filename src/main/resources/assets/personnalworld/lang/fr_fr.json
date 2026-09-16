@@ -1,4 +1,5 @@
 {
+  "block.personnalworld.spawn_marker": "Bloc d'apparition Personnal World",
   "item.personnalworld.personnal_world_item": "Bâton du monde perso",
 
   "message.personnalworld.island_generated": "[personnalworld] Île NBT générée avec succès !",
@@ -20,5 +21,12 @@
   "message.personnalworld.command_only_in_personal_world": "§cCette commande ne peut être utilisée que depuis votre monde perso !",
   "message.personnalworld.returned_to_origin": "Retour à votre emplacement d'origine !",
   "message.personnalworld.origin_dimension_gone": "La dimension d'origine n'existe plus.",
-  "message.personnalworld.no_return_position": "Aucune position de retour sauvegardée."
+  "message.personnalworld.no_return_position": "Aucune position de retour sauvegardée.",
+
+  "message.personnalworld.teleport_blocked_in_dimension": "Vous ne pouvez pas ouvrir votre monde perso depuis cette dimension.",
+  "message.personnalworld.returned_to_player_spawn": "Aucune position de retour — téléporté à votre point d'apparition.",
+  "message.personnalworld.dimension_already_exists_error": "[personnalworld] Erreur : %s",
+  "message.personnalworld.dimension_create_error": "[personnalworld] Erreur création dimension : %s",
+  "message.personnalworld.dimension_unavailable_after_create": "[personnalworld] Erreur : monde perso indisponible après création.",
+  "message.personnalworld.island_generate_failed": "[personnalworld] Avertissement : échec génération île (%s)."
 }

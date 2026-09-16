@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "personnalworld:block/spawn_marker",
+    "particle": "personnalworld:block/spawn_marker"
+  }
+}

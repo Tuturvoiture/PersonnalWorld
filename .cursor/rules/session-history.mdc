@@ -1,0 +1,52 @@
+---
+description: Journal de livraison — lire/écrire sessions à chaque correctif ou livraison fonctionnelle
+globs:
+  - docs/historique/sessions/**
+  - docs/CHANGELOG_WIP.md
+  - gradle.properties
+alwaysApply: false
+---
+
+# Historique des sessions
+
+Avant un **correctif** ou une reprise de feature : lire [`docs/historique/sessions/INDEX.md`](docs/historique/sessions/INDEX.md) et 1–2 entrées pertinentes.
+
+Après **chaque livraison fonctionnelle** (en plus du bump `mod.version` + WIP) :
+
+1. Créer ou compléter `docs/historique/sessions/YYYY-MM-DD_slug.md`.
+2. Ajouter une ligne dans `docs/historique/sessions/INDEX.md`.
+
+## Template d'entrée
+
+```markdown
+# Titre court
+
+- **Date :** YYYY-MM-DD
+- **Version début / fin :** X.Y.Z → X.Y.W
+
+## Prompt / objectif
+
+(2–5 lignes)
+
+## Fait
+
+- …
+
+## Fichiers touchés
+
+- `path/…`
+
+## Décisions
+
+- …
+
+## Ouvert / à corriger
+
+- …
+
+## WIP
+
+- (bullets ajoutés dans CHANGELOG_WIP, si applicable)
+```
+
+**Interdit :** secrets, chemins personnels, transcripts de chat complets.
