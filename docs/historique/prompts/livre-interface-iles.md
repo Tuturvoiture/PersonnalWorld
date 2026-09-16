@@ -242,6 +242,17 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** branche locale `feature/livre-interface-iles` @ `3907dcc`  
 **Suite :** PR 1.3.1 via `feature/multi-version-multi-loader` → `main` ; carnet hors remote.
 
+## P044 — commit push (erreur de branche)
+**Demande :** commit push.  
+**Livré :** Rien — working tree clean sur `main` (déjà merge PR #4).  
+**Suite :** —
+
+## P045 — Confinement branche livre
+**Demande :** On n’est pas sur main mais sur livre-interface ; commits ici seulement ; ne pas toucher main/autres branches sans ordre explicite.  
+**Livré :** Checkout `feature/livre-interface-iles` ; working tree clean (`e7cf13b`) ; règle conversation : **uniquement cette branche**.  
+**Pointeurs :** branche locale `feature/livre-interface-iles`  
+**Suite :** Commit local uniquement sur cette branche ; jamais push sans OK explicite.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
