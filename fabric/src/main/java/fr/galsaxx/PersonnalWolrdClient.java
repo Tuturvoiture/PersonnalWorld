@@ -26,7 +26,10 @@ public class PersonnalWolrdClient implements ClientModInitializer {
 				NetworkManager.Side.S2C,
 				OpenAdventureBookPayload.ID,
 				OpenAdventureBookPayload.CODEC,
-				(payload, ctx) -> ctx.queue(() -> MinecraftClient.getInstance().setScreen(new AdventureBookScreen()))
+				(payload, ctx) -> ctx.queue(() -> {
+					fr.galsaxx.client.AdventureBookClientPose.setLocalReading(true);
+					MinecraftClient.getInstance().setScreen(new AdventureBookScreen());
+				})
 		);
 
 		if (!GeckoLibHooks.animationsActive()) {

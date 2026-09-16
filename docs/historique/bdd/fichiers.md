@@ -35,12 +35,16 @@ Regarder ici **avant** un grep projet.
 - Assets : `geo/item/adventure_book.geo.json`, `animations/item/adventure_book.animation.json`, `textures/item/adventure_book.png`
 - Models : `models/item/adventure_book.json` (fallback), `models/item/adventure_book_geckolib.json` (builtin/entity)
 - Référence Blockbench : `docs/reference/blockbench/adventure_book.bbmodel`
-- Screen placeholder : `fabric/…/client/AdventureBookScreen.java` (fermeture → Close payload)
+- Screen placeholder : `fabric/…/client/AdventureBookScreen.java` (parchemin responsive + onglets test)
+- Boutons custom : `fabric/…/client/AdventureBookImageButton.java` (presets / permissions)
+- Texture GUI : `textures/gui/adventure_book_parchment.png` (256×192) ; `island_button.png` (logo île, boutons V)
+- Pose 3P lecture : `client/AdventureBookClientPose.java` + `mixin/client/PlayerEntityRendererMixin.java`
+- Sens open main : `compat/geckolib/client/AdventureBookGeoRenderer.java`
 
 - Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
 - Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`
 - DoD / hors-scope / commandes / env : `docs/DEFINITION_OF_DONE.md`, `HORS_SCOPE.md`, `COMMANDS.md`, `ENVIRONMENTS.md`
-- Scripts : `script/` (`build-all.bat`, `build-fabric.bat`, `build-neoforge.bat`, `run-client.bat`, `run-client-rebuild.bat`, `_env.bat`)
+- Scripts : `script/` (`build-all.bat`, `build-fabric.bat`, `build-neoforge.bat`, `run-client.bat`, `run-client-rebuild.bat`, `fix-minecraft-cache.bat`, `_env.bat`)
 - Migration DimLib (manuelle) : `docs/MIGRATION_DIMLIB.md`
 - Sessions / API : `docs/historique/sessions/INDEX.md`, `docs/historique/api-darchitect/INDEX.md`
 - Rules : `.cursor/rules/` — always = git-attribution, versioning, prompt-bdd
