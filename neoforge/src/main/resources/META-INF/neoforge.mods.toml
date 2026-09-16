@@ -8,7 +8,7 @@ version = "${version}"
 displayName = "${name}"
 authors = "GalsaxX"
 description = "your own personal world at your fingertips"
-logoFile = "assets/personnalworld/icon.jpg"
+logoFile = "assets/personnalworld/icon.png"
 
 [[mixins]]
 config = "personnalworld.mixins.json"

@@ -1,6 +1,6 @@
 # État courant
 
-- **mod.version :** `1.4.0-alpha.6` (`gradle.properties`)
+- **mod.version :** `1.4.0-alpha.15` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
 - **Branche active :** `feature/livre-interface-iles` (depuis `feature/multi-version-multi-loader` base `1.3.1`)
 - **Jar :** non buildé (alpha en cours)
@@ -9,9 +9,9 @@
 
 ## En cours — livre-interface-iles
 
-- `adventure_book` : modèle 3D Blockbench + 4 anims GeckoLib (commit `c8aefc7`)
-- Interface placeholder `AdventureBookScreen` livrée
-- **À faire** : remplir l'interface GUI (phase 2) ; tester en jeu
+- `adventure_book` : modèle 3D Blockbench + 4 anims GeckoLib ; UI test parchemin (onglets)
+- Interface `AdventureBookScreen` style carte ancienne (placeholder contenu)
+- **À faire** : remplir onglets (liste îles réelle, carte) ; peaufiner texture
 
 ## Ouvert (ne pas redécouvrir)
 

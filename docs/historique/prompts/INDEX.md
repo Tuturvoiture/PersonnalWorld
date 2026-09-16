@@ -6,7 +6,8 @@ Un fichier par **conversation** Cursor. Incrémenter à **chaque** message utili
 |------|-------|-----------|---------|
 | co-creator-correction-across-branches | Co-creator correction across branches | P001 | [co-creator-correction-across-branches.md](co-creator-correction-across-branches.md) |
 | darchitect-0-0-57 | DArchitect 0.0.57 | P054 | [darchitect-0-0-57.md](darchitect-0-0-57.md) |
+| fix-minecraft-cache | Fix Minecraft cache | P003 | [fix-minecraft-cache.md](fix-minecraft-cache.md) |
 | kit-nouveau-projet | Kit nouveau projet | P002 | [kit-nouveau-projet.md](kit-nouveau-projet.md) |
-| livre-interface-iles | Livre interface îles | P028 | [livre-interface-iles.md](livre-interface-iles.md) |
+| livre-interface-iles | Livre interface îles | P041 | [livre-interface-iles.md](livre-interface-iles.md) |
 | reprise-contexte-regles | Reprise contexte + règles | P004 | [reprise-contexte-regles.md](reprise-contexte-regles.md) |
 

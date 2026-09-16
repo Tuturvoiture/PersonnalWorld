@@ -478,3 +478,13 @@
 **Pointeurs :** `gradle.properties`, `docs/RELEASE_NOTES_EN.md`, `fabric.mod.json`
 
 **Suite :** Upload storefront puis « c'est en ligne » → tag `v1.3.1`.
+
+## P054
+
+**Demande :** Commit + push branche (diff-tab).
+
+**Livré :** Commit `48f08ba` (sans Co-authored Cursor) poussé sur `feature/multi-version-multi-loader`.
+
+**Pointeurs :** `origin/feature/multi-version-multi-loader`
+
+**Suite :** Upload 1.3.1 puis « c'est en ligne ».

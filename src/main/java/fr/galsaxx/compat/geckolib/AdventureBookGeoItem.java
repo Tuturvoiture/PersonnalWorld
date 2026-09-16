@@ -1,8 +1,12 @@
 package fr.galsaxx.compat.geckolib;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import fr.galsaxx.AdventureBookItem;
 import fr.galsaxx.PersonnalWorld;
+import fr.galsaxx.client.AdventureBookClientPose;
+import fr.galsaxx.compat.geckolib.client.AdventureBookGeoRenderer;
 import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,7 +39,8 @@ import java.util.function.Consumer;
  * Ne jamais référencer hors de {@code compat/geckolib/} (chargé via Class.forName).
  * <p>
  * Flux : idle_closed → (use) open → idle_open → (close GUI) close → idle_closed.
- * Bras levés via {@link fr.galsaxx.AdventureBookItem#getUseAction} pendant l'usage.
+ * Anims JSON = Blockbench (Y− = ouvrir). Sens main corrigé via {@link AdventureBookGeoRenderer}.
+ * Bras : UseAction + {@link fr.galsaxx.client.AdventureBookClientPose}.
  */
 public final class AdventureBookGeoItem extends AdventureBookItem implements GeoItem {
 
@@ -43,8 +48,8 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	private static final RawAnimation OPEN = RawAnimation.begin().thenPlay("open").thenLoop("idle_open");
 	private static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("close").thenLoop("idle_closed");
 
-	/** ~durée anim {@code open} (0.35 s ≈ 7 ticks). */
-	private static final int OPEN_GUI_DELAY_TICKS = 7;
+	/** ~durée anim {@code open} (0.45 s ≈ 9 ticks). */
+	private static final int OPEN_GUI_DELAY_TICKS = 9;
 
 	private static final Map<UUID, Integer> PENDING_GUI_OPEN = new ConcurrentHashMap<>();
 
@@ -63,7 +68,7 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 			@Override
 			public GeoItemRenderer<?> getGeoItemRenderer() {
 				if (this.renderer == null) {
-					this.renderer = new GeoItemRenderer<>(new DefaultedItemGeoModel<>(
+					this.renderer = new AdventureBookGeoRenderer(new DefaultedItemGeoModel<>(
 							Identifier.of(PersonnalWorld.MOD_ID, "adventure_book")
 					));
 				}
@@ -74,7 +79,7 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "book", 1, state -> {
+		controllers.add(new AnimationController<>(this, "book", 0, state -> {
 			if (state.getController().getCurrentRawAnimation() == null) {
 				return state.setAndContinue(IDLE_CLOSED);
 			}
@@ -112,6 +117,7 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
 		user.setCurrentHand(hand);
+		EnvExecutor.runInEnv(Env.CLIENT, () -> () -> AdventureBookClientPose.setLocalReading(true));
 		if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
 			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld) world), "book", "open");
 			PENDING_GUI_OPEN.put(serverPlayer.getUuid(), OPEN_GUI_DELAY_TICKS);

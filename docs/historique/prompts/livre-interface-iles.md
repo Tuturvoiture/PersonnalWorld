@@ -153,6 +153,83 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Livré :** open/close 0.4s Y=+165 ; UseAction.BLOCK + setCurrentHand ; délai GUI 8 ticks ; alpha.5.  
 **Suite :** Tester en jeu.
 
+## P028 — Ouverture max 100°
+**Demande :** Livre s'ouvre trop grand, 100 % pas plus.  
+**Livré :** Angle open / idle_open / close plafonné à **100°** (au lieu de 165°) ; Blockbench resync ; `1.4.0-alpha.6`.  
+**Suite :** Tester en jeu.
+
+## P029 — Sens BB inversé en jeu + bras 3P sans hold
+**Demande :** Pourquoi anim BB inversée en jeu ? Corriger 3P : livre tendu seulement si bouton enfoncé.  
+**Livré :** Y open/close → **-100°** (compensation display main ~−82° Y) ; flag `AdventureBookClientPose` + mixin `getArmPose` jusqu’à fermeture GUI ; alpha.7.  
+**Pointeurs :** `AdventureBookClientPose.java`, `mixin/client/PlayerEntityRendererMixin.java`  
+**Suite :** Tester sens + bras sans maintenir clic.
+
+## P030 — Anims smooth rapides + idle fermé plus lent
+**Demande :** Open/close plus smooth mais rapides ; idle fermé éléments moins rapides.  
+**Livré :** open/close 0.4s + easing cubic ; idle_closed 5s ±1.5° sine ; idle_open pages ralenties ; délai GUI 8 ticks ; alpha.8.  
+**Suite :** Tester en jeu.
+
+## P031 — Aucune différence visible (build stale)
+**Demande :** Sûr d’avoir fait la demande ? Aucune différence.  
+**Livré :** Cause = `versions/1.21.1/build/resources` encore en 2.0/0.35 ; processResources + idle **8s** / open-close **0.45s** courbes ; alpha.9.  
+**Suite :** Relancer client (rebuild), pas seulement F3+T sur vieux jar.
+
+## P032 — Sync anims vers MCP Blockbench
+**Demande :** Appliquer aussi les anims sur le MCP pour les voir.  
+**Livré :** Anims BB remplacées : idle_closed 8s, open/close 0.45s, idle_open 3s (Y compensée API).  
+**Suite :** Scrubber timeline BB pour preview.
+
+## P033 — Open/close opposés BB↔jeu
+**Demande :** Trouver solution pour ouverture/fermeture opposées ; les deux pareil ; livre normal.  
+**Livré :** Keyframes uniques BB=jeu (Y− / miroir close) ; `AdventureBookGeoRenderer` negate Y `cover_front` au rendu ; transition 0 ; alpha.10.  
+**Pointeurs :** `AdventureBookGeoRenderer.java`  
+**Suite :** Rebuild client + tester open puis close (même axe, sens normal).
+
+## P034 — Bouton fermer + inventaire
+**Demande :** Bouton pour fermer l’UI si bloqué ; fermable aussi en ouvrant l’inventaire.  
+**Livré :** Bouton Fermer ; `removed()` notifie serveur (inventaire / autre écran) ; alpha.11.  
+**Suite :** Tester bouton, Échap, touche inventaire.
+
+## P035 — UI parchemin test
+**Demande :** Mettre en place interface test style carte ancienne/parchemin simple, responsive.  
+**Livré :** Cadre parchemin centré (max 256×192), 3 onglets Carte/Îles/Notes, texture `adventure_book_parchment.png`, bouton Fermer ; alpha.12.  
+**Pointeurs :** `AdventureBookScreen.java`, `textures/gui/adventure_book_parchment.png`  
+**Suite :** Tester GUI scale + redimensionnement fenêtre.
+
+## P036 — Interface floue
+**Demande :** UI floue mais fonctionne sinon.  
+**Livré :** Texture régénérée nette ; `setFilter(false,false)` ; panel 1:1 / crop ; alpha.13.  
+**Suite :** Rebuild + F3+T, comparer netteté.
+
+## P037 — Flou global / priorité carte
+**Demande :** Toujours flou ; flou global ; carte doit être devant.  
+**Livré :** Plus d’`applyBlur` (fond assombri seul) ; parchemin+texte en z=200 devant ; alpha.14.  
+**Suite :** Rebuild — texte/parchemin nets comme les boutons.
+
+## P038 — Boutons invisibles + base presets
+**Demande :** Mieux mais boutons pas au premier plan ; prévoir images presets îles / permissions custom.  
+**Livré :** Widgets z=300 au-dessus du parchemin ; `AdventureBookImageButton` ; onglet Îles avec 3 cartes placeholder ; alpha.15.  
+**Pointeurs :** `AdventureBookImageButton.java`, `textures/gui/island_*.png`  
+**Suite :** Tester onglets + cartes Îles ; brancher actions plus tard.
+
+## P039 — Scripts fix en .bat
+**Demande :** Les scripts fix doivent être en `.bat`, pas autre chose.  
+**Livré :** `fix-minecraft-cache.bat` ; suppression `.sh` / `.ps1` ; doc COMMANDS.  
+**Pointeurs :** `script/fix-minecraft-cache.bat`  
+**Suite :** —
+
+## P040 — Nouveau logo mod
+**Demande :** Remplacer l’ancienne icône par le logo généré (île + vache + cascade).  
+**Livré :** `docs/reference/personnalworld-logo.png` → `assets/personnalworld/icon.png` ; `fabric.mod.json` + NeoForge `logoFile` ; suppression `icon.jpg` ; alpha.16.  
+**Pointeurs :** `assets/personnalworld/icon.png`, `docs/reference/personnalworld-logo.png`  
+**Suite :** Rebuild jar si publish storefront.
+
+## P041 — 3 îles boutons en V
+**Demande :** Logo île en bouton cliquable ; 3 en V (gauche, centre bas, droite alignée gauche).  
+**Livré :** `textures/gui/island_button.png` ; mode `ICON_ONLY` ; layout V + sélection ; alpha.17.  
+**Pointeurs :** `AdventureBookScreen.java`, `AdventureBookImageButton.java`  
+**Suite :** Presets / permissions par slot.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

@@ -6,6 +6,17 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.17 — Carnet onglet Îles : 3 boutons logo cliquables en V (`island_button.png`).
+- 1.4.0-alpha.16 — Icône mod : `docs/reference/personnalworld-logo.png` → `assets/personnalworld/icon.png` (Fabric + NeoForge).
+- 1.4.0-alpha.15 — Boutons carnet au premier plan ; `AdventureBookImageButton` + placeholders presets/permissions (onglet Îles).
+- 1.4.0-alpha.14 — Carnet : plus de flou GUI 1.21 sur le parchemin (fond assombri seulement ; carte dessinée devant).
+- 1.4.0-alpha.13 — Parchemin carnet plus net : texture sans blur, filtrage nearest, dessin 1:1 (crop si petit écran).
+- 1.4.0-alpha.12 — Interface carnet test style **parchemin / carte ancienne** : cadre responsive, 3 onglets (Carte / Îles / Notes), texture GUI.
+- 1.4.0-alpha.11 — Carnet : bouton Fermer ; fermeture aussi via inventaire / remplacement d’écran (anim close + pose bras).
+- 1.4.0-alpha.10 — Open/close carnet : mêmes anims que Blockbench ; sens main corrigé au rendu (`cover_front` Y) pour ouverture/fermeture normales et cohérentes.
+- 1.4.0-alpha.9 — Anims carnet vraiment rechargées (build stale) : idle fermé **8s**, open/close **0.45s** avec courbe accélérée (plus de paliers).
+- 1.4.0-alpha.8 — Open/close carnet plus fluides (easing cubic, 0.4s) ; idle fermé plus lent (5s, amplitude douce).
+- 1.4.0-alpha.7 — Sens open carnet aligné jeu↔Blockbench (Y inversé pour compenser le display main) ; bras tendus en 3P jusqu’à fermeture du GUI sans maintenir le clic.
 - 1.4.0-alpha.6 — Ouverture carnet plafonnée à **100°** (plus de dépassement à 165°).
 - 1.4.0-alpha.5 — Anims open/close 0.4s, sens Y=+165 ; bras en avant (`UseAction.BLOCK` + `setCurrentHand`) pendant lecture ; GUI après 8 ticks.
 - 1.4.0-alpha.4 — Fix anims carnet : contrôleur ne force plus idle_closed pendant open ; GUI après 20 ticks ; open/close Y=-165 (sens Blockbench) ; displays sync depuis BB.
