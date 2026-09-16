@@ -230,6 +230,18 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `AdventureBookScreen.java`, `AdventureBookImageButton.java`  
 **Suite :** Presets / permissions par slot.
 
+## P042 — Commit + branche main + PR
+**Demande :** Committer tout, renommer la branche principale en `main`, tout fusionner via pull request.  
+**Livré :** Commit local `3907dcc` ; branche distante `main` créée depuis `fabric-1.21.1`. **Erreur :** push de `feature/livre-interface-iles` alors que le carnet ne doit pas être sur GitHub.  
+**Pointeurs :** `origin/main`, commit local `3907dcc`  
+**Suite :** PR **sans** livre : `feature/multi-version-multi-loader` → `main` uniquement.
+
+## P043 — WARNING : ne pas pousser le carnet
+**Demande :** Ne pas pousser `feature/livre-interface-iles` sur GitHub.  
+**Livré :** `git push origin --delete feature/livre-interface-iles` ; branche carnet reste **locale uniquement**.  
+**Pointeurs :** branche locale `feature/livre-interface-iles` @ `3907dcc`  
+**Suite :** PR 1.3.1 via `feature/multi-version-multi-loader` → `main` ; carnet hors remote.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
