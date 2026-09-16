@@ -1,0 +1,15 @@
+---
+description: Rappel — animations GeckoLib / Blockbench pour PersonnalWorld
+globs:
+  - "**/geo/**/*.json"
+  - "**/animations/**/*.json"
+  - "**/compat/geckolib/**/*.java"
+  - "**/*geckolib*"
+alwaysApply: false
+---
+
+# Animations
+
+Lire et suivre `.cursor/skills/minecraft-geckolib/SKILL.md`.
+
+Setup MCP Blockbench (optionnel, live) : `docs/BLOCKBENCH_MCP_SETUP.md`.

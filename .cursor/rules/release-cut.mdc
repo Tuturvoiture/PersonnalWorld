@@ -1,0 +1,14 @@
+---
+description: Cut release — appliquer si l'utilisateur dit « c'est en ligne » ou « release X.Y.Z publiée »
+alwaysApply: false
+---
+
+# Cut release
+
+Quand l'utilisateur dit **« c'est en ligne »**, **« release X.Y.Z publiée »**, ou équivalent clair :
+
+1. Déplacer `## Pending` de [`docs/CHANGELOG_WIP.md`](docs/CHANGELOG_WIP.md) vers une section `## [X.Y.Z] — YYYY-MM-DD` en **tête** de [`docs/CHANGELOG.md`](docs/CHANGELOG.md).
+2. Mettre à jour `Dernière version en ligne : X.Y.Z` dans le WIP et **vider** Pending.
+3. Mettre à jour [`docs/CAPABILITIES.md`](docs/CAPABILITIES.md) si le produit a changé.
+4. Ne plus écraser `builds/X.Y.Z/` sauf rebuild explicite de cette version.
+5. Proposer un tag Git `vX.Y.Z` — **sans push** sauf demande ; commit seulement si demandé.

@@ -1,0 +1,18 @@
+---
+description: Commits sans mention Cursor/agent ; auteur GalsaxX_FR
+alwaysApply: true
+---
+
+# Attribution Git
+
+Tout commit / tag / action Git dans ce dépôt :
+
+1. **Auteur** = `GalsaxX_FR` (config **repo-locale** si besoin) + `145108538+Tuturvoiture@users.noreply.github.com`. Jamais Cursor ni un agent.
+2. Interdit dans le message, le corps, les trailers, les notes de tag, ou les descriptions de PR :
+   - nom / marque de l'assistant (Cursor, Auto, Composer, Agent, etc.)
+   - `Co-authored-by:` pointant vers Cursor ou un bot
+   - « Generated with Cursor », « Made with Cursor », « via Cursor Agent »
+3. Avant chaque commit : vérifier `git config user.name` / `user.email` (repo) et le message draft.
+4. Ne jamais `amend` / réécrire l'historique uniquement pour « enlever Cursor » sans demande explicite.
+
+Si la config locale pointe vers un autre nom : la corriger **dans ce repo uniquement** (`git config user.name` / `user.email`, sans `--global` sauf demande).
