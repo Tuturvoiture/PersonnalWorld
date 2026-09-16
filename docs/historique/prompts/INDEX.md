@@ -4,6 +4,7 @@ Un fichier par **conversation** Cursor. Incrémenter à **chaque** message utili
 
 | Slug | Titre | Dernier P | Fichier |
 |------|-------|-----------|---------|
+| invitations-droits-iles | Invitations & droits îles | P001 | [invitations-droits-iles.md](invitations-droits-iles.md) |
 | co-creator-correction-across-branches | Co-creator correction across branches | P001 | [co-creator-correction-across-branches.md](co-creator-correction-across-branches.md) |
 | darchitect-0-0-57 | DArchitect 0.0.57 | P053 | [darchitect-0-0-57.md](darchitect-0-0-57.md) |
 | kit-nouveau-projet | Kit nouveau projet | P002 | [kit-nouveau-projet.md](kit-nouveau-projet.md) |

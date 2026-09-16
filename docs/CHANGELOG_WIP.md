@@ -6,6 +6,7 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.0 — Invitations / droits d’îles : `/pw invite|kick|role|list|visit|leave` ; whitelist JSON hors îles (`personnalworld/access/`, écriture live + revision) ; validation/quarantaine ; debug `setowner` / `reload-access` / `reload-island` ; BANNED prévu en code sans application.
 - 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.
 - 1.3.0 — Première release Fabric stable (ligne 1.3 DArchitect ; NeoForge reporté).
 - 1.3.0 — Config `personnalworld.toml` : `noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory` (commentaires EN + exemples).
