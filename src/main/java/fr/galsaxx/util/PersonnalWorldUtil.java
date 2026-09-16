@@ -2,6 +2,11 @@ package fr.galsaxx.util;
 
 import fr.galsaxx.PersonnalWorld;
 import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.invite.AccessFileStore;
+import fr.galsaxx.invite.AccessRecord;
+import fr.galsaxx.invite.DArchitectAccess;
+import fr.galsaxx.invite.IslandDirectory;
+import net.darchitect.api.AccessMode;
 import net.darchitect.api.DimensionAlreadyExistsException;
 import net.darchitect.api.DimensionArchitectRuntime;
 import net.darchitect.api.ModCallContext;
@@ -22,6 +27,9 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 
+import java.util.UUID;
+import java.nio.file.Path;
+
 /**
  * Demande la dimension perso à DimensionArchitect (VOID), puis pose l’île NBT une seule fois.
  */
@@ -36,9 +44,11 @@ public final class PersonnalWorldUtil {
                                                   RegistryKey<World> worldKey,
                                                   Identifier dimId,
                                                   ServerPlayerEntity owner) {
+		AccessFileStore.get().bindServer(server);
         ServerWorld existing = server.getWorld(worldKey);
         if (existing != null) {
             runOneTimeInitIfNeeded(existing, owner);
+			ensureAccessForWorld(server, dimId.toString(), owner);
             return existing;
         }
 
@@ -47,16 +57,21 @@ public final class PersonnalWorldUtil {
                 var api = DimensionArchitectRuntime.get();
                 String id = dimId.toString();
                 if (!api.hasDimension(id)) {
-                    api.builder(id)
+					UUID ownerUuid = owner != null ? owner.getUuid() : null;
+                    var builder = api.builder(id)
                             .type(WorldType.VOID)
                             // shareInventory=true → isolatePlayerData(false) (DArchitect ≥ 0.0.58).
                             .isolatePlayerData(!PersonnalWorldConfig.get().shareInventory())
+							.accessMode(AccessMode.MANAGED)
                             // VOID API 0.0.44 : Optional.empty() = structures vanilla. SKYBLOCK les coupe.
                             .worldProfile(WorldProfile.builder()
                                     .preset(WorldPreset.SKYBLOCK)
                                     .structures(StructureGenerationRules.none())
-                                    .build())
-                            .build();
+                                    .build());
+					if (ownerUuid != null) {
+						builder.owner(ownerUuid);
+					}
+					builder.build();
                 }
             });
         } catch (DimensionAlreadyExistsException ignored) {
@@ -85,8 +100,43 @@ public final class PersonnalWorldUtil {
         }
 
         runOneTimeInitIfNeeded(persoWorld, owner);
+		ensureAccessForWorld(server, dimId.toString(), owner);
         return persoWorld;
     }
+
+	private static void ensureAccessForWorld(MinecraftServer server, String dimensionId, ServerPlayerEntity ownerHint) {
+		UUID ownerUuid = ownerHint != null
+				? ownerHint.getUuid()
+				: fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(null);
+		String nameHint = ownerHint != null ? ownerHint.getGameProfile().getName() : "";
+		Path accessFile = AccessFileStore.get().accessRoot()
+				.resolve(fr.galsaxx.invite.IslandIds.fileKey(dimensionId) + ".json");
+		AccessRecord record;
+		if (AccessFileStore.get().getCached(dimensionId).isEmpty() && !java.nio.file.Files.isRegularFile(accessFile)) {
+			record = AccessFileStore.createInitial(dimensionId, ownerUuid, nameHint);
+			// First persist: keep revision at 1 (saveMutation bumps).
+			record.setRevision(0L);
+			AccessFileStore.get().saveMutation(record);
+		} else {
+			record = AccessFileStore.get().loadOrRecover(dimensionId, ownerUuid, nameHint);
+			DArchitectAccess.applyRecord(record);
+		}
+		IslandDirectory.get().registerOrUpdate(record);
+
+		Identifier id = Identifier.tryParse(dimensionId);
+		if (id == null) {
+			return;
+		}
+		ServerWorld world = server.getWorld(RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, id));
+		PWWorldState state = PWWorldState.get(world);
+		if (state != null && !state.accessMigrated) {
+			state.accessMigrated = true;
+			if (record.ownerUuid() != null) {
+				state.ownerUuid = record.ownerUuid().toString();
+			}
+			state.markDirty();
+		}
+	}
 
     static PWWorldState getWorldState(ServerWorld world) {
         return PWWorldState.get(world);
@@ -133,6 +183,10 @@ public final class PersonnalWorldUtil {
         private int spawnMarkerZ;
         /** Réservé : profil d’île pour futures dims (non utilisé en MVP). */
         private String islandProfile = "";
+		/** Soft migration MANAGED / access file done. */
+		boolean accessMigrated = false;
+		/** Logical owner UUID string (may differ from path uuid after debug setowner). */
+		String ownerUuid = "";
 
         static final Type<PWWorldState> TYPE = new Type<>(
                 PWWorldState::new,
@@ -173,6 +227,10 @@ public final class PersonnalWorldUtil {
             if (nbt.contains("islandProfile")) {
                 s.islandProfile = nbt.getString("islandProfile");
             }
+			s.accessMigrated = nbt.contains("accessMigrated") && nbt.getBoolean("accessMigrated");
+			if (nbt.contains("ownerUuid")) {
+				s.ownerUuid = nbt.getString("ownerUuid");
+			}
             return s;
         }
 
@@ -188,10 +246,17 @@ public final class PersonnalWorldUtil {
             if (!islandProfile.isEmpty()) {
                 nbt.putString("islandProfile", islandProfile);
             }
+			nbt.putBoolean("accessMigrated", accessMigrated);
+			if (ownerUuid != null && !ownerUuid.isEmpty()) {
+				nbt.putString("ownerUuid", ownerUuid);
+			}
             return nbt;
         }
 
         static PWWorldState get(ServerWorld world) {
+			if (world == null) {
+				return null;
+			}
             PersistentStateManager mgr = world.getPersistentStateManager();
             return mgr.getOrCreate(TYPE, "personnalworld_init");
         }

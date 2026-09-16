@@ -2,6 +2,7 @@
 
 | Date | Version | Titre | Statut | Fichier |
 |------|---------|-------|--------|---------|
+| 2026-09-16 | 1.4.0-alpha.0 | Invitations & droits îles | done | [2026-09-16_invitations-droits-iles.md](2026-09-16_invitations-droits-iles.md) |
 | 2026-09-12 | 1.3.1 | Sortie publique Fabric (docs + jar) | done | [2026-09-12_1.3.1-public.md](2026-09-12_1.3.1-public.md) |
 | 2026-09-12 | 1.3.0 | Release Fabric officielle | done | [2026-09-12_1.3.0-fabric.md](2026-09-12_1.3.0-fabric.md) |
 | 2026-09-10 | 1.3.0-beta.0 | Passage beta 1.3.0 | done | [2026-09-10_1.3.0-beta.0.md](2026-09-10_1.3.0-beta.0.md) |

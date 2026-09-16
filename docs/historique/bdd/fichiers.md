@@ -15,7 +15,9 @@ Regarder ici **avant** un grep projet.
 ## Gameplay (`src/`)
 
 - Entrée / item / bloc : `PersonnalWorld.java`, `PersonnalWorldContent.java`, `block/PersonalSpawnMarkerBlock.java`, `PersonnalWorldItem.java`
-- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`
+- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`, `command/PersonnalWorldCommand.java`
+- Invitations / droits : `invite/` (`IslandAccessService`, `AccessFileStore`, `PresenceAndRightsGuard`, `IslandMembersApi`, …) ; fichiers `<world>/personnalworld/access/`
+- Réseau UI stub : `network/SyncIslandMembersPayload.java`
 - Mixin : `mixin/PlayerEntityMixin.java`, `personnalworld.mixins.json` ; NBT `data/personnalworld/structure/ile_1.nbt`
 - Loaders : `fabric/…/PersonnalWorldFabric.java`, `PersonnalWolrdClient.java` ; `neoforge/…/PersonnalWorldNeoForge.java`
 
