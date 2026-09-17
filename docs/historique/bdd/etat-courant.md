@@ -9,6 +9,7 @@
 ## Ouvert (ne pas redécouvrir)
 
 - Smoke multi-joueurs invitations / TEMP / quarantine access
+- Resync DA au kick (`setRolesForDimension`) — voir rapport API [2026-09-17_access-api-public-sync-roles.md](../api-darchitect/2026-09-17_access-api-public-sync-roles.md)
 - Comportement **BANNED** (enum prêt) — plan futur
 - Merge carnet `feature/livre-interface-iles` + UI permissions
 - Multi-îles réelles / switch active bâton

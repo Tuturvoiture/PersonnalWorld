@@ -8,6 +8,7 @@ Regarder ici **avant** un grep projet.
 - Fabric / NeoForge : `fabric/build.gradle.kts`, `neoforge/build.gradle.kts` ; métadonnées `${version}`
 - Jars API : `libs/darchitect-fabric.jar`, `libs/darchitect-neoforge.jar` (≥ 0.0.59)
 - PATCHNOTES API : `docs/historique/api-darchitect/PATCHNOTES-0.0.59.txt`
+- Rapport invitations / accès public : `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`
 - Inventaire mondes perso : `PersonnalWorldUtil` → `isolatePlayerData(!shareInventory)` via `PersonnalWorldConfig`
 - Config serveur : `config/PersonnalWorldConfig.java` → `config/personnalworld.toml`
 - Bloc spawn : `PersonnalWorldContent.SPAWN_MARKER` ; `PersonalWorldSpawnReference` ; assets `textures/block/spawn_marker.*`
