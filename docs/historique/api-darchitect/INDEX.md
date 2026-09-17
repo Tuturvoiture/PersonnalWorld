@@ -5,6 +5,7 @@ PersonnalWorld ne corrige pas l’API ici — voir règle `.cursor/rules/darchit
 
 | Date | API | Sévérité | Titre | Statut PW | Fichier |
 |------|-----|----------|-------|-----------|---------|
+| 2026-09-17 | 0.0.59 | P2 | Accès dims : façade publique + sync rôles (invitations) | wrap `impl` ; kick BUILD fragile | [2026-09-17_access-api-public-sync-roles.md](2026-09-17_access-api-public-sync-roles.md) |
 | 2026-08-30 | 0.0.59 | — | PATCHNOTES build API (copie locale) | jars `libs/` ≥ 0.0.59 ; inventaire partagé PW | [PATCHNOTES-0.0.59.txt](PATCHNOTES-0.0.59.txt) |
 | 2026-08-30 | 0.0.57 | — | PATCHNOTES build API (copie locale) | jars `libs/` ≥ 0.0.57 | [PATCHNOTES-0.0.57.txt](PATCHNOTES-0.0.57.txt) |
 | 2026-08-18 | 0.0.44 | P3 | Pas de flag builder skip plateforme SKYBLOCK | contourné (`SpawnResolver`) | [2026-08-18_skip-starter-platform.md](2026-08-18_skip-starter-platform.md) |

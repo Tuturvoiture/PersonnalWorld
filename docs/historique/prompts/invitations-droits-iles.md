@@ -1,11 +1,12 @@
 # Invitations & droits îles
 
-## P001
+## P002
 
-**Demande :** Implémenter le plan invitations/droits (commandes, JSON hors îles, reload, BANNED code-only).
+**Demande :** Document MD — besoin invitations/droits, blocage DA, aide attendue, propositions de changement API.
 
-**Livré :** `1.4.0-alpha.0` — `/pw` + `invite/` + access JSON live/quarantine + debug ops + stub UI ; BANNED non branché.
+**Livré :** Rapport API `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md` + ligne INDEX.
 
-**Pointeurs :** `src/main/java/fr/galsaxx/invite/`, `docs/COMMANDS.md`, `docs/CAPABILITIES.md`
+**Pointeurs :** `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`
 
-**Suite :** Smoke multi-joueurs ; UI livre ; comportement BANNED.
+**Suite :** Bump DA (façade `access()` + setRoles) puis resync kick côté PW ; ou contournement court via `setRolesForDimension` impl.
+
