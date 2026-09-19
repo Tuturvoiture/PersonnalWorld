@@ -1,6 +1,5 @@
 package fr.galsaxx.command;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,14 +11,10 @@ import fr.galsaxx.invite.IslandReloadService;
 import fr.galsaxx.invite.IslandRole;
 import fr.galsaxx.invite.PlayerRef;
 import fr.galsaxx.invite.TransferOwnershipService;
-import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-
-import java.util.Collection;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -27,8 +22,8 @@ import static net.minecraft.server.command.CommandManager.literal;
 /**
  * Player + debug commands under {@code /pw}.
  * <p>
- * {@code invite}/{@code kick}/{@code role}/{@code visit} accept {@link GameProfileArgumentType}
- * so offline players (user cache / UUID) work without waiting for DArchitect unload API.
+ * Invite / kick / role / visit : joueur <strong>connecté</strong> seulement
+ * (offline = hors scope, voir {@code docs/HORS_SCOPE.md}).
  */
 public final class PersonnalWorldCommand {
 	private PersonnalWorldCommand() {}
@@ -39,61 +34,40 @@ public final class PersonnalWorldCommand {
 
 		root.then(literal("invite")
 				.requires(source -> source.getEntity() instanceof ServerPlayerEntity)
-				.then(argument("player", GameProfileArgumentType.gameProfile())
-						.suggests((ctx, builder) -> CommandSource.suggestMatching(
-								ctx.getSource().getPlayerNames(), builder))
+				.then(argument("player", EntityArgumentType.player())
 						.then(argument("role", StringArgumentType.word())
 								.executes(ctx -> {
 									ServerPlayerEntity actor = ctx.getSource().getPlayer();
-									PlayerRef target = firstProfile(ctx.getSource(),
-											GameProfileArgumentType.getProfileArgument(ctx, "player"));
-									if (target == null) {
-										ctx.getSource().sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
-										return 0;
-									}
+									ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "player");
 									IslandRole role = IslandRole.parseInviteRole(StringArgumentType.getString(ctx, "role"));
 									IslandAccessService.Result r = IslandAccessService.get()
-											.invite(ctx.getSource().getServer(), actor, target, role);
+											.invite(ctx.getSource().getServer(), actor, PlayerRef.of(target), role);
 									r.send(ctx.getSource());
 									return r.ok() ? Command.SINGLE_SUCCESS : 0;
 								}))));
 
 		root.then(literal("kick")
 				.requires(source -> source.getEntity() instanceof ServerPlayerEntity)
-				.then(argument("player", GameProfileArgumentType.gameProfile())
-						.suggests((ctx, builder) -> CommandSource.suggestMatching(
-								ctx.getSource().getPlayerNames(), builder))
+				.then(argument("player", EntityArgumentType.player())
 						.executes(ctx -> {
 							ServerPlayerEntity actor = ctx.getSource().getPlayer();
-							PlayerRef target = firstProfile(ctx.getSource(),
-									GameProfileArgumentType.getProfileArgument(ctx, "player"));
-							if (target == null) {
-								ctx.getSource().sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
-								return 0;
-							}
+							ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "player");
 							IslandAccessService.Result r = IslandAccessService.get()
-									.kick(ctx.getSource().getServer(), actor, target);
+									.kick(ctx.getSource().getServer(), actor, PlayerRef.of(target));
 							r.send(ctx.getSource());
 							return r.ok() ? Command.SINGLE_SUCCESS : 0;
 						})));
 
 		root.then(literal("role")
 				.requires(source -> source.getEntity() instanceof ServerPlayerEntity)
-				.then(argument("player", GameProfileArgumentType.gameProfile())
-						.suggests((ctx, builder) -> CommandSource.suggestMatching(
-								ctx.getSource().getPlayerNames(), builder))
+				.then(argument("player", EntityArgumentType.player())
 						.then(argument("role", StringArgumentType.word())
 								.executes(ctx -> {
 									ServerPlayerEntity actor = ctx.getSource().getPlayer();
-									PlayerRef target = firstProfile(ctx.getSource(),
-											GameProfileArgumentType.getProfileArgument(ctx, "player"));
-									if (target == null) {
-										ctx.getSource().sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
-										return 0;
-									}
+									ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "player");
 									IslandRole role = IslandRole.parseInviteRole(StringArgumentType.getString(ctx, "role"));
 									IslandAccessService.Result r = IslandAccessService.get()
-											.setRole(ctx.getSource().getServer(), actor, target, role);
+											.setRole(ctx.getSource().getServer(), actor, PlayerRef.of(target), role);
 									r.send(ctx.getSource());
 									return r.ok() ? Command.SINGLE_SUCCESS : 0;
 								}))));
@@ -113,34 +87,22 @@ public final class PersonnalWorldCommand {
 
 		root.then(literal("visit")
 				.requires(source -> source.getEntity() instanceof ServerPlayerEntity)
-				.then(argument("player", GameProfileArgumentType.gameProfile())
-						.suggests((ctx, builder) -> CommandSource.suggestMatching(
-								ctx.getSource().getPlayerNames(), builder))
+				.then(argument("player", EntityArgumentType.player())
 						.executes(ctx -> {
 							ServerPlayerEntity visitor = ctx.getSource().getPlayer();
-							PlayerRef host = firstProfile(ctx.getSource(),
-									GameProfileArgumentType.getProfileArgument(ctx, "player"));
-							if (host == null) {
-								ctx.getSource().sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
-								return 0;
-							}
+							ServerPlayerEntity host = EntityArgumentType.getPlayer(ctx, "player");
 							IslandAccessService.Result r = IslandAccessService.get()
-									.visit(ctx.getSource().getServer(), visitor, host, null);
+									.visit(ctx.getSource().getServer(), visitor, PlayerRef.of(host), null);
 							r.send(ctx.getSource());
 							return r.ok() ? Command.SINGLE_SUCCESS : 0;
 						})
 						.then(argument("island", StringArgumentType.greedyString())
 								.executes(ctx -> {
 									ServerPlayerEntity visitor = ctx.getSource().getPlayer();
-									PlayerRef host = firstProfile(ctx.getSource(),
-											GameProfileArgumentType.getProfileArgument(ctx, "player"));
-									if (host == null) {
-										ctx.getSource().sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
-										return 0;
-									}
+									ServerPlayerEntity host = EntityArgumentType.getPlayer(ctx, "player");
 									String island = StringArgumentType.getString(ctx, "island");
 									IslandAccessService.Result r = IslandAccessService.get()
-											.visit(ctx.getSource().getServer(), visitor, host, island);
+											.visit(ctx.getSource().getServer(), visitor, PlayerRef.of(host), island);
 									r.send(ctx.getSource());
 									return r.ok() ? Command.SINGLE_SUCCESS : 0;
 								}))));
@@ -173,17 +135,6 @@ public final class PersonnalWorldCommand {
 										StringArgumentType.getString(ctx, "target"))))));
 
 		dispatcher.register(root);
-	}
-
-	private static PlayerRef firstProfile(ServerCommandSource source, Collection<GameProfile> profiles) {
-		if (profiles == null || profiles.isEmpty()) {
-			return null;
-		}
-		GameProfile profile = profiles.iterator().next();
-		if (profile.getId() == null) {
-			return null;
-		}
-		return PlayerRef.of(profile, source.getServer());
 	}
 
 	private static boolean debugEnabled(ServerCommandSource source) {
