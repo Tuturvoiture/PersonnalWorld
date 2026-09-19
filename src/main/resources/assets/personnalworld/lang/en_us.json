@@ -56,5 +56,6 @@
   "message.personnalworld.pw.debug_reload_access_all": "Reloaded access for %s island(s).",
   "message.personnalworld.pw.debug_reload_access_none": "No islands registered to reload.",
   "message.personnalworld.pw.debug_reload_island_ok": "Reloaded island %s (unload attempted).",
-  "message.personnalworld.pw.debug_reload_island_partial": "Island %s: players evicted and access resynced. Full unload unavailable — restart recommended if needed."
+  "message.personnalworld.pw.debug_reload_island_partial": "Island %s: players evicted and access resynced. Full unload unavailable — restart recommended if needed.",
+  "message.personnalworld.pw.player_not_found": "Player not found (online, UUID, or user cache)."
 }

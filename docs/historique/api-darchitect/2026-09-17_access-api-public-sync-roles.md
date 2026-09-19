@@ -1,12 +1,23 @@
 # P2 — Accès dims : façade publique + sync rôles pour surcouche invitations
 
-- **Date :** 2026-09-17
-- **Consommateur :** PersonnalWorld `1.4.0-alpha.0` (branche invitations / droits d’îles)
-- **API visée :** DimensionArchitect **0.0.59** (`darchitect`)
-- **Sévérité :** P2 — feature jouable côté liste/commandes, mais **enforcement build/interact + kick** fragiles sans contrat API clair
-- **Statut côté PW :** contournement partiel via `AccessManagerImpl.INSTANCE` (package `impl`) + garde JOIN PersonnalWorld ; **pas** de sync complète des rôles au kick
+- **Date :** 2026-09-17 (mise à jour statut **2026-09-19**)
+- **Consommateur :** PersonnalWorld `1.4.0-alpha.1`
+- **API visée :** DimensionArchitect **0.1.2** (`darchitect`) — **livré**
+- **Sévérité :** P2 (historique) — **résolu côté PW** pour sync kick / migration ; unload public reste P2 soft (0.1.3)
+- **Statut côté PW :** `DArchitectAccess` utilise `DimensionArchitectRuntime.get().access()` ; `applyRecord` → `setRolesForDimension` ; TEMP → `clearRole` ; migration soft `setAccessMode(MANAGED)` + `setOwner`
 
-Copier cette fiche dans le Cursor du dépôt **DimensionArchitectAPI**. Ne pas patcher l’API depuis le workspace PersonnalWorld.
+---
+
+## Statut d’intégration (2026-09-19)
+
+| Besoin | DA 0.1.2 | PW 1.4.0-alpha.1 |
+|--------|---------|------------------|
+| `access()` public | OK | branché |
+| `setRolesForDimension` / `clearRole` | OK | kick / leave / applyRecord |
+| `setAccessMode` / `setOwner` | OK | `migrateManaged` au 1er accès |
+| Unload/load API | prévu 0.1.3 | `reload-island` best-effort |
+
+Jars : `libs/darchitect-fabric.jar` / `darchitect-neoforge.jar` depuis `dist/builds/0.1.2`.
 
 ---
 

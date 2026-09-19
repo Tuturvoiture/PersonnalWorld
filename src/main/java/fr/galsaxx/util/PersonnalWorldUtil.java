@@ -57,7 +57,9 @@ public final class PersonnalWorldUtil {
                 var api = DimensionArchitectRuntime.get();
                 String id = dimId.toString();
                 if (!api.hasDimension(id)) {
-					UUID ownerUuid = owner != null ? owner.getUuid() : null;
+					UUID ownerUuid = owner != null
+							? owner.getUuid()
+							: fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(id).orElse(null);
                     var builder = api.builder(id)
                             .type(WorldType.VOID)
                             // shareInventory=true → isolatePlayerData(false) (DArchitect ≥ 0.0.58).
@@ -130,10 +132,12 @@ public final class PersonnalWorldUtil {
 		ServerWorld world = server.getWorld(RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, id));
 		PWWorldState state = PWWorldState.get(world);
 		if (state != null && !state.accessMigrated) {
-			state.accessMigrated = true;
 			if (record.ownerUuid() != null) {
+				DArchitectAccess.migrateManaged(dimensionId, record.ownerUuid());
 				state.ownerUuid = record.ownerUuid().toString();
 			}
+			DArchitectAccess.applyRecord(record);
+			state.accessMigrated = true;
 			state.markDirty();
 		}
 	}

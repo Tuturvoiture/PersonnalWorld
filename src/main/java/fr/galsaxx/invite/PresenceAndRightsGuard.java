@@ -30,6 +30,10 @@ public final class PresenceAndRightsGuard {
 	public static void onServerStarting(MinecraftServer server) {
 		AccessFileStore.get().bindServer(server);
 		TempVisitorStore.get().clearAll();
+		// TEMP never persists; re-apply whitelist-only roles to drop orphan DA GUESTs.
+		for (IslandDirectory.IslandMeta meta : IslandDirectory.get().all()) {
+			AccessFileStore.get().getCached(meta.dimensionId()).ifPresent(DArchitectAccess::applyRecord);
+		}
 	}
 
 	private static void onQuit(ServerPlayerEntity player) {
