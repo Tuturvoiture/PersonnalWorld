@@ -1,12 +1,13 @@
 # Invitations & droits îles
 
-## P002
+## P003
 
-**Demande :** Document MD — besoin invitations/droits, blocage DA, aide attendue, propositions de changement API.
+**Demande :** Intégrer DA 0.1.2 + sync droits + kick/visit offline (sans attendre 0.1.3) + bien documenter.
 
-**Livré :** Rapport API `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md` + ligne INDEX.
+**Livré :** `1.4.0-alpha.1` — jars 0.1.2, `access()`/`setRolesForDimension`/`clearRole`/`migrateManaged`, GameProfile offline, docs COMMANDS/CAPABILITIES/rapport API/session.
 
-**Pointeurs :** `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`
+**Pointeurs :** `invite/DArchitectAccess.java`, `docs/COMMANDS.md`, `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`
 
-**Suite :** Bump DA (façade `access()` + setRoles) puis resync kick côté PW ; ou contournement court via `setRolesForDimension` impl.
+**Suite :** Smoke multi-joueurs ; unload API 0.1.3.
+
 

@@ -56,5 +56,6 @@
   "message.personnalworld.pw.debug_reload_access_all": "Accès rechargé pour %s île(s).",
   "message.personnalworld.pw.debug_reload_access_none": "Aucune île enregistrée à recharger.",
   "message.personnalworld.pw.debug_reload_island_ok": "Île %s rechargée (unload tenté).",
-  "message.personnalworld.pw.debug_reload_island_partial": "Île %s : joueurs expulsés et accès resynchronisé. Unload complet indisponible — redémarrage recommandé si besoin."
+  "message.personnalworld.pw.debug_reload_island_partial": "Île %s : joueurs expulsés et accès resynchronisé. Unload complet indisponible — redémarrage recommandé si besoin.",
+  "message.personnalworld.pw.player_not_found": "Joueur introuvable (en ligne, UUID ou cache utilisateurs)."
 }
