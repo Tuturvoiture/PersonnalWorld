@@ -6,7 +6,8 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
-- 1.4.0-alpha.2 — Hors scope clarifié : pas de `/pw` kick/visit/invite/role sur joueur **offline** (connecté seulement) ; doc `HORS_SCOPE.md`.
+- 1.4.0-alpha.3 — `/pw` invite/kick/role/visit : cibles **online ou offline** (GameProfile / cache UUID) ; retiré du hors-scope.
+- 1.4.0-alpha.2 — (corrigé) doc hors-scope offline — annulé par alpha.3.
 - 1.4.0-alpha.1 — DArchitect **≥ 0.1.2** : sync rôles atomique (`access()` / `setRolesForDimension` / `clearRole`) ; migration soft MANAGED+owner ; purge TEMP propre.
 - 1.4.0-alpha.0 — Invitations / droits d’îles : `/pw invite|kick|role|list|visit|leave` ; whitelist JSON hors îles (`personnalworld/access/`, écriture live + revision) ; validation/quarantaine ; debug `setowner` / `reload-access` / `reload-island` ; BANNED prévu en code sans application.
 - 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.

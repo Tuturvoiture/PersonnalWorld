@@ -18,20 +18,20 @@ Jar produit (cible release) : `build\libs\<mod.version>\fabric\`.
 
 ## Commandes in-game
 
-`<joueur>` = joueur **connecté** (offline = hors scope, voir [`HORS_SCOPE.md`](HORS_SCOPE.md)).
+`<joueur>` = profil Mojang **online ou offline** (connecté, cache utilisateurs, ou UUID) pour invite / kick / role / visit.
 
 | Commande | Qui | Effet |
 |----------|-----|--------|
 | `/returnworld` | Joueur dans une île perso | Retour position sauvée / spawn |
-| `/pw invite <joueur> <co_creator\|builder\|visitor>` | Owner ou co-créateur | Whitelist persistante (JSON live + sync DA) |
-| `/pw kick <joueur>` | Owner ou co-créateur | Retire whitelist/TEMP ; `clearRole`/`setRolesForDimension` ; expulse si présent |
-| `/pw role <joueur> <role>` | Owner ou co-créateur | Change le rôle whitelist |
+| `/pw invite <joueur> <co_creator\|builder\|visitor>` | Owner ou co-créateur | Whitelist persistante (JSON live + sync DA) ; cible offline OK |
+| `/pw kick <joueur>` | Owner ou co-créateur | Retire whitelist/TEMP ; sync DA ; expulse si présent ; cible offline OK |
+| `/pw role <joueur> <role>` | Owner ou co-créateur | Change le rôle whitelist ; cible offline OK |
 | `/pw list` | Joueur | Liste membres (+ TEMP) |
-| `/pw visit <joueur> [nomIle]` | Joueur | Visite île active (hôte **connecté**) ; TEMP si pas membre |
+| `/pw visit <joueur> [nomIle]` | Joueur | Visite île active (hôte **offline OK**) ; TEMP si pas membre |
 | `/pw leave` | Visiteur sur une île | Quitte + retire TEMP + clearRole DA |
 | `/pw debug setowner <cible> <nouveau>` | Op 4 + `enableDebugCommands` | Transfert owner logique |
 | `/pw debug reload-access [cible]` | Op 4 + debug | Relit JSON access + resync DA |
-| `/pw debug reload-island <cible>` | Op 4 + debug | Expulse, purge TEMP, resync ; unload DA encore best-effort (API publique unload = DA ≥ 0.1.3) |
+| `/pw debug reload-island <cible>` | Op 4 + debug | Expulse, purge TEMP, resync ; unload DA best-effort (API unload = DA ≥ 0.1.3) |
 
 ### Accès / fichiers
 
@@ -39,6 +39,6 @@ Jar produit (cible release) : `build\libs\<mod.version>\fabric\`.
 - Source de vérité = JSON PW ; DArchitect ≥ **0.1.2** = enforcer (`access()`).
 - Config : `allowPassiveIslandVisit`, `enableDebugCommands` dans `config/personnalworld.toml`.
 - **BANNED** : enum/schéma prêts, **pas** de `/pw ban`.
-- **Offline** (kick/visit/invite/role) : **hors scope** jusqu’à demande explicite.
 
 Doc technique sync DA : [`historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`](historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md).
+

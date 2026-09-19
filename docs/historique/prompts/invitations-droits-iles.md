@@ -1,14 +1,15 @@
 # Invitations & droits îles
 
-## P004
+## P005
 
-**Demande :** Clarifier — « hors scope kick/visit offline » = fichier `HORS_SCOPE.md`, pas le plan ; faire la modif.
+**Demande :** Implémenter kick/visit offline (réclamé plusieurs fois) — pas le laisser hors scope.
 
-**Livré :** `1.4.0-alpha.2` — ligne hors scope offline ; `/pw` repasse en joueur connecté seulement ; docs alignées.
+**Livré :** `1.4.0-alpha.3` — GameProfile pour invite/kick/role/visit ; retiré de `HORS_SCOPE` ; docs alignées.
 
-**Pointeurs :** `docs/HORS_SCOPE.md`, `command/PersonnalWorldCommand.java`
+**Pointeurs :** `command/PersonnalWorldCommand.java`, `invite/PlayerRef.java`, `docs/HORS_SCOPE.md`
 
-**Suite :** Smoke sync DA ; offline seulement si demandé explicitement.
+**Suite :** Smoke visit hôte offline + kick offline.
+
 
 
 
