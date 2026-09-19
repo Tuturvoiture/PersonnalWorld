@@ -1,13 +1,14 @@
 # Invitations & droits îles
 
-## P003
+## P004
 
-**Demande :** Intégrer DA 0.1.2 + sync droits + kick/visit offline (sans attendre 0.1.3) + bien documenter.
+**Demande :** Clarifier — « hors scope kick/visit offline » = fichier `HORS_SCOPE.md`, pas le plan ; faire la modif.
 
-**Livré :** `1.4.0-alpha.1` — jars 0.1.2, `access()`/`setRolesForDimension`/`clearRole`/`migrateManaged`, GameProfile offline, docs COMMANDS/CAPABILITIES/rapport API/session.
+**Livré :** `1.4.0-alpha.2` — ligne hors scope offline ; `/pw` repasse en joueur connecté seulement ; docs alignées.
 
-**Pointeurs :** `invite/DArchitectAccess.java`, `docs/COMMANDS.md`, `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md`
+**Pointeurs :** `docs/HORS_SCOPE.md`, `command/PersonnalWorldCommand.java`
 
-**Suite :** Smoke multi-joueurs ; unload API 0.1.3.
+**Suite :** Smoke sync DA ; offline seulement si demandé explicitement.
+
 
 
