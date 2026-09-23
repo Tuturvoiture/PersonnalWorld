@@ -6,6 +6,7 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-alpha.18 — Fusion `cursor/island-invites-permissions-73e0` → `feature/livre-interface-iles` : invitations/droits + DA ≥ 0.1.2 + façade `IslandMembersApi` avec le carnet.
 - 1.4.0-alpha.17 — Carnet onglet Îles : 3 boutons logo cliquables en V (`island_button.png`).
 - 1.4.0-alpha.16 — Icône mod : `docs/reference/personnalworld-logo.png` → `assets/personnalworld/icon.png` (Fabric + NeoForge).
 - 1.4.0-alpha.15 — Boutons carnet au premier plan ; `AdventureBookImageButton` + placeholders presets/permissions (onglet Îles).
@@ -26,6 +27,14 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 - 1.4.0-alpha.0 — Carnet d'aventurier (`adventure_book`) : modèle 3D GeckoLib (couverture cuir, 4 coins laiton, 3 crêtes reliure, sangle/boucle, double marque-page bordeaux, ouverture en deux).
 - 1.4.0-alpha.0 — 4 animations GeckoLib : `idle_closed` (boucle, oscillation + ruban), `open` (1s, cover_front pivote 160°), `idle_open` (boucle, pages flottent), `close` (inverse).
 - 1.4.0-alpha.0 — Interface placeholder (`AdventureBookScreen`) : clic droit ouvre une fenêtre, fermeture déclenche `close`; réseau Architectury S→C / C→S.
+- 1.4.0-beta.1 — (branche invites) PATCHNOTES auto pour chaque version sous `build/libs/` ; beta/stable = agrégat depuis le dernier même canal, sans doublons thématiques.
+- 1.4.0-beta.0 — (branche invites) Première **beta** ligne 1.4 (invitations / droits îles, sync DA ≥ 0.1.2, cibles online/offline, façade UI prête).
+- 1.4.0-alpha.9 — (branche invites) alignement docs / jar avant passage beta.
+- 1.4.0-alpha.5 — (branche invites) Façade UI `IslandMembersApi` (mutations + sync S2C Architectury) ; cache client pour le futur livre.
+- 1.4.0-alpha.4 — (branche invites) Fix liaison visit TEMP : `applyRecord` ne wipe plus le GUEST DA ; `/pw` résout nom/UUID via `PlayerRef` (offline fiable).
+- 1.4.0-alpha.3 — (branche invites) `/pw` invite/kick/role/visit : cibles **online ou offline** (GameProfile / cache UUID).
+- 1.4.0-alpha.1 — (branche invites) DArchitect **≥ 0.1.2** : sync rôles atomique (`access()` / `setRolesForDimension` / `clearRole`) ; migration soft MANAGED+owner ; purge TEMP propre.
+- 1.4.0-alpha.0 — (branche invites) Invitations / droits d’îles : `/pw invite|kick|role|list|visit|leave` ; whitelist JSON hors îles (`personnalworld/access/`) ; validation/quarantaine ; debug `setowner` / `reload-access` / `reload-island` ; BANNED prévu en code sans application.
 - 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.
 - 1.3.0 — Première release Fabric stable (ligne 1.3 DArchitect ; NeoForge reporté).
 - 1.3.0 — Config `personnalworld.toml` : `noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory` (commentaires EN + exemples).

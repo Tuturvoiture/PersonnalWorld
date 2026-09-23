@@ -1,3 +1,46 @@
+## PersonnalWorld 1.4.0-beta.0
+
+> CurseForge paste-ready copy: [`builds/1.4.0-beta.0/CURSEFORGE_EN.md`](../builds/1.4.0-beta.0/CURSEFORGE_EN.md)
+
+### Highlights
+
+- First **beta** of the 1.4 line: island invites and member roles on Fabric 1.21.1.
+- DimensionArchitect **≥ 0.1.2** enforces MANAGED access; PersonnalWorld JSON remains source of truth.
+- `/pw` targets work **online or offline** (name / UUID).
+
+### Added
+
+- `/pw invite|kick|role|list|visit|leave` for personal islands.
+- Persistent whitelist under `<world>/personnalworld/access/` (live write, revision, quarantine).
+- Temporary visitors (RAM only) via `/pw visit`.
+- `IslandMembersApi` + S2C member sync (ready for a future book UI; no book screen yet).
+- Debug ops: `/pw debug setowner|reload-access|reload-island` when `enableDebugCommands` is on.
+
+### Changed
+
+- Personal dimensions created as MANAGED with logical owner; soft migration from legacy OPEN.
+- Role sync to DimensionArchitect is atomic (`setRolesForDimension` / `clearRole`).
+
+### Not in this beta
+
+- Adventure-book UI / C2S packets.
+- Ban / BANNED behaviour (enum only).
+- NeoForge build (still deferred).
+
+### Requirements
+
+- Minecraft 1.21.1
+- Fabric Loader ≥ 0.18.4
+- Fabric API ≥ 0.116.0 (recommended `0.116.0+1.21.1`)
+- Architectury API ≥ 13.0.8
+- DimensionArchitect **0.1.2** or newer
+
+### Optional
+
+- GeckoLib 4.7.5.1
+
+---
+
 ## PersonnalWorld 1.3.1
 
 ### Highlights

@@ -72,12 +72,27 @@ Dossier **durable** à la racine, séparé de `build/` Gradle :
 builds/
   INDEX.md
   <mod.version>/
-    PATCHNOTES.md    # snapshot du WIP au build
+    PATCHNOTES.md    # généré au build (voir règles ci-dessous)
     META.md          # date, rev Git, loaders
     jars/            # copies locales (gitignore)
 ```
 
-Produit automatiquement par la tâche Gradle `writePendingPatchNotes` (branchée sur `build` et `buildAndCollect`).
+Même `PATCHNOTES.md` + `META.md` sont aussi écrits sous `build/libs/<mod.version>/`.
+
+### Contenu des PATCHNOTES
+
+| Canal | Contenu |
+|-------|---------|
+| **alpha** | Bullets WIP de **cette** version seulement |
+| **beta** | Agrégat depuis la **dernière beta** ; thèmes similaires fusionnés (1 ligne = dernière occurrence) |
+| **stable / official** | Agrégat depuis la **dernière stable** ; même dédoublonnage thématique |
+
+Tâches Gradle :
+
+- `writePendingPatchNotes` — version courante (`mod.version`) ; branchée après `buildAndCollect`
+- `generateAllLibsPatchNotes` — **toutes** les versions déjà présentes sous `build/libs/`
+
+Source des bullets : [`docs/CHANGELOG_WIP.md`](CHANGELOG_WIP.md) (`## Pending`).
 
 ## Hors scope
 

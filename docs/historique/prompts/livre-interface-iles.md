@@ -259,6 +259,12 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `origin/feature/livre-interface-iles` ; PR possible : https://github.com/Tuturvoiture/PersonnalWorld/pull/new/feature/livre-interface-iles  
 **Suite :** PR si demandé ; sinon suite UI îles.
 
+## P047 — Merge invites + gros projet GUI
+**Demande :** Gros projet GUI à venir ; d’abord récupérer toutes les modifs de la branche island invitation feature.  
+**Livré :** Merge `cursor/island-invites-permissions-73e0` → `feature/livre-interface-iles` ; conflits résolus (carnet + `/pw` + DA 0.1.2) ; `1.4.0-alpha.18`.  
+**Pointeurs :** `invite/`, `IslandMembersApi`, `PersonnalWorldCommand`, `libs/darchitect-*.jar` ≥ 0.1.2  
+**Suite :** Brancher l’UI carnet sur `IslandMembersApi` (permissions, liste îles).
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

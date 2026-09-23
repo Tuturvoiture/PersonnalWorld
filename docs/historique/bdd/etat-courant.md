@@ -1,20 +1,23 @@
 # État courant
 
-- **mod.version :** `1.4.0-alpha.17` (`gradle.properties`)
+- **mod.version :** `1.4.0-alpha.18` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
-- **Branche active :** `feature/livre-interface-iles` → tracke `origin/feature/livre-interface-iles` (poussée P046)
+- **Branche active :** `feature/livre-interface-iles` → `origin/feature/livre-interface-iles`
 - **Jar :** non buildé (alpha en cours)
-- **API :** DimensionArchitect `darchitect` ≥ 0.0.59
+- **API :** DimensionArchitect `darchitect` ≥ **0.1.2** (`access()` public)
 - **GeckoLib :** optionnel 4.7.5.1
 
-## En cours — livre-interface-iles
+## En cours — gros GUI (carnet + invites)
 
-- `adventure_book` : modèle 3D Blockbench + 4 anims GeckoLib ; UI test parchemin (onglets)
-- Interface `AdventureBookScreen` style carte ancienne (placeholder contenu)
-- **À faire** : remplir onglets (liste îles réelle, carte) ; peaufiner texture
+- Carnet `adventure_book` : modèle 3D + anims GeckoLib ; UI parchemin (onglets)
+- Invitations / droits : `/pw`, `invite/*`, `IslandMembersApi`, sync S2C (fusionnés depuis `cursor/island-invites-permissions-73e0`)
+- **À faire** : brancher l’UI carnet sur `IslandMembersApi` (liste îles réelle, permissions, presets)
 
 ## Ouvert (ne pas redécouvrir)
 
-- Upload Modrinth/CurseForge de 1.3.1 (jar + RELEASE_NOTES_EN.md) — **en attente branche principale**
-- Dire « c'est en ligne » → cut CHANGELOG.md + tag `v1.3.1`
+- Smoke multi-joueurs : kick → plus de build ; TEMP leave/restart ; visit hôte offline
+- Unload/load public DA (0.1.3) pour `reload-island` complet
+- Comportement **BANNED** (enum prêt) — plan futur
+- Multi-îles réelles / switch active bâton
+- Upload Modrinth/CurseForge 1.3.1 / cut tag — hors priorité GUI
 - NeoForge / roadmap : pas maintenant
