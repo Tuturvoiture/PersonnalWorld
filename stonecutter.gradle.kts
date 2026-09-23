@@ -21,3 +21,5 @@ for (branch in stonecutter.tree.branches) {
 		ofTask("buildAndCollect")
 	}
 }
+
+fr.galsaxx.build.VersionArchive.registerRootTasks(rootProject)

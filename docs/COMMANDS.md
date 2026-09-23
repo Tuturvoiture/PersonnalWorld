@@ -8,7 +8,8 @@ Scripts dans [`script/`](../script/). Java **21** via `JAVA_HOME` (pas le `java`
 | Client Fabric **rebuild** (wipe `build/` + `--stop`) | `script\run-client-rebuild.bat` ou `script\run-client.bat --rebuild` |
 | Client Fabric + hors-ligne | `script\run-client.bat --offline` |
 | **Build Fabric** (publication actuelle) | `script\build-fabric.bat` |
-| Notes + archive `builds/` | `.\gradlew.bat writePendingPatchNotes` |
+| Notes version courante → `build/libs` + `builds/` | `.\gradlew.bat writePendingPatchNotes` **ou** `powershell -File script\generate-patchnotes.ps1` |
+| Notes pour **toutes** les versions sous `build/libs/` | `.\gradlew.bat generateAllLibsPatchNotes` **ou** `powershell -File script\generate-patchnotes.ps1 -All` |
 
 Helper partagé : `script\_env.bat` (racine projet + JDK 21). Ne pas lancer seul.
 
@@ -18,7 +19,7 @@ Jar produit (cible release) : `build\libs\<mod.version>\fabric\`.
 
 ## Commandes in-game
 
-`<joueur>` = profil Mojang **online ou offline** (connecté, cache utilisateurs, ou UUID) pour invite / kick / role / visit.
+`<joueur>` = nom ou UUID (**online ou offline** : connecté, user cache, ou UUID brut) pour invite / kick / role / visit.
 
 | Commande | Qui | Effet |
 |----------|-----|--------|
