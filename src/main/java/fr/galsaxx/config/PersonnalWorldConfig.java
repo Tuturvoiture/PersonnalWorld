@@ -95,6 +95,27 @@ public final class PersonnalWorldConfig {
 			# Example:
 			# shareInventory = false
 			shareInventory = true
+
+			# -----------------------------------------------------------------------------
+			# allowPassiveIslandVisit
+			# -----------------------------------------------------------------------------
+			# If false (default), /pw visit <player> <islandName> is refused when the named
+			# island is marked passive. Active-island visits (no name / active only) are
+			# always allowed when the visitor has rights.
+			#
+			# Example:
+			# allowPassiveIslandVisit = true
+			allowPassiveIslandVisit = false
+
+			# -----------------------------------------------------------------------------
+			# enableDebugCommands
+			# -----------------------------------------------------------------------------
+			# If true, /pw debug … (setowner, reload-access, reload-island) is available to
+			# permission level 4 operators. Keep false in production.
+			#
+			# Example:
+			# enableDebugCommands = true
+			enableDebugCommands = false
 			""";
 
 	private static volatile PersonnalWorldConfig INSTANCE = defaults();
@@ -103,16 +124,22 @@ public final class PersonnalWorldConfig {
 	private final Set<String> noDimensionTeleport;
 	private final int staffCooldownTicks;
 	private final boolean shareInventory;
+	private final boolean allowPassiveIslandVisit;
+	private final boolean enableDebugCommands;
 
 	private PersonnalWorldConfig(
 			Set<String> noDimensionSavePosition,
 			Set<String> noDimensionTeleport,
 			int staffCooldownTicks,
-			boolean shareInventory) {
+			boolean shareInventory,
+			boolean allowPassiveIslandVisit,
+			boolean enableDebugCommands) {
 		this.noDimensionSavePosition = noDimensionSavePosition;
 		this.noDimensionTeleport = noDimensionTeleport;
 		this.staffCooldownTicks = Math.max(0, staffCooldownTicks);
 		this.shareInventory = shareInventory;
+		this.allowPassiveIslandVisit = allowPassiveIslandVisit;
+		this.enableDebugCommands = enableDebugCommands;
 	}
 
 	public static PersonnalWorldConfig get() {
@@ -154,8 +181,16 @@ public final class PersonnalWorldConfig {
 		return shareInventory;
 	}
 
+	public boolean allowPassiveIslandVisit() {
+		return allowPassiveIslandVisit;
+	}
+
+	public boolean enableDebugCommands() {
+		return enableDebugCommands;
+	}
+
 	private static PersonnalWorldConfig defaults() {
-		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true);
+		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true, false, false);
 	}
 
 	static PersonnalWorldConfig parse(String raw) {
@@ -163,6 +198,8 @@ public final class PersonnalWorldConfig {
 		Set<String> noTp = new HashSet<>();
 		int cooldown = 40;
 		boolean share = true;
+		boolean allowPassive = false;
+		boolean debug = false;
 
 		for (String logicalLine : splitLogicalLines(stripComments(raw))) {
 			Matcher list = LIST_PATTERN.matcher(logicalLine);
@@ -184,8 +221,16 @@ public final class PersonnalWorldConfig {
 				continue;
 			}
 			Matcher boolM = BOOL_PATTERN.matcher(logicalLine);
-			if (boolM.matches() && "shareInventory".equals(boolM.group(1))) {
-				share = Boolean.parseBoolean(boolM.group(2).toLowerCase(Locale.ROOT));
+			if (boolM.matches()) {
+				String key = boolM.group(1);
+				boolean value = Boolean.parseBoolean(boolM.group(2).toLowerCase(Locale.ROOT));
+				switch (key) {
+					case "shareInventory" -> share = value;
+					case "allowPassiveIslandVisit" -> allowPassive = value;
+					case "enableDebugCommands" -> debug = value;
+					default -> {
+					}
+				}
 			}
 		}
 
@@ -193,7 +238,9 @@ public final class PersonnalWorldConfig {
 				Collections.unmodifiableSet(noSave),
 				Collections.unmodifiableSet(noTp),
 				cooldown,
-				share);
+				share,
+				allowPassive,
+				debug);
 	}
 
 	/** Drop # comments; keep quoted strings intact. */

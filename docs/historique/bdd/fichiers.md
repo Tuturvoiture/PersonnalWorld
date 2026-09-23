@@ -6,8 +6,10 @@ Regarder ici **avant** un grep projet.
 
 - Version : `gradle.properties` → `mod.version`
 - Fabric / NeoForge : `fabric/build.gradle.kts`, `neoforge/build.gradle.kts` ; métadonnées `${version}`
-- Jars API : `libs/darchitect-fabric.jar`, `libs/darchitect-neoforge.jar` (≥ 0.0.59)
-- PATCHNOTES API : `docs/historique/api-darchitect/PATCHNOTES-0.0.59.txt`
+- Jars API : `libs/darchitect-fabric.jar`, `libs/darchitect-neoforge.jar` (≥ **0.1.2**)
+- PATCHNOTES API : `docs/historique/api-darchitect/PATCHNOTES-0.1.2.txt`
+- Rapport invitations / accès public : `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md` (statut intégré)
+- PATCHNOTES par version : `script/generate-patchnotes.ps1 -All` ou Gradle `generateAllLibsPatchNotes` → `build/libs/<ver>/` + `builds/<ver>/` ; beta/stable = agrégat dédupliqué
 - Inventaire mondes perso : `PersonnalWorldUtil` → `isolatePlayerData(!shareInventory)` via `PersonnalWorldConfig`
 - Config serveur : `config/PersonnalWorldConfig.java` → `config/personnalworld.toml`
 - Bloc spawn : `PersonnalWorldContent.SPAWN_MARKER` ; `PersonalWorldSpawnReference` ; assets `textures/block/spawn_marker.*`
@@ -15,7 +17,10 @@ Regarder ici **avant** un grep projet.
 ## Gameplay (`src/`)
 
 - Entrée / item / bloc : `PersonnalWorld.java`, `PersonnalWorldContent.java`, `block/PersonalSpawnMarkerBlock.java`, `PersonnalWorldItem.java`
-- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`
+- Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`, `command/PersonnalWorldCommand.java`
+- Invitations / droits : `invite/` — façade UI `IslandMembersApi` → `IslandAccessService` / `AccessFileStore` / `DArchitectAccess` ; garde `PresenceAndRightsGuard` ; fichiers `<world>/personnalworld/access/`
+- Réseau UI : `network/SyncIslandMembersPayload` (S2C Architectury) + `IslandMembersClientCache` ; C2S livre = futur
+- Offline / TEMP : `PlayerRef.resolve` ; TEMP réinjectés dans `DArchitectAccess.applyRecord`
 - Mixin : `mixin/PlayerEntityMixin.java`, `personnalworld.mixins.json` ; NBT `data/personnalworld/structure/ile_1.nbt`
 - Loaders : `fabric/…/PersonnalWorldFabric.java`, `PersonnalWolrdClient.java` ; `neoforge/…/PersonnalWorldNeoForge.java`
 
