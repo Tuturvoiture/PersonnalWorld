@@ -6,9 +6,12 @@ import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import fr.galsaxx.block.PersonalSpawnMarkerBlock;
+import fr.galsaxx.command.PersonnalWorldCommand;
 import fr.galsaxx.command.ReturnWorldCommand;
 import fr.galsaxx.compat.geckolib.GeckoLibHooks;
 import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.invite.PresenceAndRightsGuard;
+import fr.galsaxx.network.SyncIslandMembersPayload;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -39,8 +42,18 @@ public final class PersonnalWorldContent {
 		BLOCKS.register();
 		ITEMS.register();
 		CreativeTabRegistry.append(ItemGroups.TOOLS, PERSONNAL_WORLD_ITEM);
-		CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, environment) ->
-				ReturnWorldCommand.register(dispatcher));
-		LifecycleEvent.SERVER_STARTING.register(server -> PersonnalWorldConfig.load());
+		CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, environment) -> {
+			ReturnWorldCommand.register(dispatcher);
+			PersonnalWorldCommand.register(dispatcher);
+		});
+		LifecycleEvent.SERVER_STARTING.register(server -> {
+			PersonnalWorldConfig.load();
+			PresenceAndRightsGuard.onServerStarting(server);
+		});
+		PresenceAndRightsGuard.register();
+		SyncIslandMembersPayload.register();
+		dev.architectury.utils.EnvExecutor.runInEnv(
+				dev.architectury.utils.Env.CLIENT,
+				() -> SyncIslandMembersPayload::registerClientReceiver);
 	}
 }

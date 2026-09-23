@@ -45,3 +45,7 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# Kotlin daemon / buildSrc noise
+buildSrc/.kotlin/
+

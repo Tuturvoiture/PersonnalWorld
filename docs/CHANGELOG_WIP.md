@@ -6,6 +6,15 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-beta.1 — PATCHNOTES auto pour chaque version sous `build/libs/` ; beta/stable = agrégat depuis le dernier même canal, sans doublons thématiques.
+- 1.4.0-beta.0 — Première **beta** ligne 1.4 (invitations / droits îles, sync DA ≥ 0.1.2, cibles online/offline, façade UI prête).
+- 1.4.0-alpha.9 — (build intermédiaire) alignement docs / jar avant passage beta.
+- 1.4.0-alpha.5 — Façade UI `IslandMembersApi` (mutations + sync S2C Architectury) ; cache client pour le futur livre.
+- 1.4.0-alpha.4 — Fix liaison visit TEMP : `applyRecord` ne wipe plus le GUEST DA ; `/pw` résout nom/UUID via `PlayerRef` (offline fiable).
+- 1.4.0-alpha.3 — `/pw` invite/kick/role/visit : cibles **online ou offline** (GameProfile / cache UUID) ; retiré du hors-scope.
+- 1.4.0-alpha.2 — (corrigé) doc hors-scope offline — annulé par alpha.3.
+- 1.4.0-alpha.1 — DArchitect **≥ 0.1.2** : sync rôles atomique (`access()` / `setRolesForDimension` / `clearRole`) ; migration soft MANAGED+owner ; purge TEMP propre.
+- 1.4.0-alpha.0 — Invitations / droits d’îles : `/pw invite|kick|role|list|visit|leave` ; whitelist JSON hors îles (`personnalworld/access/`, écriture live + revision) ; validation/quarantaine ; debug `setowner` / `reload-access` / `reload-island` ; BANNED prévu en code sans application.
 - 1.3.1 — Sortie publique Fabric : config `personnalworld.toml` documentée ; README/notes EN ; nettoyage jar (stubs, pack GeckoLib obsolète, junk textures) ; depends `fabric-api`/`architectury` resserrées.
 - 1.3.0 — Première release Fabric stable (ligne 1.3 DArchitect ; NeoForge reporté).
 - 1.3.0 — Config `personnalworld.toml` : `noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory` (commentaires EN + exemples).

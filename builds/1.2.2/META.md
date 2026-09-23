@@ -1,10 +1,6 @@
-# META — 1.2.2
+# META - 1.2.2
 
-| Champ | Valeur |
-|-------|--------|
-| mod.version | `1.2.2` |
-| build_utc | 2026-08-16T23:49:16Z |
-| git | `d8fd1ea` |
-| loaders | fabric, neoforge |
-| minecraft | voir Stonecutter (`versions/`) |
+- **Built (UTC) :** 2026-09-21T02:25:55.2730878Z
+- **Git :** `1afc32d`
+- **Loaders :** _(none yet)_
 

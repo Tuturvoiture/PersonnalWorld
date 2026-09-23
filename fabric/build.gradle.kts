@@ -127,3 +127,5 @@ tasks.register<Copy>("buildAndCollect") {
 	into(rootProject.layout.buildDirectory.file("libs/${mod.version}/$loader"))
 	dependsOn("build")
 }
+
+fr.galsaxx.build.VersionArchive.wireBuildAndCollect(project)

@@ -1,20 +1,15 @@
-# Patch notes — 1.2.2
+# Patch notes - 1.2.2
 
-- **Build (UTC) :** 2026-08-16T23:49:16Z
-- **Git :** `d8fd1ea`
-- **Capacités :** voir `docs/CAPABILITIES.md`
-- **Source :** snapshot de `docs/CHANGELOG_WIP.md` (depuis la dernière mise en ligne)
+- **Canal :** official/stable (agregat depuis la derniere stable, sans doublons thematiques)
+- **Depuis :** _(aucune version anterieure du meme canal)_
+- **Build (UTC) :** 2026-09-21T02:25:55.2730878Z
+- **Git :** `1afc32d`
+- **Capacites :** voir `docs/CAPABILITIES.md`
+- **Source :** `docs/CHANGELOG_WIP.md` (Pending)
 
 ---
 
-# Changelog WIP
+## Changements
 
-Journal vivant des changements fonctionnels **non encore archivés** dans [`CHANGELOG.md`](CHANGELOG.md).
+_Aucun bullet WIP trouve pour cette plage - completer docs/CHANGELOG_WIP.md._
 
-**Dernière version en ligne :** aucune
-
-## Pending
-
-<!-- Ajouter 1–3 bullets par livraison, avec la version, ex. :
-- 1.2.3 — …
--->

@@ -5,7 +5,9 @@ PersonnalWorld ne corrige pas l’API ici — voir règle `.cursor/rules/darchit
 
 | Date | API | Sévérité | Titre | Statut PW | Fichier |
 |------|-----|----------|-------|-----------|---------|
-| 2026-08-30 | 0.0.59 | — | PATCHNOTES build API (copie locale) | jars `libs/` ≥ 0.0.59 ; inventaire partagé PW | [PATCHNOTES-0.0.59.txt](PATCHNOTES-0.0.59.txt) |
+| 2026-09-19 | 0.1.2 | — | PATCHNOTES build API (copie locale) | jars `libs/` ≥ 0.1.2 | [PATCHNOTES-0.1.2.txt](PATCHNOTES-0.1.2.txt) |
+| 2026-09-17 | 0.1.2 | P2→OK | Accès dims : façade publique + sync rôles | **intégré** PW 1.4.0-alpha.1 (`access()`) | [2026-09-17_access-api-public-sync-roles.md](2026-09-17_access-api-public-sync-roles.md) |
+| 2026-08-30 | 0.0.59 | — | PATCHNOTES build API (copie locale) | historisé | [PATCHNOTES-0.0.59.txt](PATCHNOTES-0.0.59.txt) |
 | 2026-08-30 | 0.0.57 | — | PATCHNOTES build API (copie locale) | jars `libs/` ≥ 0.0.57 | [PATCHNOTES-0.0.57.txt](PATCHNOTES-0.0.57.txt) |
 | 2026-08-18 | 0.0.44 | P3 | Pas de flag builder skip plateforme SKYBLOCK | contourné (`SpawnResolver`) | [2026-08-18_skip-starter-platform.md](2026-08-18_skip-starter-platform.md) |
 | 2026-08-18 | 0.0.44 | P2 | VOID garde les structures vanilla (`Optional.empty()`) | contourné (preset SKYBLOCK) | [2026-08-18_void-structures.md](2026-08-18_void-structures.md) |
