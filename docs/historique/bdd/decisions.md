@@ -8,7 +8,10 @@
 - Config serveur : `config/personnalworld.toml` via `PersonnalWorldConfig` (`noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory`, `allowPassiveIslandVisit`, `enableDebugCommands`).
 - Accès îles : JSON hors îles `<world>/personnalworld/access/` = source de vérité PW ; DArchitect ≥ **0.1.2** = enforcer via `access()` (`setRolesForDimension` / `clearRole`) ; TEMP jamais persisté ; **BANNED** enum/mapping seulement (pas de commandes).
 - Owner logique distinct du path `perso_<uuid>` ; transfert via `/pw debug setowner` seulement.
-- Kick/visit/invite/role : joueur **online ou offline** (GameProfile / user cache / UUID).
+- Kick/visit/invite/role : joueur **online ou offline** (`PlayerRef.resolve` : online / user cache / UUID brut).
+- `DArchitectAccess.applyRecord` : OWNER + whitelist + TEMP RAM (sinon visit wipe le GUEST DA).
+- Façade UI : `IslandMembersApi` (lecture + mutations + `notifyWatchers`) ; S2C `SyncIslandMembersPayload` ; cache `IslandMembersClientCache`. C2S livre = version UI.
+- PATCHNOTES : alpha = delta version ; beta/stable = agrégat depuis dernier même canal, 1 ligne par thème (dernière gagne).
 - TP monde perso : marqueur `spawn_marker` (**Y=88**, pieds Y=89) ; scan 50 blocs ; bedrock Y=87 = secours ultime.
 - Item / assets / `/returnworld` / mixins gameplay = module **common** (base multi-loader plus tard).
 - **Publication 1.3.x : Fabric uniquement.** NeoForge (et autres loaders) = plus tard, après une 1.3.0 Fabric complète et stable. Ne pas prioriser smoke/publish NeoForge.

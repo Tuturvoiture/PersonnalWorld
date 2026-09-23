@@ -1,6 +1,6 @@
 # État courant
 
-- **mod.version :** `1.4.0-alpha.3` (`gradle.properties`)
+- **mod.version :** `1.4.0-beta.1` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
 - **Branche :** `cursor/island-invites-permissions-73e0`
 - **API :** DimensionArchitect `darchitect` ≥ **0.1.2** (`access()` public)

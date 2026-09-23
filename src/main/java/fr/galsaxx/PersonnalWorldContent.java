@@ -52,5 +52,8 @@ public final class PersonnalWorldContent {
 		});
 		PresenceAndRightsGuard.register();
 		SyncIslandMembersPayload.register();
+		dev.architectury.utils.EnvExecutor.runInEnv(
+				dev.architectury.utils.Env.CLIENT,
+				() -> SyncIslandMembersPayload::registerClientReceiver);
 	}
 }

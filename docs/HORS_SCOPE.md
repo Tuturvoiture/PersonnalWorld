@@ -6,7 +6,7 @@ Ce que PersonnalWorld **n’est pas**. L’agent n’élargit pas tout seul.
 - Pas de migrateur automatique DimLib → 1.3 (breaking) : procédure manuelle « monde neuf + copie » dans [`MIGRATION_DIMLIB.md`](MIGRATION_DIMLIB.md).
 - Pas d’upload automatique Modrinth / CurseForge.
 - Pas de majeure `2.0` sans demande explicite.
-- Invitations / droits d’îles : **en cours** (`/pw`, fichiers `personnalworld/access/`, sync DA ≥ 0.1.2). Kick/visit/invite/role acceptent joueur **online ou offline** (GameProfile). Rôle **BANNED** : enum/schéma prêts, **comportement non branché** (pas de ban/unban) — à reprendre plus tard.
+- Invitations / droits d’îles : **en cours** (`/pw`, fichiers `personnalworld/access/`, sync DA ≥ 0.1.2). Kick/visit/invite/role acceptent joueur **online ou offline** (nom / UUID via `PlayerRef`). Rôle **BANNED** : enum/schéma prêts, **comportement non branché** (pas de ban/unban) — à reprendre plus tard.
 - Pas de menu livre / types d’îles / biomes / multi-mondes réels : roadmap (modèle active/passive préparé seulement).
 - Unload/load dim via API DA publique : attendre DArchitect ≥ 0.1.3 ; `reload-island` reste best-effort.
 - **Pas de release NeoForge (ni autre loader) tant que la 1.3.0 Fabric n’est pas complète** : le module NeoForge peut rester dans le repo, mais hors priorité publish / smoke / storefront.

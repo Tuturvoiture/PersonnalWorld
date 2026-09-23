@@ -17,8 +17,8 @@ import java.util.UUID;
  * Wrapper autour de l’API d’accès publique DimensionArchitect ({@code access()} depuis 0.1.2).
  * <p>
  * PersonnalWorld reste source de vérité (JSON) ; DA est l’enforcer runtime.
- * {@link #applyRecord} remplace <strong>toute</strong> la carte de rôles (owner + members persistants),
- * sans TEMP — les visiteurs temporaires utilisent {@link #grantTempGuest} / {@link #clearRole}.
+ * {@link #applyRecord} remplace la carte de rôles (owner + members + TEMP RAM).
+ * Les visiteurs temporaires restent aussi gérés via {@link #grantTempGuest} / {@link #clearRole}.
  */
 public final class DArchitectAccess {
 	private DArchitectAccess() {}
@@ -54,8 +54,9 @@ public final class DArchitectAccess {
 	}
 
 	/**
-	 * Remplacement atomique : OWNER + membres whitelist uniquement (pas de TEMP).
-	 * Les UUID absents de la map perdent leur rôle DA (plus de build fantôme après kick).
+	 * Remplacement atomique : OWNER + membres whitelist + TEMP en RAM.
+	 * Sans les TEMP du {@link TempVisitorStore}, un {@code setRolesForDimension} juste après
+	 * {@link #grantTempGuest} (ex. {@code visit} → {@code ensurePersonalWorld}) effaçait le GUEST DA.
 	 */
 	public static void applyRecord(AccessRecord record) {
 		if (record == null || record.dimensionId() == null || record.ownerUuid() == null) {
@@ -69,6 +70,9 @@ public final class DArchitectAccess {
 				continue;
 			}
 			roles.put(m.uuid, m.role.toDArchitect());
+		}
+		for (UUID tempUuid : TempVisitorStore.get().view(dim).keySet()) {
+			roles.putIfAbsent(tempUuid, DimensionRole.GUEST);
 		}
 		manager().setRolesForDimension(dim, roles);
 	}

@@ -185,23 +185,25 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.pw.visit_denied");
 		}
 		boolean permanent = existing == IslandRole.CO_CREATOR || existing == IslandRole.BUILDER || existing == IslandRole.VISITOR;
-		if (!permanent) {
-			TempVisitorStore.get().put(dimId, visitor.getUuid(), visitor.getGameProfile().getName());
-			DArchitectAccess.grantTempGuest(dimId, visitor.getUuid());
-		}
 
 		Identifier id = Identifier.tryParse(dimId);
 		if (id == null) {
 			return Result.fail("message.personnalworld.personal_world_unavailable");
 		}
 		RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, id);
+		// Hôte offline OK : owner UUID dérivé de l’id de dim / fallback access file.
 		ServerPlayerEntity hostOnline = host.online().orElse(null);
 		ServerWorld world = PersonnalWorldUtil.ensurePersonalWorld(server, key, id, hostOnline);
 		if (world == null) {
 			return Result.fail("message.personnalworld.personal_world_unavailable");
 		}
-		// Access again after ensure (migration / file create)
+		// Access after ensure (migration / file create) — puis TEMP après, pour ne pas
+		// dépendre d’un applyRecord intermédiaire (TEMP aussi réinjectés dans applyRecord).
 		ensureIslandAccess(server, dimId, host.uuid(), host.name());
+		if (!permanent) {
+			TempVisitorStore.get().put(dimId, visitor.getUuid(), visitor.getGameProfile().getName());
+			DArchitectAccess.grantTempGuest(dimId, visitor.getUuid());
+		}
 		Vec3d spawn = PersonalWorldSpawnSafety.resolveTeleportPosition(world);
 		visitor.teleport(world, spawn.x, spawn.y, spawn.z, Set.of(), 0.0F, 0.0F);
 		return Result.ok("message.personnalworld.pw.visit_ok", host.name());
