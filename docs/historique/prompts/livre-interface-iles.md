@@ -253,6 +253,12 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** branche locale `feature/livre-interface-iles`  
 **Suite :** Commit local uniquement sur cette branche ; jamais push sans OK explicite.
 
+## P046 — Récupérer fichiers + branche commit/push
+**Demande :** Récupérer tous les fichiers ; créer la branche via commit + push.  
+**Livré :** Fichiers carnet déjà présents sur `feature/livre-interface-iles` @ `c9176ea` (working tree clean, rien à committer) ; push `origin/feature/livre-interface-iles` (tracking OK). Stashs journal docs redondants ; stash fabric ancien non appliqué.  
+**Pointeurs :** `origin/feature/livre-interface-iles` ; PR possible : https://github.com/Tuturvoiture/PersonnalWorld/pull/new/feature/livre-interface-iles  
+**Suite :** PR si demandé ; sinon suite UI îles.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

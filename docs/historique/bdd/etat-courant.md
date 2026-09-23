@@ -1,8 +1,8 @@
 # État courant
 
-- **mod.version :** `1.4.0-alpha.15` (`gradle.properties`)
+- **mod.version :** `1.4.0-alpha.17` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
-- **Branche active :** `feature/livre-interface-iles` (depuis `feature/multi-version-multi-loader` base `1.3.1`)
+- **Branche active :** `feature/livre-interface-iles` → tracke `origin/feature/livre-interface-iles` (poussée P046)
 - **Jar :** non buildé (alpha en cours)
 - **API :** DimensionArchitect `darchitect` ≥ 0.0.59
 - **GeckoLib :** optionnel 4.7.5.1
