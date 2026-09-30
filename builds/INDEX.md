@@ -1,9 +1,10 @@
 # Archive des builds
 
-Historique durable par `mod.version` - hors `build/` Gradle (ephemere).
+Historique durable par `mod.version` — **hors** `build/` Gradle (éphémère).
 
 | Version | Dernier build (UTC) | Notes |
 |---------|---------------------|-------|
+| 1.4.0-beta.2 | 2026-09-30T04:44:53.726312700Z | [PATCHNOTES](1.4.0-beta.2/PATCHNOTES.md) · [META](1.4.0-beta.2/META.md) |
 | 1.4.0-beta.1 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.4.0-beta.1/PATCHNOTES.md) / [META](1.4.0-beta.1/META.md) |
 | 1.4.0-beta.0 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.4.0-beta.0/PATCHNOTES.md) / [META](1.4.0-beta.0/META.md) |
 | 1.4.0-alpha.9 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.4.0-alpha.9/PATCHNOTES.md) / [META](1.4.0-alpha.9/META.md) |
@@ -16,5 +17,5 @@ Historique durable par `mod.version` - hors `build/` Gradle (ephemere).
 | 1.3.0-alpha.28 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.3.0-alpha.28/PATCHNOTES.md) / [META](1.3.0-alpha.28/META.md) |
 | 1.2.2 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.2.2/PATCHNOTES.md) / [META](1.2.2/META.md) |
 
-Voir `docs/VERSIONING.md` section Archive builds/.
+Voir [`docs/VERSIONING.md`](../docs/VERSIONING.md) § Archive `builds/`.
 

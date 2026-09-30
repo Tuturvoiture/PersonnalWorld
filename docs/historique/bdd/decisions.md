@@ -1,16 +1,19 @@
 # Décisions durables
 
 - PW = **surcouche** : création de dim = DArchitect. Bug API → rapport `docs/historique/api-darchitect/`, pas de patch API depuis ce workspace.
-- IDs dim : `personnalworld:perso_<uuid>` ; quota DArchitect 64 ; type VOID.
+- IDs dim : slot 0 `personnalworld:perso_<uuid>`, slot ≥ 1 `perso_<uuid>_<index>` ; quota DArchitect 64 ; type VOID. Plafond joueur = `maxIslandsPerPlayer` (défaut 3). Au démarrage, PA aligne `max_simultaneous` DA sur 64 sauf `syncDarchitectMaxSimultaneous = false`.
 - Breaking 1.3 : **pas** de migrateur auto DimLib ; doc manuelle « monde neuf + copie builds » : `docs/MIGRATION_DIMLIB.md`.
 - Île : classpath NBT ; spawn **0 90 0** ; pas de plateforme SKYBLOCK 3×3 (`SpawnResolver`) ; preset SKYBLOCK pour couper les structures vanilla.
 - Inventaire mondes perso : **partagé par défaut** (`shareInventory = true` → `isolatePlayerData(false)` à la création ; configurable dans `personnalworld.toml` ; DArchitect ≥ 0.0.58).
 - Config serveur : `config/personnalworld.toml` via `PersonnalWorldConfig` (`noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory`, `allowPassiveIslandVisit`, `enableDebugCommands`).
-- Accès îles : JSON hors îles `<world>/personnalworld/access/` = source de vérité PW ; DArchitect ≥ **0.1.2** = enforcer via `access()` (`setRolesForDimension` / `clearRole`) ; TEMP jamais persisté ; **BANNED** enum/mapping seulement (pas de commandes).
+- Accès îles : JSON hors îles `<world>/personnalworld/access/` = source de vérité PW ; DArchitect ≥ **0.1.2** = enforcer via `access()` (`setRolesForDimension` / `clearRole`) ; TEMP jamais persisté ; **BANNED** enum/mapping seulement (pas de commandes). Rejoindre et `/pw visit` = whitelist et dimension déjà là. Visiteur : pas de casse, pose, coffre, ni PvP.
 - Owner logique distinct du path `perso_<uuid>` ; transfert via `/pw debug setowner` seulement.
 - Kick/visit/invite/role : joueur **online ou offline** (`PlayerRef.resolve` : online / user cache / UUID brut).
 - `DArchitectAccess.applyRecord` : OWNER + whitelist + TEMP RAM (sinon visit wipe le GUEST DA).
-- Façade UI : `IslandMembersApi` (lecture + mutations + `notifyWatchers`) ; S2C `SyncIslandMembersPayload` ; cache `IslandMembersClientCache`. C2S livre = version UI.
+- Façade membres : `IslandMembersApi` + `SyncIslandMembersPayload`. Carnet îles : `IslandBookNetworking` (pas un second magasin). Refonte graphique du carnet = plus tard (`docs/ISLAND_UI.md`).
+- Type S2C : `registerS2CPayloadType` seulement en `Env.SERVER`. Le `registerReceiver` client enregistre le type ; le faire des deux côtés plante (`sync_island_members`).
+- Droits au démarrage : `applyRecord` au premier tick serveur une fois `DimensionArchitectRuntime.getOrNull()` non nul. `SERVER_STARTED` de PersonnalWorld part avant `setInstance` de DimensionArchitect.
+- Déplacement du cube : `SpawnMove` + `PersonalWorldSpawnReference.relocate`. Le bloc recouvert est dans le NBT de dim (`replacedBlockId`). Panneau invitations du carnet = `inviteOn` / `kickOn` / `setRoleOn` sur le JSON d’accès de l’île affichée. Libellés du carnet et messages restés en anglais : les 10 fichiers `lang`.
 - PATCHNOTES : alpha = delta version ; beta/stable = agrégat depuis dernier même canal, 1 ligne par thème (dernière gagne).
 - TP monde perso : marqueur `spawn_marker` (**Y=88**, pieds Y=89) ; scan 50 blocs ; bedrock Y=87 = secours ultime.
 - Item / assets / `/returnworld` / mixins gameplay = module **common** (base multi-loader plus tard).

@@ -4,6 +4,7 @@ import dev.architectury.networking.NetworkManager;
 import fr.galsaxx.client.AdventureBookScreen;
 import fr.galsaxx.compat.geckolib.GeckoLibHooks;
 import fr.galsaxx.compat.geckolib.client.BuiltinStaffModelWrapper;
+import fr.galsaxx.network.BookReadingPayload;
 import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -31,6 +32,21 @@ public class PersonnalWolrdClient implements ClientModInitializer {
 					MinecraftClient.getInstance().setScreen(new AdventureBookScreen());
 				})
 		);
+		NetworkManager.registerReceiver(
+				NetworkManager.Side.S2C,
+				BookReadingPayload.ID,
+				BookReadingPayload.CODEC,
+				(payload, ctx) -> ctx.queue(() -> {
+					fr.galsaxx.client.AdventureBookClientPose.setReading(payload.playerId(), payload.reading());
+					if (MinecraftClient.getInstance().player != null
+							&& MinecraftClient.getInstance().player.getUuid().equals(payload.playerId())) {
+						fr.galsaxx.client.AdventureBookClientPose.setLocalReading(payload.reading());
+					}
+				})
+		);
+		fr.galsaxx.network.IslandBookNetworking.registerClient(
+				payload -> fr.galsaxx.client.IslandBookClient.acceptSync(payload),
+				payload -> fr.galsaxx.client.IslandBookClient.acceptDetail(payload));
 
 		if (!GeckoLibHooks.animationsActive()) {
 			return;

@@ -1,5 +1,6 @@
 package fr.galsaxx.invite;
 
+import fr.galsaxx.network.IslandBookNetworking;
 import fr.galsaxx.network.SyncIslandMembersPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,7 +23,7 @@ public final class IslandMembersApi {
 
 	public static List<IslandMemberEntry> listMembers(MinecraftServer server, UUID ownerUuid) {
 		AccessFileStore.get().bindServer(server);
-		String dim = IslandDirectory.get().activeDimensionForOwner(ownerUuid)
+		String dim = AccessFileStore.get().activeOrFirstOwned(ownerUuid)
 				.orElse(IslandIds.dimensionIdForPlayer(ownerUuid));
 		AccessRecord record = AccessFileStore.get().ensureFresh(dim, ownerUuid, "");
 		return record.toMemberEntries(true, true, dim, TempVisitorStore.get().view(dim));
@@ -58,6 +59,7 @@ public final class IslandMembersApi {
 		IslandAccessService.Result r = IslandAccessService.get().invite(server, actor, target, role);
 		if (r.ok()) {
 			notifyWatchers(server, managedDimOf(server, actor));
+			syncBooks(actor, target);
 		}
 		return r;
 	}
@@ -68,6 +70,7 @@ public final class IslandMembersApi {
 		IslandAccessService.Result r = IslandAccessService.get().kick(server, actor, target);
 		if (r.ok()) {
 			notifyWatchers(server, dim);
+			syncBooks(actor, target);
 		}
 		return r;
 	}
@@ -77,6 +80,7 @@ public final class IslandMembersApi {
 		IslandAccessService.Result r = IslandAccessService.get().setRole(server, actor, target, role);
 		if (r.ok()) {
 			notifyWatchers(server, managedDimOf(server, actor));
+			syncBooks(actor, target);
 		}
 		return r;
 	}
@@ -139,6 +143,11 @@ public final class IslandMembersApi {
 		}
 	}
 
+	private static void syncBooks(ServerPlayerEntity actor, PlayerRef target) {
+		IslandBookNetworking.sendSync(actor);
+		target.online().ifPresent(IslandBookNetworking::sendSync);
+	}
+
 	private static boolean isCoCreator(AccessRecord record, UUID uuid) {
 		AccessRecord.Member m = record.members().get(uuid);
 		return m != null && m.role == IslandRole.CO_CREATOR;
@@ -150,6 +159,7 @@ public final class IslandMembersApi {
 
 	/** Même règle que {@link IslandAccessService} (île gérée si co-créateur dessus, sinon île perso). */
 	private static String resolveActorManageDim(MinecraftServer server, ServerPlayerEntity actor) {
+		AccessFileStore.get().bindServer(server);
 		String current = actor.getServerWorld().getRegistryKey().getValue().toString();
 		if (IslandIds.isPersonalIsland(current)) {
 			AccessRecord record = IslandAccessService.get().ensureIslandAccess(server, current, actor);
@@ -157,6 +167,7 @@ public final class IslandMembersApi {
 				return current;
 			}
 		}
-		return IslandIds.dimensionIdForPlayer(actor.getUuid());
+		return AccessFileStore.get().activeOrFirstOwned(actor.getUuid())
+				.orElse(IslandIds.dimensionIdForPlayer(actor.getUuid()));
 	}
 }

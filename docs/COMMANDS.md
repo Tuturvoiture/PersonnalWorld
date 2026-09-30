@@ -35,6 +35,7 @@ Si un `runClient` zombie ou un `session.lock` empêche d’ouvrir un monde (laun
 | `/pw list` | Joueur | Liste membres (+ TEMP) |
 | `/pw visit <joueur> [nomIle]` | Joueur | Visite île active (hôte **offline OK**) ; TEMP si pas membre |
 | `/pw leave` | Visiteur sur une île | Quitte + retire TEMP + clearRole DA |
+| `/pw create <joueur> [preset]` | Op 2 | Crée une île pour la cible (en ligne ou non). Owner = cible. Preset défaut `classic`. Plafond `maxIslandsPerPlayer`, hors `enableDebugCommands`. |
 | `/pw debug setowner <cible> <nouveau>` | Op 4 + `enableDebugCommands` | Transfert owner logique |
 | `/pw debug reload-access [cible]` | Op 4 + debug | Relit JSON access + resync DA |
 | `/pw debug reload-island <cible>` | Op 4 + debug | Expulse, purge TEMP, resync ; unload DA best-effort (API unload = DA ≥ 0.1.3) |

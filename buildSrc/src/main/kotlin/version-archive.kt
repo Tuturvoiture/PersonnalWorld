@@ -3,8 +3,11 @@ package fr.galsaxx.build
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Instant
@@ -42,6 +45,26 @@ object VersionArchive {
 		val root = project.rootProject
 		project.tasks.matching { it.name == "buildAndCollect" }.configureEach {
 			finalizedBy(root.tasks.named("writePendingPatchNotes"))
+		}
+	}
+
+	/**
+	 * Chaque tâche `build` d'un loader copie le jar remappé vers
+	 * `builds/<mod.version>/<mod.version>-<loader>.jar`.
+	 * Le fichier est ignoré par Git (voir `.gitignore`).
+	 */
+	fun wireVersionJar(project: Project, loader: String) {
+		val version = project.providers.gradleProperty("mod.version")
+		val copy = project.tasks.register<Copy>("copyVersionJar") {
+			group = "versioned"
+			description = "Copie le jar joueur vers builds/<version>/<version>-<loader>.jar (hors Git)."
+			val remap = project.tasks.named("remapJar", AbstractArchiveTask::class.java)
+			from(remap.flatMap { it.archiveFile })
+			into(project.rootProject.layout.projectDirectory.dir("builds").dir(version))
+			rename { "${version.get()}-$loader.jar" }
+		}
+		project.tasks.named("build").configure {
+			finalizedBy(copy)
 		}
 	}
 

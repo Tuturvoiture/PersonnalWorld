@@ -265,6 +265,210 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `invite/`, `IslandMembersApi`, `PersonnalWorldCommand`, `libs/darchitect-*.jar` ≥ 0.1.2  
 **Suite :** Brancher l’UI carnet sur `IslandMembersApi` (permissions, liste îles).
 
+## P048 — Exécution GUI îles
+**Demande :** Implémenter le plan GUI îles (fonctionnel), sans modifier le fichier de plan, jusqu’aux todos.  
+**Livré :** `1.4.0-alpha.19`. Deux onglets, ids multi-slot, plafond, presets, réglages, `/pw create`, gamerules au load/reload. Tests `:fabric:test` verts (9). Refonte graphique laissée ouverte.  
+**Pointeurs :** `docs/ISLAND_UI.md` ; `src/main/java/fr/galsaxx/island/` ; `AdventureBookScreen` ; `IslandBookNetworking`  
+**Suite :** Vérif manuelle des trois checklists `docs/tests/island-ui-*.md`. Pas de commit tant que non demandé.
+
+## P049 — Vérification du lot GUI
+**Demande :** Vérification intégrale de ce qui vient d'être livré.  
+**Livré :** `1.4.0-alpha.20`. Correctifs : page de l'île active après réception de la liste ; bâton lit le flag `active` ; catalogue chargé au démarrage ; saisie de nom conservée pendant un refresh.  
+**Pointeurs :** `AdventureBookScreen` ; `PersonnalWorldItem` ; `AccessFileStore.warmDirectory`  
+**Suite :** Checklists manuelles en jeu.
+
+## P050 — Compatibilité avec l'existant
+**Demande :** Revérifier le lot îles contre les ids, invitations, bâton et accès déjà en place.  
+**Livré :** `1.4.0-alpha.21`. Invite / visite / setowner utilisent l'île active du catalogue. Slot 0 inchangé s'il n'y a qu'une île. JSON sans `active` = actif.  
+**Pointeurs :** `AccessFileStore.activeOrFirstOwned` ; `IslandAccessService` ; `IslandDirectory.resolveVisitTarget`  
+**Suite :** Checklists manuelles en jeu.
+
+## P051 — Copie du jar à chaque build
+**Demande :** Chaque build copie le jar dans `builds/<version>/<version>-<loader>.jar`, sans le suivre dans Git.  
+**Livré :** `1.4.0-alpha.22`. Tâche `copyVersionJar` après `build` (Fabric et NeoForge). `.gitignore` : `builds/**/*.jar`. Règle dans `versioning.mdc`.  
+**Pointeurs :** `buildSrc/.../version-archive.kt` ; `docs/VERSIONING.md`  
+**Suite :** —
+
+## P052 — Crash client sync_island_members
+**Demande :** Le client Fabric plante au lancement (terminal 11).  
+**Livré :** Traces de démarrage sur l’enregistrement du paquet membres. Pas encore de correctif.  
+**Pointeurs :** `SyncIslandMembersPayload` ; crash `personnalworld:sync_island_members` already registered  
+**Suite :** Relancer le client et lire `debug-fe02b9.log`.
+
+## P053 — Correctif double enregistrement membres
+**Demande :** Le client plante toujours sur `sync_island_members` déjà enregistré.  
+**Livré :** `1.4.0-alpha.23`. Le type S2C membres n’est plus enregistré côté client avant le receiver. Traces laissées pour la vérif.  
+**Pointeurs :** `SyncIslandMembersPayload.register` ; `debug-fe02b9.log`  
+**Suite :** Relancer le client et confirmer la ligne « after registerReceiver ».
+
+## P054 — Traces retirées
+**Demande :** Le plantage est corrigé, retirer l’instrumentation.  
+**Livré :** Traces enlevées. Le type S2C membres reste réservé au serveur (`1.4.0-alpha.23`).  
+**Pointeurs :** `SyncIslandMembersPayload.register`  
+**Suite :** —
+
+## P055 — Spawn, nom du bâton, panneau droits
+**Demande :** Déplacer le spawn (bouton grisé hors dim, confirmation, pas dans le vide, remettre l’ancien bloc, bloc plein). Nom « Monde 1 » / « World 1 » pour le premier monde du bâton. Panneau de droits par île.  
+**Livré :** `1.4.0-alpha.24`. `SpawnMove` + relocation, nom par défaut à la langue, panneau Droits sur l’accès existant. Checklist `docs/tests/island-ui-spawn-droits.md`.  
+**Pointeurs :** `PersonalWorldSpawnReference.relocate` ; `IslandAccessService.inviteOn` ; `AdventureBookScreen`  
+**Suite :** Vérifier en jeu.
+
+## P056 — Crash DA au démarrage du monde
+**Demande :** Le serveur intégré plante : DimensionArchitect API is not initialized.  
+**Livré :** `1.4.0-alpha.25`. L’application des droits passe de SERVER_STARTING à SERVER_STARTED. Traces laissées pour la vérif.  
+**Pointeurs :** `PresenceAndRightsGuard.onServerStarted`  
+**Suite :** Relancer le client et entrer dans le monde.
+
+## P057 — DA encore absent à SERVER_STARTED
+**Demande :** Le monde plante encore, cette fois dans `onServerStarted`.  
+**Livré :** `1.4.0-alpha.26`. L’envoi des droits attend le premier tick, après `setInstance` de DimensionArchitect.  
+**Pointeurs :** `PresenceAndRightsGuard.onServerTick` ; `DimensionArchitectRuntime.getOrNull`  
+**Suite :** Relancer et entrer dans le monde.
+
+## P058 — Traces retirées
+**Demande :** Le plantage est corrigé, retirer l’instrumentation.  
+**Livré :** Traces enlevées. Les droits partent au premier tick une fois DimensionArchitect prêt (`1.4.0-alpha.26`).  
+**Pointeurs :** `PresenceAndRightsGuard.onServerTick`  
+**Suite :** —
+
+## P059 — Carnet lisible + langues
+**Demande :** Rendre l’interface compréhensible, et traduire l’interface plus les textes encore en anglais dans toutes les langues du mod.  
+**Livré :** Onglet actif visible, noms sous les icônes, états sur les boutons, invitations dans le cadre, types d’île traduits. Les 10 langues ont les mêmes clés (`1.4.0-alpha.27`).  
+**Pointeurs :** `fabric/.../AdventureBookScreen.java`, `assets/personnalworld/lang/`  
+**Suite :** —
+
+## P060 — Texte crème sur le parchemin
+**Demande :** Le texte noir sur le fond sombre ne se voit pas.  
+**Livré :** Libellés du parchemin et noms sous les icônes en crème avec ombre (`1.4.0-alpha.28`). Les boutons clairs gardent l’encre foncée.  
+**Pointeurs :** `AdventureBookScreen`, `AdventureBookImageButton`  
+**Suite :** —
+
+## P061 — Texte des boutons
+**Demande :** La couleur du texte dans les boutons n’est toujours pas lisible.  
+**Livré :** Noir net, sans ombre, sur fond clair (`1.4.0-alpha.29`).  
+**Pointeurs :** `AdventureBookImageButton.renderParchment`  
+**Suite :** —
+
+## P062 — Noms d’îles
+**Demande :** Les textes des îles ne sont pas assez visibles.  
+**Livré :** Nom, « active » et rôle en blanc avec contour noir (`1.4.0-alpha.30`).  
+**Pointeurs :** `AdventureBookScreen.drawOutlined`  
+**Suite :** —
+
+## P063 — Textes du parchemin couverts
+**Demande :** Les noms d’îles, les textes de description de page et le reste ne sont pas visibles.  
+**Livré :** Blanc sur plaque noire, dessiné après les icônes. Les noms ne sont plus sous le sprite (`1.4.0-alpha.31`).  
+**Pointeurs :** `AdventureBookScreen.drawOutlinedAt`  
+**Suite :** —
+
+## P064 — Plus de bandeau noir
+**Demande :** Le bandeau noir derrière les textes est nul.  
+**Livré :** Texte blanc, contour noir, plus de rectangle (`1.4.0-alpha.32`).  
+**Pointeurs :** `AdventureBookScreen.drawOutlinedAt`  
+**Suite :** —
+
+## P065 — Build alpha
+**Demande :** Build l’alpha.  
+**Livré :** `:fabric:1.21.1:build` OK. Jar `builds/1.4.0-alpha.32/1.4.0-alpha.32-fabric.jar`.  
+**Pointeurs :** `gradle.properties` `mod.version`  
+**Suite :** —
+
+## P066 — Notes depuis 1.3.1
+**Demande :** Patch notes depuis la dernière v1.3.1.  
+**Livré :** Agrégat joueur 1.4.0-alpha.32 (carnet, îles, invitations, correctifs). Pas de fichier `PATCHNOTES.md` généré.  
+**Pointeurs :** `docs/CHANGELOG_WIP.md`  
+**Suite :** —
+
+## P067 — Notes EN en fichier
+**Demande :** Un fichier md avec le patch note en anglais, comme d’habitude.  
+**Livré :** `builds/1.4.0-alpha.32/CURSEFORGE_EN.md` (depuis 1.3.1).  
+**Pointeurs :** `builds/1.4.0-alpha.32/CURSEFORGE_EN.md`  
+**Suite :** —
+
+## P068 — Invitations : rejoindre
+**Demande :** L’invité voit l’île mais ne peut pas la rejoindre, et l’inviteur voit l’île de l’autre dans son livre.  
+**Livré :** Bouton Rejoindre si le rôle est enregistré. Les visites temporaires ne remplissent plus l’onglet Îles invitées (`1.4.0-alpha.33`).  
+**Pointeurs :** `IslandAccessService.joinInvited`, `AccessFileStore.listInvited`  
+**Suite :** —
+
+## P069 — Audit invitations
+**Demande :** Corriger tout le parcours d’invitation (entrée, sync, co-créateur, leave, droits, bâton, UUID).  
+**Livré :** `1.4.0-alpha.34`. Visit et Rejoindre = whitelist sur une île déjà là. Livres rafraîchis. Co-créateur gère l’île affichée. Visiteur bloqué (casse, pose, coffres, coups).  
+**Pointeurs :** `IslandAccessService`, `IslandRoleGuard`, `PersonnalWorldItem`  
+**Suite :** —
+
+## P070 — Visiteur peut entrer
+**Demande :** Le visiteur n’entre pas ; messages de TP en barre d’action désactivable ; prévenir l’invité ; sauver la position au Rejoindre comme le bâton.  
+**Livré :** `1.4.0-alpha.35`. JOIN visiteur via `IslandVisitorAccess`. Barre d’action `actionBarMessages`. Position de retour au join.  
+**Pointeurs :** `IslandVisitorAccess`, `ReturnTeleport.rememberIfAllowed`, `PersonnalWorldConfig`  
+**Suite :** —
+
+## P071 — Invitation dans le tchat
+**Demande :** Les messages d’invitation doivent être dans le tchat du joueur.  
+**Livré :** `1.4.0-alpha.36`. L’invité reçoit `invited_you` en tchat. La barre d’action ne garde que les téléportations.  
+**Pointeurs :** `IslandAccessService.inviteOn`  
+**Suite :** —
+
+## P072 — Liste d’invitations
+**Demande :** Liste des invités et leur rôle, bouton Ajouter, puis joueurs connectés qui remplissent le champ, avec Rafraîchir et Ajouter.  
+**Livré :** `1.4.0-alpha.37`. Page invitations = membres. Page ajout = liste client `getPlayerList`, champ en bas.  
+**Pointeurs :** `AdventureBookScreen.buildRights`, `buildAddInvite`  
+**Suite :** —
+
+## P073 — Message de rôle différé
+**Demande :** Le tchat de changement de rôle seulement en quittant Invitations ou le livre, et seulement le dernier changement réel.  
+**Livré :** `1.4.0-alpha.38`. Clics locaux, envoi `quiet` à la sortie, une ligne `role_ok` pour le dernier rôle différent.  
+**Pointeurs :** `AdventureBookScreen.flushRoleEdits`  
+**Suite :** —
+
+## P074 — Nom du propriétaire
+**Demande :** Afficher le nom du joueur à qui appartient le monde dans les invitations.  
+**Livré :** `1.4.0-alpha.39`. Sous l’icône : nom de l’île, `ownerNameHint`, puis le rôle.  
+**Pointeurs :** `AdventureBookScreen` liste Îles invitées  
+**Suite :** —
+
+## P075 — Visiteur et animation du livre
+**Demande :** Un invité ne doit pas blesser les animaux, même via un autre mod. Vérifier les contournements (casse, objets, coffres). L’ouverture du livre ne doit animer que celui qui l’ouvre.  
+**Livré :** `1.4.0-alpha.40`. Coup visiteur annulé (y compris entité au pseudo). Animation du carnet par joueur, plus d’état GeckoLib partagé.  
+**Pointeurs :** `IslandPvpGuard`, `PlayerEntityMixin.attack`, `BookReadingPayload`, `AdventureBookGeoRenderer.getInstanceId`  
+**Suite :** Vérifier en jeu que la vache ne prend pas de dégâts et que l’autre carnet reste fermé.
+
+## P076 — Carnet encore partagé
+**Demande :** L’attaque visiteur est bonne. Le carnet s’ouvre encore chez les autres.  
+**Livré :** `1.4.0-alpha.41`. La couverture est refermée au dessin si la pile n’est pas celle en lecture.  
+**Pointeurs :** `AdventureBookItem.isVisuallyOpen`, `AdventureBookGeoRenderer`  
+**Suite :** Revérifier à deux joueurs.
+
+## P077 — Retrait des traces
+**Demande :** Le carnet et les attaques sont bons. Retirer l’instrumentation.  
+**Livré :** Traces `AgentDebugLog` retirées. Le blocage des coups et la couverture par pile restent.  
+**Pointeurs :** `IslandPvpGuard`, `AdventureBookGeoRenderer`  
+**Suite :** —
+
+## P078 — Alignement max_simultaneous DA
+**Demande :** PersonnalWorld doit forcer le `max_simultaneous` de DimensionArchitect à son quota, avec une ligne toml pour désactiver.  
+**Livré :** `1.4.0-alpha.42`. `syncDarchitectMaxSimultaneous` (défaut true) → `DArchitectQuotaSync` écrit 64 puis `reloadConfig`.  
+**Pointeurs :** `DArchitectQuotaSync`, `personnalworld.toml`  
+**Suite :** —
+
+## P079 — Passage en beta
+**Demande :** Mettre le jar 1.4.0-alpha.42 en beta.  
+**Livré :** `1.4.0-beta.2` (beta.0 / beta.1 déjà pris). Rebuild Fabric.  
+**Pointeurs :** `gradle.properties`, `builds/1.4.0-beta.2/`  
+**Suite :** —
+
+## P080 — Patch notes EN depuis 1.3.1
+**Demande :** Patch note en anglais depuis la v1.3.1 pour la beta.2.  
+**Livré :** `builds/1.4.0-beta.2/CURSEFORGE_EN.md` ; lien depuis `RELEASE_NOTES_EN.md`.  
+**Pointeurs :** `builds/1.4.0-beta.2/CURSEFORGE_EN.md`  
+**Suite :** —
+
+## P081 — Commit push PR
+**Demande :** Commit + push + pull request.  
+**Livré :** Commit branche `feature/livre-interface-iles`, push origin, PR vers main.  
+**Pointeurs :** `builds/1.4.0-beta.2/CURSEFORGE_EN.md`  
+**Suite :** —
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
@@ -283,4 +487,4 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 | Flux use→open→GUI→close→idle_closed | Oui — paquets réseau | ✅ |
 | Bump version 1.4.0-alpha.0 | Oui | ✅ |
 | Commit GalsaxX_FR | Oui — c8aefc7 | ✅ |
-| Interface complète (phase 2) | Non — déféré | ⏳ |
+| Interface complète (phase 2) | Fonctionnel alpha.19 — graphisme plus tard | ⏳ |

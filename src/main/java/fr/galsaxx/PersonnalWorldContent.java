@@ -54,10 +54,24 @@ public final class PersonnalWorldContent {
 		});
 		LifecycleEvent.SERVER_STARTING.register(server -> {
 			PersonnalWorldConfig.load();
+			fr.galsaxx.config.DArchitectQuotaSync.applyIfEnabled();
 			PresenceAndRightsGuard.onServerStarting(server);
 		});
+		LifecycleEvent.SERVER_STARTED.register(server ->
+				fr.galsaxx.island.IslandGameruleSync.applyLoadedPersonalWorlds(server));
+		LifecycleEvent.SERVER_LEVEL_LOAD.register(world -> {
+			String id = world.getRegistryKey().getValue().toString();
+			if (fr.galsaxx.invite.IslandIds.isPersonalIsland(id)) {
+				fr.galsaxx.island.IslandGameruleSync.apply(world);
+			}
+		});
+		fr.galsaxx.island.IslandPvpGuard.register();
+		fr.galsaxx.island.IslandRoleGuard.register();
+		dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(player ->
+				fr.galsaxx.island.IslandNameRefresh.onJoin(player));
 		PresenceAndRightsGuard.register();
 		SyncIslandMembersPayload.register();
+		fr.galsaxx.network.IslandBookNetworking.registerServer();
 		dev.architectury.utils.EnvExecutor.runInEnv(
 				dev.architectury.utils.Env.CLIENT,
 				() -> SyncIslandMembersPayload::registerClientReceiver);

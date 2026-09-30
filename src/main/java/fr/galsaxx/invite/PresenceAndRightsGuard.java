@@ -18,6 +18,7 @@ public final class PresenceAndRightsGuard {
 	private static final int CHECK_INTERVAL_TICKS = 40;
 	private static final Map<UUID, String> LAST_DIM = new ConcurrentHashMap<>();
 	private static int tickCounter;
+	private static boolean rolesApplied;
 
 	private PresenceAndRightsGuard() {}
 
@@ -28,12 +29,10 @@ public final class PresenceAndRightsGuard {
 	}
 
 	public static void onServerStarting(MinecraftServer server) {
+		rolesApplied = false;
 		AccessFileStore.get().bindServer(server);
+		AccessFileStore.get().warmDirectory();
 		TempVisitorStore.get().clearAll();
-		// TEMP never persists; re-apply whitelist-only roles to drop orphan DA GUESTs.
-		for (IslandDirectory.IslandMeta meta : IslandDirectory.get().all()) {
-			AccessFileStore.get().getCached(meta.dimensionId()).ifPresent(DArchitectAccess::applyRecord);
-		}
 	}
 
 	private static void onQuit(ServerPlayerEntity player) {
@@ -42,6 +41,12 @@ public final class PresenceAndRightsGuard {
 	}
 
 	private static void onServerTick(MinecraftServer server) {
+		if (!rolesApplied && DArchitectAccess.isReady()) {
+			rolesApplied = true;
+			for (IslandDirectory.IslandMeta meta : IslandDirectory.get().all()) {
+				AccessFileStore.get().getCached(meta.dimensionId()).ifPresent(DArchitectAccess::applyRecord);
+			}
+		}
 		tickCounter++;
 		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 			String current = player.getServerWorld().getRegistryKey().getValue().toString();
@@ -65,6 +70,7 @@ public final class PresenceAndRightsGuard {
 			AccessRecord record = AccessFileStore.get().ensureFresh(dim, ownerFallback, "");
 			if (!IslandAccessService.get().hasJoin(record, player.getUuid())) {
 				player.sendMessage(Text.translatable("message.personnalworld.pw.evicted"), false);
+				fr.galsaxx.util.ReturnTeleport.forgetIfDimension(player, dim);
 				fr.galsaxx.util.ReturnTeleport.teleportHome(player);
 			}
 		}

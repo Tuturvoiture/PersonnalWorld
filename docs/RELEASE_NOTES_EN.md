@@ -1,3 +1,15 @@
+## PersonnalWorld 1.4.0-beta.2
+
+> CurseForge paste-ready copy: [`builds/1.4.0-beta.2/CURSEFORGE_EN.md`](../builds/1.4.0-beta.2/CURSEFORGE_EN.md)
+
+### Highlights
+
+- Adventure journal with islands, invites, and roles on Fabric 1.21.1.
+- Changes since **1.3.1** (book UI, visitor rules, DA quota sync).
+- DimensionArchitect **≥ 0.1.2** required.
+
+---
+
 ## PersonnalWorld 1.4.0-beta.0
 
 > CurseForge paste-ready copy: [`builds/1.4.0-beta.0/CURSEFORGE_EN.md`](../builds/1.4.0-beta.0/CURSEFORGE_EN.md)

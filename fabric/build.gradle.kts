@@ -36,6 +36,8 @@ val shadowBundle: Configuration by configurations.creating {
 configurations {
 	compileClasspath.get().extendsFrom(commonBundle)
 	runtimeClasspath.get().extendsFrom(commonBundle)
+	testCompileClasspath.get().extendsFrom(commonBundle)
+	testRuntimeClasspath.get().extendsFrom(commonBundle)
 	get("developmentFabric").extendsFrom(commonBundle)
 }
 
@@ -62,6 +64,12 @@ dependencies {
 
 	commonBundle(project(path = common.path, configuration = "namedElements")) { isTransitive = false }
 	shadowBundle(project(path = common.path, configuration = "transformProductionFabric")) { isTransitive = false }
+
+	testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+}
+
+tasks.test {
+	useJUnitPlatform()
 }
 
 loom {
@@ -129,3 +137,4 @@ tasks.register<Copy>("buildAndCollect") {
 }
 
 fr.galsaxx.build.VersionArchive.wireBuildAndCollect(project)
+fr.galsaxx.build.VersionArchive.wireVersionJar(project, loader)

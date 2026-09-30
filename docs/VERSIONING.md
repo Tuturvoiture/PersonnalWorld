@@ -72,10 +72,14 @@ Dossier **durable** à la racine, séparé de `build/` Gradle :
 builds/
   INDEX.md
   <mod.version>/
-    PATCHNOTES.md    # généré au build (voir règles ci-dessous)
-    META.md          # date, rev Git, loaders
-    jars/            # copies locales (gitignore)
+    PATCHNOTES.md
+    META.md
+    <mod.version>-<loader>.jar   # copie locale à chaque build (gitignore)
 ```
+
+Exemple : `builds/1.4.0-alpha.22/1.4.0-alpha.22-fabric.jar`.
+
+Chaque tâche Gradle `build` d'un loader (Fabric ou NeoForge) copie le jar remappé à cet emplacement. Les notes restent dans Git. Les `.jar` sous `builds/` ne sont pas versionnés.
 
 Même `PATCHNOTES.md` + `META.md` sont aussi écrits sous `build/libs/<mod.version>/`.
 

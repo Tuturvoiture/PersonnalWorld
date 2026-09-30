@@ -1,6 +1,7 @@
 package fr.galsaxx.invite;
 
 import fr.galsaxx.PersonnalWorld;
+import fr.galsaxx.island.IslandIdParser;
 import net.minecraft.util.Identifier;
 
 import java.util.Locale;
@@ -16,7 +17,15 @@ public final class IslandIds {
 	private IslandIds() {}
 
 	public static String dimensionIdForPlayer(UUID playerUuid) {
-		return PersonnalWorld.MOD_ID + ":" + PATH_PREFIX + playerUuid.toString();
+		return IslandIdParser.dimensionId(playerUuid, 0);
+	}
+
+	public static String dimensionIdForSlot(UUID playerUuid, int slot) {
+		return IslandIdParser.dimensionId(playerUuid, slot);
+	}
+
+	public static int slotIndex(String dimensionId) {
+		return IslandIdParser.slotIndex(dimensionId);
 	}
 
 	public static Identifier identifierForPlayer(UUID playerUuid) {
@@ -31,15 +40,7 @@ public final class IslandIds {
 		if (!isPersonalIsland(dimensionId)) {
 			return Optional.empty();
 		}
-		String path = dimensionId.substring((PersonnalWorld.MOD_ID + ":").length());
-		if (!path.startsWith(PATH_PREFIX)) {
-			return Optional.empty();
-		}
-		try {
-			return Optional.of(UUID.fromString(path.substring(PATH_PREFIX.length())));
-		} catch (IllegalArgumentException e) {
-			return Optional.empty();
-		}
+		return IslandIdParser.creatorUuid(dimensionId);
 	}
 
 	/** File-safe key for access JSON (no colon). */

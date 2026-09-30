@@ -1,6 +1,8 @@
 package fr.galsaxx.mixin;
 
+import fr.galsaxx.island.IslandRoleGuard;
 import fr.galsaxx.util.ReturnPositionSaver;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,5 +36,14 @@ public abstract class PlayerEntityMixin implements ReturnPositionSaver {
     @Override
     public void setReturnPosition(NbtCompound nbt) {
         this.personnalworld$returnPosition = nbt;
+    }
+
+    @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+    private void personnalworld$visitorNoAttack(Entity target, CallbackInfo ci) {
+        PlayerEntity self = (PlayerEntity) (Object) this;
+        if (!IslandRoleGuard.visitor(self)) {
+            return;
+        }
+        ci.cancel();
     }
 }

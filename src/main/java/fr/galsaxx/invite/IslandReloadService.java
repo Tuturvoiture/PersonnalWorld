@@ -52,6 +52,14 @@ public final class IslandReloadService {
 		IslandAccessService.get().evictEveryone(server, dim);
 		IslandAccessService.get().purgeTempsForDimension(dim);
 		reloadOne(server, dim);
+		net.minecraft.util.Identifier parsed = net.minecraft.util.Identifier.tryParse(dim);
+		if (parsed != null) {
+			net.minecraft.server.world.ServerWorld loaded = server.getWorld(
+					net.minecraft.registry.RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, parsed));
+			if (loaded != null) {
+				fr.galsaxx.island.IslandGameruleSync.apply(loaded);
+			}
+		}
 
 		boolean unloaded = tryUnloadViaCommand(server, source, dim);
 		if (unloaded) {

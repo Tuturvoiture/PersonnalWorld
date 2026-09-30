@@ -18,10 +18,11 @@ public final class AdventureBookImageButton extends ButtonWidget {
 		ICON_ONLY
 	}
 
-	private static final int FRAME = 0xFF5C3A1E;
-	private static final int FILL = 0xFFD7C09A;
-	private static final int FILL_HOVER = 0xFFE8D4B0;
-	private static final int LABEL = 0xFF3A2412;
+	private static final int FRAME = 0xFF2A1810;
+	private static final int FILL = 0xFFFFF6E4;
+	private static final int FILL_HOVER = 0xFFFFFFFF;
+	private static final int FILL_OFF = 0xFFE4D4BC;
+	private static final int LABEL = 0xFF140C06;
 
 	private final @Nullable Identifier icon;
 	private final int iconTexW;
@@ -116,23 +117,31 @@ public final class AdventureBookImageButton extends ButtonWidget {
 			);
 		}
 		if (!this.getMessage().getString().isEmpty()) {
-			context.drawCenteredTextWithShadow(
-					MinecraftClient.getInstance().textRenderer,
-					this.getMessage(),
-					this.getX() + this.width / 2,
-					this.getY() + this.height + 2,
-					LABEL
-			);
+			var renderer = MinecraftClient.getInstance().textRenderer;
+			Text label = this.getMessage();
+			int max = Math.max(8, this.width + 10);
+			if (renderer.getWidth(label) > max) {
+				label = Text.literal(renderer.trimToWidth(label.getString(), max));
+			}
+			int x = this.getX() + (this.width - renderer.getWidth(label)) / 2;
+			int y = this.getY() + this.height + 4;
+			int outline = 0xFF000000;
+			context.drawText(renderer, label, x - 1, y, outline, false);
+			context.drawText(renderer, label, x + 1, y, outline, false);
+			context.drawText(renderer, label, x, y - 1, outline, false);
+			context.drawText(renderer, label, x, y + 1, outline, false);
+			context.drawText(renderer, label, x, y, 0xFFFFFFFF, false);
 		}
 	}
 
 	private void renderParchment(DrawContext context) {
-		int fill = this.isHovered() ? FILL_HOVER : FILL;
+		int fill = !this.active ? FILL_OFF : (this.selected ? 0xFFFFD98A : (this.isHovered() ? FILL_HOVER : FILL));
+		int frame = this.selected ? 0xFF140C06 : FRAME;
 		context.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, fill);
-		context.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + 1, FRAME);
-		context.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, FRAME);
-		context.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, FRAME);
-		context.fill(this.getX() + this.width - 1, this.getY(), this.getX() + this.width, this.getY() + this.height, FRAME);
+		context.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + 1, frame);
+		context.fill(this.getX(), this.getY() + this.height - 1, this.getX() + this.width, this.getY() + this.height, frame);
+		context.fill(this.getX(), this.getY(), this.getX() + 1, this.getY() + this.height, frame);
+		context.fill(this.getX() + this.width - 1, this.getY(), this.getX() + this.width, this.getY() + this.height, frame);
 
 		int contentTop = this.getY() + 3;
 		if (this.icon != null) {
@@ -156,16 +165,22 @@ public final class AdventureBookImageButton extends ButtonWidget {
 			contentTop += iconDraw + 2;
 		}
 
-		Text label = this.getMessage();
+		Text label = fittedLabel();
+		var renderer = MinecraftClient.getInstance().textRenderer;
 		int textY = this.icon != null
 				? Math.min(contentTop, this.getY() + this.height - 12)
 				: this.getY() + (this.height - 8) / 2;
-		context.drawCenteredTextWithShadow(
-				MinecraftClient.getInstance().textRenderer,
-				label,
-				this.getX() + this.width / 2,
-				textY,
-				LABEL
-		);
+		int textX = this.getX() + (this.width - renderer.getWidth(label)) / 2;
+		context.drawText(renderer, label, textX, textY, this.active ? LABEL : 0xFF4A3C2C, false);
+	}
+
+	private Text fittedLabel() {
+		Text label = this.getMessage();
+		var renderer = MinecraftClient.getInstance().textRenderer;
+		int max = Math.max(8, this.width - 6);
+		if (renderer.getWidth(label) <= max) {
+			return label;
+		}
+		return Text.literal(renderer.trimToWidth(label.getString(), max));
 	}
 }

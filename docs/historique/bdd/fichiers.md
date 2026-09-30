@@ -9,17 +9,17 @@ Regarder ici **avant** un grep projet.
 - Jars API : `libs/darchitect-fabric.jar`, `libs/darchitect-neoforge.jar` (≥ **0.1.2**)
 - PATCHNOTES API : `docs/historique/api-darchitect/PATCHNOTES-0.1.2.txt`
 - Rapport invitations / accès public : `docs/historique/api-darchitect/2026-09-17_access-api-public-sync-roles.md` (statut intégré)
-- PATCHNOTES par version : `script/generate-patchnotes.ps1 -All` ou Gradle `generateAllLibsPatchNotes` → `build/libs/<ver>/` + `builds/<ver>/` ; beta/stable = agrégat dédupliqué
+- PATCHNOTES par version : `script/generate-patchnotes.ps1 -All` ou Gradle `generateAllLibsPatchNotes` → `build/libs/<ver>/` + `builds/<ver>/`. Jar joueur à chaque `build` : `builds/<ver>/<ver>-<loader>.jar` (gitignore).
 - Inventaire mondes perso : `PersonnalWorldUtil` → `isolatePlayerData(!shareInventory)` via `PersonnalWorldConfig`
-- Config serveur : `config/PersonnalWorldConfig.java` → `config/personnalworld.toml`
+- Config serveur : `config/PersonnalWorldConfig.java` → `config/personnalworld.toml` ; sync DA : `config/DArchitectQuotaSync.java`
 - Bloc spawn : `PersonnalWorldContent.SPAWN_MARKER` ; `PersonalWorldSpawnReference` ; assets `textures/block/spawn_marker.*`
 
 ## Gameplay (`src/`)
 
 - Entrée / item / bloc : `PersonnalWorld.java`, `PersonnalWorldContent.java`, `block/PersonalSpawnMarkerBlock.java`, `PersonnalWorldItem.java`
 - Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`, `command/PersonnalWorldCommand.java`
-- Invitations / droits : `invite/` — façade UI `IslandMembersApi` → `IslandAccessService` / `AccessFileStore` / `DArchitectAccess` ; garde `PresenceAndRightsGuard` ; fichiers `<world>/personnalworld/access/`
-- Réseau UI : `network/SyncIslandMembersPayload` (S2C Architectury) + `IslandMembersClientCache` ; C2S livre = futur
+- Invitations / droits : `invite/` — façade UI `IslandMembersApi` → `IslandAccessService` / `AccessFileStore` / `DArchitectAccess` ; garde `PresenceAndRightsGuard` ; visiteur `island/IslandRoleGuard.java` ; fichiers `<world>/personnalworld/access/`
+- Réseau UI : `network/SyncIslandMembersPayload` (membres) ; `network/IslandBookNetworking` (listes îles, presets, réglages) + `fabric/…/client/IslandBookClient`
 - Offline / TEMP : `PlayerRef.resolve` ; TEMP réinjectés dans `DArchitectAccess.applyRecord`
 - Mixin : `mixin/PlayerEntityMixin.java`, `personnalworld.mixins.json` ; NBT `data/personnalworld/structure/ile_1.nbt`
 - Loaders : `fabric/…/PersonnalWorldFabric.java`, `PersonnalWolrdClient.java` ; `neoforge/…/PersonnalWorldNeoForge.java`
@@ -40,7 +40,7 @@ Regarder ici **avant** un grep projet.
 - Assets : `geo/item/adventure_book.geo.json`, `animations/item/adventure_book.animation.json`, `textures/item/adventure_book.png`
 - Models : `models/item/adventure_book.json` (fallback), `models/item/adventure_book_geckolib.json` (builtin/entity)
 - Référence Blockbench : `docs/reference/blockbench/adventure_book.bbmodel`
-- Screen placeholder : `fabric/…/client/AdventureBookScreen.java` (parchemin responsive + onglets test)
+- Écran îles : `fabric/…/client/AdventureBookScreen.java` (Mes îles / Îles invitées, parchemin existant). Continuité : `docs/ISLAND_UI.md`. Règles pures : `src/main/java/fr/galsaxx/island/`
 - Boutons custom : `fabric/…/client/AdventureBookImageButton.java` (presets / permissions)
 - Texture GUI : `textures/gui/adventure_book_parchment.png` (256×192) ; `island_button.png` (logo île, boutons V)
 - Pose 3P lecture : `client/AdventureBookClientPose.java` + `mixin/client/PlayerEntityRendererMixin.java`

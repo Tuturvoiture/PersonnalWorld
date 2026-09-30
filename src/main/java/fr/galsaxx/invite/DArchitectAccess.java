@@ -23,6 +23,10 @@ import java.util.UUID;
 public final class DArchitectAccess {
 	private DArchitectAccess() {}
 
+	public static boolean isReady() {
+		return DimensionArchitectRuntime.getOrNull() != null;
+	}
+
 	public static DimensionAccessManager manager() {
 		return DimensionArchitectRuntime.get().access();
 	}

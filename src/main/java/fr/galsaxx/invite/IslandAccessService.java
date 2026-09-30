@@ -65,11 +65,17 @@ public final class IslandAccessService {
 		if (player.equals(record.ownerUuid())) {
 			return IslandRole.OWNER;
 		}
+		AccessRecord.Member member = record.members().get(player);
+		if (member != null && member.role != null && member.role.isAssignableByInviteCommand()) {
+			return member.role;
+		}
+		if (member != null && member.role == IslandRole.BANNED) {
+			return IslandRole.BANNED;
+		}
 		if (TempVisitorStore.get().isTemp(record.dimensionId(), player)) {
 			return IslandRole.TEMP_VISITOR;
 		}
-		AccessRecord.Member m = record.members().get(player);
-		return m == null ? null : m.role;
+		return member == null ? null : member.role;
 	}
 
 	public boolean hasJoin(AccessRecord record, UUID player) {
@@ -86,14 +92,19 @@ public final class IslandAccessService {
 	}
 
 	public Result invite(MinecraftServer server, ServerPlayerEntity actor, PlayerRef target, IslandRole role) {
+		return inviteOn(server, actor, resolveManagedDimension(server, actor), target, role);
+	}
+
+	public Result inviteOn(MinecraftServer server, ServerPlayerEntity actor, String dimensionId, PlayerRef target, IslandRole role) {
 		if (role == null || !role.isAssignableByInviteCommand()) {
 			return Result.fail("message.personnalworld.pw.invalid_role");
 		}
 		if (actor.getUuid().equals(target.uuid())) {
 			return Result.fail("message.personnalworld.pw.cannot_target_self");
 		}
-		String dimId = resolveManagedDimension(server, actor);
-		AccessRecord record = ensureIslandAccess(server, dimId, actor);
+		UUID hintedOwner = IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(actor.getUuid());
+		String hintedName = hintedOwner.equals(actor.getUuid()) ? actor.getGameProfile().getName() : "";
+		AccessRecord record = ensureIslandAccess(server, dimensionId, hintedOwner, hintedName);
 		if (!canInvite(record, actor.getUuid())) {
 			return Result.fail("message.personnalworld.pw.no_permission");
 		}
@@ -101,14 +112,22 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.pw.cannot_change_owner");
 		}
 		record.putMember(target.uuid(), role, target.name());
-		revokeTemp(dimId, target.uuid());
+		revokeTemp(dimensionId, target.uuid());
 		AccessFileStore.get().saveMutation(record);
-		return Result.ok("message.personnalworld.pw.invite_ok", target.name(), role.name());
+		String ownerName = record.ownerNameHint().isBlank() ? actor.getGameProfile().getName() : record.ownerNameHint();
+		target.online().ifPresent(invited ->
+				invited.sendMessage(Text.translatable("message.personnalworld.pw.invited_you", ownerName), false));
+		return Result.ok("message.personnalworld.pw.invite_ok", target.name(), roleLabel(role));
 	}
 
 	public Result kick(MinecraftServer server, ServerPlayerEntity actor, PlayerRef target) {
-		String dimId = resolveManagedDimension(server, actor);
-		AccessRecord record = ensureIslandAccess(server, dimId, actor);
+		return kickOn(server, actor, resolveManagedDimension(server, actor), target);
+	}
+
+	public Result kickOn(MinecraftServer server, ServerPlayerEntity actor, String dimensionId, PlayerRef target) {
+		UUID hintedOwner = IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(actor.getUuid());
+		String hintedName = hintedOwner.equals(actor.getUuid()) ? actor.getGameProfile().getName() : "";
+		AccessRecord record = ensureIslandAccess(server, dimensionId, hintedOwner, hintedName);
 		if (!canManageMembers(record, actor.getUuid())) {
 			return Result.fail("message.personnalworld.pw.no_permission");
 		}
@@ -116,27 +135,31 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.pw.cannot_change_owner");
 		}
 		boolean removed = record.members().remove(target.uuid()) != null;
-		boolean tempRemoved = TempVisitorStore.get().remove(dimId, target.uuid());
+		boolean tempRemoved = TempVisitorStore.get().remove(dimensionId, target.uuid());
 		if (!removed && !tempRemoved) {
 			return Result.fail("message.personnalworld.pw.not_on_list");
 		}
 		if (removed) {
 			AccessFileStore.get().saveMutation(record);
 		} else {
-			// TEMP only: clear DA guest without rewriting whitelist file
-			DArchitectAccess.clearRole(dimId, target.uuid());
+			DArchitectAccess.clearRole(dimensionId, target.uuid());
 			DArchitectAccess.applyRecord(record);
 		}
-		evictIfPresent(server, dimId, target.uuid());
+		evictIfPresent(server, dimensionId, target.uuid());
 		return Result.ok("message.personnalworld.pw.kick_ok", target.name());
 	}
 
 	public Result setRole(MinecraftServer server, ServerPlayerEntity actor, PlayerRef target, IslandRole role) {
+		return setRoleOn(server, actor, resolveManagedDimension(server, actor), target, role);
+	}
+
+	public Result setRoleOn(MinecraftServer server, ServerPlayerEntity actor, String dimensionId, PlayerRef target, IslandRole role) {
 		if (role == null || !role.isAssignableByInviteCommand()) {
 			return Result.fail("message.personnalworld.pw.invalid_role");
 		}
-		String dimId = resolveManagedDimension(server, actor);
-		AccessRecord record = ensureIslandAccess(server, dimId, actor);
+		UUID hintedOwner = IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(actor.getUuid());
+		String hintedName = hintedOwner.equals(actor.getUuid()) ? actor.getGameProfile().getName() : "";
+		AccessRecord record = ensureIslandAccess(server, dimensionId, hintedOwner, hintedName);
 		if (!canManageMembers(record, actor.getUuid())) {
 			return Result.fail("message.personnalworld.pw.no_permission");
 		}
@@ -144,9 +167,21 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.pw.cannot_change_owner");
 		}
 		record.putMember(target.uuid(), role, target.name());
-		revokeTemp(dimId, target.uuid());
+		revokeTemp(dimensionId, target.uuid());
 		AccessFileStore.get().saveMutation(record);
-		return Result.ok("message.personnalworld.pw.role_ok", target.name(), role.name());
+		return Result.ok("message.personnalworld.pw.role_ok", target.name(), roleLabel(role));
+	}
+
+	/** Rejoint une île où le joueur est déjà invité. Ne crée pas la dimension. */
+	public Result joinInvited(MinecraftServer server, ServerPlayerEntity visitor, String dimensionId) {
+		if (!IslandIds.isPersonalIsland(dimensionId)) {
+			return Result.fail("message.personnalworld.pw.visit_denied");
+		}
+		AccessFileStore.get().bindServer(server);
+		if (!PersonnalWorldUtil.personalDimensionExists(server, dimensionId)) {
+			return Result.fail("message.personnalworld.pw.island_not_found");
+		}
+		return teleportWhitelisted(server, visitor, dimensionId, null);
 	}
 
 	public List<IslandMemberEntry> listMembers(MinecraftServer server, ServerPlayerEntity actor) {
@@ -161,52 +196,53 @@ public final class IslandAccessService {
 	public Result visit(MinecraftServer server, ServerPlayerEntity visitor, PlayerRef host, String optionalIslandName) {
 		Optional<IslandDirectory.ResolveResult> resolved =
 				IslandDirectory.get().resolveVisitTarget(host.uuid(), optionalIslandName);
-		String dimId;
-		boolean passive;
-		if (resolved.isPresent()) {
-			dimId = resolved.get().dimensionId();
-			passive = resolved.get().passive();
-		} else if (optionalIslandName != null && !optionalIslandName.isBlank()) {
+		if (resolved.isEmpty()) {
 			return Result.fail("message.personnalworld.pw.island_not_found");
-		} else {
-			dimId = IslandIds.dimensionIdForPlayer(host.uuid());
-			passive = false;
 		}
-		if (passive && !PersonnalWorldConfig.get().allowPassiveIslandVisit()) {
+		String dimId = resolved.get().dimensionId();
+		if (resolved.get().passive() && !PersonnalWorldConfig.get().allowPassiveIslandVisit()) {
 			return Result.fail("message.personnalworld.pw.passive_visit_denied");
 		}
-
-		AccessRecord record = ensureIslandAccess(server, dimId, host.uuid(), host.name());
-		if (visitor.getUuid().equals(record.ownerUuid())) {
-			return Result.fail("message.personnalworld.pw.visit_own");
+		AccessFileStore.get().bindServer(server);
+		if (!PersonnalWorldUtil.personalDimensionExists(server, dimId)) {
+			return Result.fail("message.personnalworld.pw.island_not_found");
 		}
-		IslandRole existing = effectiveRole(record, visitor.getUuid());
-		if (existing == IslandRole.BANNED) {
-			return Result.fail("message.personnalworld.pw.visit_denied");
-		}
-		boolean permanent = existing == IslandRole.CO_CREATOR || existing == IslandRole.BUILDER || existing == IslandRole.VISITOR;
+		return teleportWhitelisted(server, visitor, dimId, host.name());
+	}
 
+	/** Téléporte seulement un membre whitelist vers une dimension qui existe déjà. */
+	private Result teleportWhitelisted(MinecraftServer server, ServerPlayerEntity visitor, String dimId, String hostLabel) {
 		Identifier id = Identifier.tryParse(dimId);
 		if (id == null) {
 			return Result.fail("message.personnalworld.personal_world_unavailable");
 		}
+		UUID owner = IslandIds.creatorUuidFromDimensionId(dimId).orElse(null);
+		AccessRecord record = AccessFileStore.get().loadOrRecover(dimId, owner, "");
+		if (visitor.getUuid().equals(record.ownerUuid())) {
+			return Result.fail("message.personnalworld.pw.visit_own");
+		}
+		if (!isWhitelisted(record, visitor.getUuid())) {
+			return Result.fail("message.personnalworld.pw.visit_denied");
+		}
 		RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, id);
-		// Hôte offline OK : owner UUID dérivé de l’id de dim / fallback access file.
-		ServerPlayerEntity hostOnline = host.online().orElse(null);
+		ServerPlayerEntity hostOnline = server.getPlayerManager().getPlayer(record.ownerUuid());
 		ServerWorld world = PersonnalWorldUtil.ensurePersonalWorld(server, key, id, hostOnline);
 		if (world == null) {
 			return Result.fail("message.personnalworld.personal_world_unavailable");
 		}
-		// Access after ensure (migration / file create) — puis TEMP après, pour ne pas
-		// dépendre d’un applyRecord intermédiaire (TEMP aussi réinjectés dans applyRecord).
-		ensureIslandAccess(server, dimId, host.uuid(), host.name());
-		if (!permanent) {
-			TempVisitorStore.get().put(dimId, visitor.getUuid(), visitor.getGameProfile().getName());
-			DArchitectAccess.grantTempGuest(dimId, visitor.getUuid());
-		}
+		DArchitectAccess.applyRecord(record);
+		ReturnTeleport.rememberIfAllowed(visitor);
 		Vec3d spawn = PersonalWorldSpawnSafety.resolveTeleportPosition(world);
 		visitor.teleport(world, spawn.x, spawn.y, spawn.z, Set.of(), 0.0F, 0.0F);
-		return Result.ok("message.personnalworld.pw.visit_ok", host.name());
+		String ownerName = !record.ownerNameHint().isBlank()
+				? record.ownerNameHint()
+				: (hostLabel != null && !hostLabel.isBlank() ? hostLabel : record.ownerUuid().toString());
+		return Result.ok("message.personnalworld.pw.visit_ok", ownerName);
+	}
+
+	private static boolean isWhitelisted(AccessRecord record, UUID player) {
+		AccessRecord.Member member = record.members().get(player);
+		return member != null && member.role != null && member.role.isAssignableByInviteCommand();
 	}
 
 	public Result leave(ServerPlayerEntity player) {
@@ -215,12 +251,17 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.command_only_in_personal_world");
 		}
 		UUID uuid = player.getUuid();
-		AccessRecord record = AccessFileStore.get().getCached(current).orElse(null);
-		boolean isOwner = record != null && uuid.equals(record.ownerUuid());
-		if (isOwner) {
+		MinecraftServer server = player.getServer();
+		if (server != null) {
+			AccessFileStore.get().bindServer(server);
+		}
+		UUID owner = IslandIds.creatorUuidFromDimensionId(current).orElse(null);
+		AccessRecord record = AccessFileStore.get().loadOrRecover(current, owner, "");
+		if (uuid.equals(record.ownerUuid())) {
 			return Result.fail("message.personnalworld.pw.leave_owner");
 		}
 		revokeTemp(current, uuid);
+		ReturnTeleport.forgetIfDimension(player, current);
 		ReturnTeleport.teleportHome(player);
 		return Result.ok("message.personnalworld.pw.leave_ok");
 	}
@@ -269,6 +310,7 @@ public final class IslandAccessService {
 		String current = player.getServerWorld().getRegistryKey().getValue().toString();
 		if (dimensionId.equals(current)) {
 			player.sendMessage(Text.translatable("message.personnalworld.pw.evicted"), false);
+			ReturnTeleport.forgetIfDimension(player, dimensionId);
 			ReturnTeleport.teleportHome(player);
 		}
 	}
@@ -290,6 +332,7 @@ public final class IslandAccessService {
 		for (ServerPlayerEntity player : List.copyOf(world.getPlayers())) {
 			if (!hasJoin(record, player.getUuid())) {
 				player.sendMessage(Text.translatable("message.personnalworld.pw.evicted"), false);
+				ReturnTeleport.forgetIfDimension(player, dimensionId);
 				ReturnTeleport.teleportHome(player);
 			}
 		}
@@ -306,11 +349,13 @@ public final class IslandAccessService {
 		}
 		for (ServerPlayerEntity player : List.copyOf(world.getPlayers())) {
 			player.sendMessage(Text.translatable("message.personnalworld.pw.island_reloading"), false);
+			ReturnTeleport.forgetIfDimension(player, dimensionId);
 			ReturnTeleport.teleportHome(player);
 		}
 	}
 
 	private String resolveManagedDimension(MinecraftServer server, ServerPlayerEntity actor) {
+		AccessFileStore.get().bindServer(server);
 		String current = actor.getServerWorld().getRegistryKey().getValue().toString();
 		if (IslandIds.isPersonalIsland(current)) {
 			AccessRecord record = ensureIslandAccess(server, current, actor);
@@ -318,7 +363,12 @@ public final class IslandAccessService {
 				return current;
 			}
 		}
-		return IslandIds.dimensionIdForPlayer(actor.getUuid());
+		return AccessFileStore.get().activeOrFirstOwned(actor.getUuid())
+				.orElse(IslandIds.dimensionIdForPlayer(actor.getUuid()));
+	}
+
+	private static Text roleLabel(IslandRole role) {
+		return Text.translatable("screen.personnalworld.adventure_book.role." + role.name().toLowerCase(java.util.Locale.ROOT));
 	}
 
 	public record Result(boolean ok, String messageKey, Object[] args) {
@@ -331,11 +381,24 @@ public final class IslandAccessService {
 		}
 
 		public void send(ServerPlayerEntity player) {
-			player.sendMessage(Text.translatable(messageKey, args), false);
+			Text text = Text.translatable(messageKey, args);
+			if (travelFeedback()) {
+				ReturnTeleport.actionBar(player, text);
+				return;
+			}
+			player.sendMessage(text, false);
 		}
 
 		public void send(net.minecraft.server.command.ServerCommandSource source) {
+			if (travelFeedback() && source.getEntity() instanceof ServerPlayerEntity player) {
+				ReturnTeleport.actionBar(player, Text.translatable(messageKey, args));
+				return;
+			}
 			source.sendFeedback(() -> Text.translatable(messageKey, args), false);
+		}
+
+		private boolean travelFeedback() {
+			return "message.personnalworld.pw.visit_ok".equals(messageKey);
 		}
 	}
 }

@@ -3,12 +3,10 @@ package fr.galsaxx;
 import fr.galsaxx.config.PersonnalWorldConfig;
 import fr.galsaxx.util.PersonalWorldSpawnSafety;
 import fr.galsaxx.util.PersonnalWorldUtil;
-import fr.galsaxx.util.ReturnPositionSaver;
 import fr.galsaxx.util.ReturnTeleport;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
@@ -40,14 +38,34 @@ public class PersonnalWorldItem extends Item {
 			PersonnalWorldConfig config = PersonnalWorldConfig.get();
 			int cooldown = config.staffCooldownTicks();
 
-			String dimPath = "perso_" + user.getUuidAsString();
-			Identifier dimId = Identifier.of(PersonnalWorld.MOD_ID, dimPath);
+			fr.galsaxx.invite.AccessFileStore.get().bindServer(server);
+			java.util.List<fr.galsaxx.invite.AccessRecord> owned = fr.galsaxx.invite.AccessFileStore.get().listByOwner(user.getUuid());
+			String dimIdString;
+			if (owned.isEmpty()) {
+				dimIdString = fr.galsaxx.invite.IslandIds.dimensionIdForPlayer(user.getUuid());
+			} else {
+				fr.galsaxx.invite.AccessRecord chosen = owned.get(0);
+				for (fr.galsaxx.invite.AccessRecord record : owned) {
+					if (record.active()) {
+						chosen = record;
+						break;
+					}
+				}
+				dimIdString = chosen.dimensionId();
+			}
+			Identifier dimId = Identifier.tryParse(dimIdString);
+			if (dimId == null) {
+				return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
+			}
 			RegistryKey<World> worldKey = RegistryKey.of(RegistryKeys.WORLD, dimId);
 
 			ServerWorld currentWorld = serverPlayer.getServerWorld();
 			String currentWorldId = currentWorld.getRegistryKey().getValue().toString();
 
-			if (currentWorldId.equals(worldKey.getValue().toString())) {
+			if (fr.galsaxx.invite.IslandIds.isPersonalIsland(currentWorldId)) {
+				if (!ownsCurrentIsland(server, serverPlayer, currentWorldId)) {
+					ReturnTeleport.forgetIfDimension(serverPlayer, currentWorldId);
+				}
 				ReturnTeleport.teleportHome(serverPlayer);
 				user.getItemCooldownManager().set(this, cooldown);
 				return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
@@ -59,16 +77,7 @@ public class PersonnalWorldItem extends Item {
 				return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
 			}
 
-			if (!config.isNoSavePosition(currentWorldId)) {
-				NbtCompound posNbt = new NbtCompound();
-				posNbt.putDouble("x", serverPlayer.getX());
-				posNbt.putDouble("y", serverPlayer.getY());
-				posNbt.putDouble("z", serverPlayer.getZ());
-				posNbt.putFloat("yaw", serverPlayer.getYaw());
-				posNbt.putFloat("pitch", serverPlayer.getPitch());
-				posNbt.putString("dim", currentWorldId);
-				((ReturnPositionSaver) serverPlayer).setReturnPosition(posNbt);
-			}
+			ReturnTeleport.rememberIfAllowed(serverPlayer);
 
 			ServerWorld persoWorld = PersonnalWorldUtil.ensurePersonalWorld(
 					server,
@@ -88,7 +97,7 @@ public class PersonnalWorldItem extends Item {
 						0.0F,
 						0.0F
 				);
-				serverPlayer.sendMessage(Text.translatable("message.personnalworld.welcome_island"), false);
+				ReturnTeleport.actionBar(serverPlayer, Text.translatable("message.personnalworld.welcome_island"));
 				user.getItemCooldownManager().set(this, cooldown);
 				return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
 			}
@@ -96,5 +105,16 @@ public class PersonnalWorldItem extends Item {
 			return new TypedActionResult<>(ActionResult.FAIL, user.getStackInHand(hand));
 		}
 		return new TypedActionResult<>(ActionResult.SUCCESS, user.getStackInHand(hand));
+	}
+
+	/** Owner logique, ou créateur du chemin tant que le fichier ne dit pas le contraire. */
+	private static boolean ownsCurrentIsland(MinecraftServer server, ServerPlayerEntity player, String dimensionId) {
+		fr.galsaxx.invite.AccessFileStore.get().bindServer(server);
+		java.util.Optional<fr.galsaxx.invite.AccessRecord> record =
+				fr.galsaxx.invite.AccessFileStore.get().getCached(dimensionId);
+		if (record.isPresent()) {
+			return player.getUuid().equals(record.get().ownerUuid());
+		}
+		return player.getUuid().equals(fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(null));
 	}
 }

@@ -134,8 +134,17 @@ public final class AccessRecord {
 		members.put(uuid, new Member(uuid, role, nameHint == null ? "" : nameHint));
 	}
 
-	public void removeMember(UUID uuid) {
-		members.remove(uuid);
+	public boolean updateMemberName(UUID uuid, String name) {
+		Member current = members.get(uuid);
+		if (current == null) {
+			return false;
+		}
+		String next = name == null ? "" : name;
+		if (next.equals(current.nameHint)) {
+			return false;
+		}
+		members.put(uuid, new Member(uuid, current.role, next));
+		return true;
 	}
 
 	public List<IslandMemberEntry> toMemberEntries(boolean includeOwner, boolean includeTemp, String islandId,

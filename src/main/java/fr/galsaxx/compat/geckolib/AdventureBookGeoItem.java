@@ -7,6 +7,7 @@ import fr.galsaxx.AdventureBookItem;
 import fr.galsaxx.PersonnalWorld;
 import fr.galsaxx.client.AdventureBookClientPose;
 import fr.galsaxx.compat.geckolib.client.AdventureBookGeoRenderer;
+import fr.galsaxx.network.BookReadingPayload;
 import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -80,13 +81,23 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "book", 0, state -> {
-			if (state.getController().getCurrentRawAnimation() == null) {
+			java.util.UUID holder = AdventureBookClientPose.renderHolder();
+			boolean open = AdventureBookClientPose.isReading(holder);
+			RawAnimation current = state.getController().getCurrentRawAnimation();
+			if (open) {
+				if (current != OPEN) {
+					return state.setAndContinue(OPEN);
+				}
+				return PlayState.CONTINUE;
+			}
+			if (current == OPEN) {
+				return state.setAndContinue(CLOSE);
+			}
+			if (current == null) {
 				return state.setAndContinue(IDLE_CLOSED);
 			}
 			return PlayState.CONTINUE;
-		})
-				.triggerableAnim("open", OPEN)
-				.triggerableAnim("close", CLOSE));
+		}));
 	}
 
 	@Override
@@ -116,10 +127,14 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
+		setVisuallyOpen(stack, true);
 		user.setCurrentHand(hand);
-		EnvExecutor.runInEnv(Env.CLIENT, () -> () -> AdventureBookClientPose.setLocalReading(true));
+		EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+			AdventureBookClientPose.setLocalReading(true);
+			AdventureBookClientPose.setReading(user.getUuid(), true);
+		});
 		if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
-			triggerAnim(user, GeoItem.getOrAssignId(stack, (ServerWorld) world), "book", "open");
+			broadcastReading(serverPlayer, true);
 			PENDING_GUI_OPEN.put(serverPlayer.getUuid(), OPEN_GUI_DELAY_TICKS);
 		}
 		return TypedActionResult.consume(stack);
@@ -128,15 +143,15 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	public static void handleCloseFromClient(ServerPlayerEntity player) {
 		PENDING_GUI_OPEN.remove(player.getUuid());
 		player.clearActiveItem();
-		ItemStack stack = player.getMainHandStack();
-		AdventureBookGeoItem book = stack.getItem() instanceof AdventureBookGeoItem b ? b : null;
-		if (book == null) {
-			stack = player.getOffHandStack();
-			if (!(stack.getItem() instanceof AdventureBookGeoItem b2)) {
-				return;
-			}
-			book = b2;
+		setVisuallyOpen(player.getMainHandStack(), false);
+		setVisuallyOpen(player.getOffHandStack(), false);
+		broadcastReading(player, false);
+	}
+
+	private static void broadcastReading(ServerPlayerEntity player, boolean reading) {
+		BookReadingPayload payload = new BookReadingPayload(player.getUuid(), reading);
+		for (ServerPlayerEntity other : player.getServer().getPlayerManager().getPlayerList()) {
+			NetworkManager.sendToPlayer(other, payload);
 		}
-		book.triggerAnim(player, GeoItem.getOrAssignId(stack, player.getServerWorld()), "book", "close");
 	}
 }

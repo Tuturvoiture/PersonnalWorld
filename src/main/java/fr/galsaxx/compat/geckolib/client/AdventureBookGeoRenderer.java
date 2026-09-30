@@ -1,5 +1,6 @@
 package fr.galsaxx.compat.geckolib.client;
 
+import fr.galsaxx.client.AdventureBookClientPose;
 import fr.galsaxx.compat.geckolib.AdventureBookGeoItem;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -21,6 +22,15 @@ public final class AdventureBookGeoRenderer extends GeoItemRenderer<AdventureBoo
 	}
 
 	@Override
+	public long getInstanceId(AdventureBookGeoItem animatable) {
+		java.util.UUID holder = AdventureBookClientPose.renderHolder();
+		if (holder == null) {
+			return software.bernie.geckolib.animatable.GeoItem.getId(this.getCurrentItemStack());
+		}
+		return holder.getMostSignificantBits() ^ holder.getLeastSignificantBits();
+	}
+
+	@Override
 	public void renderRecursively(
 			MatrixStack poseStack,
 			AdventureBookGeoItem animatable,
@@ -34,7 +44,16 @@ public final class AdventureBookGeoRenderer extends GeoItemRenderer<AdventureBoo
 			int packedOverlay,
 			int colour
 	) {
-		boolean flipCoverY = "cover_front".equals(bone.getName());
+		boolean cover = "cover_front".equals(bone.getName());
+		boolean pages = "pages_front".equals(bone.getName());
+		boolean open = fr.galsaxx.AdventureBookItem.isVisuallyOpen(this.getCurrentItemStack());
+		if ((cover || pages) && !open) {
+			var rest = bone.getInitialSnapshot();
+			bone.setRotX(rest.getRotX());
+			bone.setRotY(rest.getRotY());
+			bone.setRotZ(rest.getRotZ());
+		}
+		boolean flipCoverY = cover;
 		if (flipCoverY) {
 			bone.setRotY(-bone.getRotY());
 		}

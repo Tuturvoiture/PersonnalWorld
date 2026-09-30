@@ -19,6 +19,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,6 +69,98 @@ public final class AccessFileStore {
 	public Optional<AccessRecord> getCached(String dimensionId) {
 		return Optional.ofNullable(cache.get(dimensionId));
 	}
+
+	public List<AccessRecord> listByOwner(UUID ownerUuid) {
+		List<AccessRecord> out = new ArrayList<>();
+		for (AccessRecord record : loadAllFromDisk()) {
+			if (ownerUuid != null && ownerUuid.equals(record.ownerUuid())) {
+				out.add(record);
+			}
+		}
+		out.sort(BY_SLOT);
+		return out;
+	}
+
+	/** Charge les JSON access dans le catalogue mémoire, sans inventer d'île. */
+	public void warmDirectory() {
+		for (AccessRecord record : loadAllFromDisk()) {
+			IslandDirectory.get().registerOrUpdate(record);
+		}
+	}
+
+	/** Île active du owner, sinon la première du catalogue. Vide s'il n'a aucune île. */
+	public Optional<String> activeOrFirstOwned(UUID ownerUuid) {
+		List<AccessRecord> owned = listByOwner(ownerUuid);
+		if (owned.isEmpty()) {
+			return Optional.empty();
+		}
+		for (AccessRecord record : owned) {
+			if (record.active()) {
+				return Optional.of(record.dimensionId());
+			}
+		}
+		return Optional.of(owned.get(0).dimensionId());
+	}
+
+	public List<AccessRecord> listInvited(UUID playerUuid) {
+		List<AccessRecord> out = new ArrayList<>();
+		if (playerUuid == null) {
+			return out;
+		}
+		for (AccessRecord record : loadAllFromDisk()) {
+			if (playerUuid.equals(record.ownerUuid())) {
+				continue;
+			}
+			AccessRecord.Member member = record.members().get(playerUuid);
+			if (member != null && member.role != IslandRole.BANNED) {
+				out.add(record);
+			}
+		}
+		out.sort(BY_SLOT);
+		return out;
+	}
+
+	public IslandRole invitedRole(AccessRecord record, UUID playerUuid) {
+		if (record == null || playerUuid == null) {
+			return null;
+		}
+		AccessRecord.Member member = record.members().get(playerUuid);
+		if (member != null) {
+			return member.role;
+		}
+		if (TempVisitorStore.get().view(record.dimensionId()).containsKey(playerUuid)) {
+			return IslandRole.TEMP_VISITOR;
+		}
+		return null;
+	}
+
+	private List<AccessRecord> loadAllFromDisk() {
+		List<AccessRecord> out = new ArrayList<>();
+		if (accessRoot == null || !Files.isDirectory(accessRoot)) {
+			return out;
+		}
+		try (var stream = Files.list(accessRoot)) {
+			stream.filter(path -> path.getFileName().toString().endsWith(".json")).forEach(path -> {
+				try {
+					AccessRecord record = parseJson(Files.readString(path, StandardCharsets.UTF_8));
+					cache.put(record.dimensionId(), record);
+					out.add(record);
+				} catch (Exception ignored) {
+					// corrupt files stay quarantined by the normal load path
+				}
+			});
+		} catch (IOException e) {
+			PersonnalWorld.LOGGER.error("Cannot list access files in {}", accessRoot, e);
+		}
+		return out;
+	}
+
+	private static final Comparator<AccessRecord> BY_SLOT = Comparator
+			.comparingInt((AccessRecord record) -> {
+				int slot = IslandIds.slotIndex(record.dimensionId());
+				return slot < 0 ? Integer.MAX_VALUE : slot;
+			})
+			.thenComparing(AccessRecord::dimensionId);
 
 	/**
 	 * Load from disk (or create/rebuild). Always validates. Never returns null.

@@ -5,10 +5,13 @@ import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import fr.galsaxx.client.AdventureBookClientPose;
 import fr.galsaxx.network.OpenAdventureBookPayload;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -23,6 +26,27 @@ public class AdventureBookItem extends Item {
 
 	public AdventureBookItem(Settings settings) {
 		super(settings);
+	}
+
+	public static boolean isVisuallyOpen(ItemStack stack) {
+		if (stack == null || stack.isEmpty() || !(stack.getItem() instanceof AdventureBookItem)) {
+			return false;
+		}
+		NbtComponent data = stack.get(DataComponentTypes.CUSTOM_DATA);
+		return data != null && data.copyNbt().getBoolean("pw_book_open");
+	}
+
+	public static void setVisuallyOpen(ItemStack stack, boolean open) {
+		if (stack == null || stack.isEmpty() || !(stack.getItem() instanceof AdventureBookItem)) {
+			return;
+		}
+		NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+		if (open) {
+			nbt.putBoolean("pw_book_open", true);
+		} else {
+			nbt.remove("pw_book_open");
+		}
+		stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
 	}
 
 	@Override
