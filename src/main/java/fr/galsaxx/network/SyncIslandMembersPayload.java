@@ -60,10 +60,12 @@ public record SyncIslandMembersPayload(String dimensionId, List<IslandMemberEntr
 		return ID;
 	}
 
-	/** Common : type S2C. Receiver client = {@link #registerClientReceiver()}. */
+	/** Serveur : type S2C. Le receiver client enregistre le type lui-même. */
 	public static void register() {
-		NetworkManager.registerS2CPayloadType(ID, CODEC);
-		PersonnalWorld.LOGGER.info("SyncIslandMembersPayload S2C registered");
+		dev.architectury.utils.EnvExecutor.runInEnv(dev.architectury.utils.Env.SERVER, () -> () -> {
+			NetworkManager.registerS2CPayloadType(ID, CODEC);
+			PersonnalWorld.LOGGER.info("SyncIslandMembersPayload S2C registered");
+		});
 	}
 
 	/** Client only — stocke le dernier snapshot pour l’UI livre. */

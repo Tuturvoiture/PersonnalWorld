@@ -135,3 +135,4 @@ tasks.register<Copy>("buildAndCollect") {
 }
 
 fr.galsaxx.build.VersionArchive.wireBuildAndCollect(project)
+fr.galsaxx.build.VersionArchive.wireVersionJar(project, loader)

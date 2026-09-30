@@ -116,6 +116,49 @@ public final class PersonnalWorldConfig {
 			# Example:
 			# enableDebugCommands = true
 			enableDebugCommands = false
+
+			# -----------------------------------------------------------------------------
+			# maxIslandsPerPlayer
+			# -----------------------------------------------------------------------------
+			# Maximum personal islands a player may own. 0 or negative = unlimited.
+			# Pagination uses the number of islands actually created, not this cap.
+			#
+			# Example:
+			# maxIslandsPerPlayer = 3
+			maxIslandsPerPlayer = 3
+
+			# -----------------------------------------------------------------------------
+			# syncGamerules
+			# -----------------------------------------------------------------------------
+			# If true, when an island world loads or reloads, vanilla gamerules that differ
+			# from the Overworld are copied from the Overworld unless that rule is covered
+			# by the island overlay (mob griefing, fire, pvp).
+			# If false, the Overworld is not copied; the overlay still applies.
+			#
+			# Example:
+			# syncGamerules = false
+			syncGamerules = true
+
+			# -----------------------------------------------------------------------------
+			# actionBarMessages
+			# -----------------------------------------------------------------------------
+			# Teleport feedback (staff, return, island visit) is shown on the action bar.
+			# Invitation notices stay in chat. Set false to hide the action bar lines.
+			#
+			# Example:
+			# actionBarMessages = false
+			actionBarMessages = true
+
+			# -----------------------------------------------------------------------------
+			# syncDarchitectMaxSimultaneous
+			# -----------------------------------------------------------------------------
+			# If true (default), on server start PersonnalWorld sets DimensionArchitect
+			# [dimensions].max_simultaneous to this mod's registerMod quota (64), then
+			# reloads DA config. If false, the value in darchitect-config.toml is left alone.
+			#
+			# Example:
+			# syncDarchitectMaxSimultaneous = false
+			syncDarchitectMaxSimultaneous = true
 			""";
 
 	private static volatile PersonnalWorldConfig INSTANCE = defaults();
@@ -126,6 +169,10 @@ public final class PersonnalWorldConfig {
 	private final boolean shareInventory;
 	private final boolean allowPassiveIslandVisit;
 	private final boolean enableDebugCommands;
+	private final int maxIslandsPerPlayer;
+	private final boolean syncGamerules;
+	private final boolean actionBarMessages;
+	private final boolean syncDarchitectMaxSimultaneous;
 
 	private PersonnalWorldConfig(
 			Set<String> noDimensionSavePosition,
@@ -133,13 +180,21 @@ public final class PersonnalWorldConfig {
 			int staffCooldownTicks,
 			boolean shareInventory,
 			boolean allowPassiveIslandVisit,
-			boolean enableDebugCommands) {
+			boolean enableDebugCommands,
+			int maxIslandsPerPlayer,
+			boolean syncGamerules,
+			boolean actionBarMessages,
+			boolean syncDarchitectMaxSimultaneous) {
 		this.noDimensionSavePosition = noDimensionSavePosition;
 		this.noDimensionTeleport = noDimensionTeleport;
 		this.staffCooldownTicks = Math.max(0, staffCooldownTicks);
 		this.shareInventory = shareInventory;
 		this.allowPassiveIslandVisit = allowPassiveIslandVisit;
 		this.enableDebugCommands = enableDebugCommands;
+		this.maxIslandsPerPlayer = maxIslandsPerPlayer;
+		this.syncGamerules = syncGamerules;
+		this.actionBarMessages = actionBarMessages;
+		this.syncDarchitectMaxSimultaneous = syncDarchitectMaxSimultaneous;
 	}
 
 	public static PersonnalWorldConfig get() {
@@ -157,6 +212,22 @@ public final class PersonnalWorldConfig {
 				return;
 			}
 			String raw = Files.readString(path, StandardCharsets.UTF_8);
+			if (!raw.contains("actionBarMessages")) {
+				raw = raw.stripTrailing() + """
+
+						# Teleport notices on the action bar. Set false to hide them. Invitation stays in chat.
+						actionBarMessages = true
+						""";
+				Files.writeString(path, raw + "\n", StandardCharsets.UTF_8);
+			}
+			if (!raw.contains("syncDarchitectMaxSimultaneous")) {
+				raw = raw.stripTrailing() + """
+
+						# Align DimensionArchitect max_simultaneous with PersonnalWorld quota (64). Set false to leave DA alone.
+						syncDarchitectMaxSimultaneous = true
+						""";
+				Files.writeString(path, raw + "\n", StandardCharsets.UTF_8);
+			}
 			INSTANCE = parse(raw);
 			PersonnalWorld.LOGGER.info("Loaded config {}", path);
 		} catch (IOException e) {
@@ -189,8 +260,24 @@ public final class PersonnalWorldConfig {
 		return enableDebugCommands;
 	}
 
+	public int maxIslandsPerPlayer() {
+		return maxIslandsPerPlayer;
+	}
+
+	public boolean syncGamerules() {
+		return syncGamerules;
+	}
+
+	public boolean actionBarMessages() {
+		return actionBarMessages;
+	}
+
+	public boolean syncDarchitectMaxSimultaneous() {
+		return syncDarchitectMaxSimultaneous;
+	}
+
 	private static PersonnalWorldConfig defaults() {
-		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true, false, false);
+		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true, false, false, 3, true, true, true);
 	}
 
 	static PersonnalWorldConfig parse(String raw) {
@@ -200,6 +287,10 @@ public final class PersonnalWorldConfig {
 		boolean share = true;
 		boolean allowPassive = false;
 		boolean debug = false;
+		int maxIslands = 3;
+		boolean syncRules = true;
+		boolean actionBar = true;
+		boolean syncDaMax = true;
 
 		for (String logicalLine : splitLogicalLines(stripComments(raw))) {
 			Matcher list = LIST_PATTERN.matcher(logicalLine);
@@ -216,8 +307,14 @@ public final class PersonnalWorldConfig {
 				continue;
 			}
 			Matcher intM = INT_PATTERN.matcher(logicalLine);
-			if (intM.matches() && "staffCooldownTicks".equals(intM.group(1))) {
-				cooldown = Integer.parseInt(intM.group(2));
+			if (intM.matches()) {
+				String key = intM.group(1);
+				int value = Integer.parseInt(intM.group(2));
+				if ("staffCooldownTicks".equals(key)) {
+					cooldown = value;
+				} else if ("maxIslandsPerPlayer".equals(key)) {
+					maxIslands = value;
+				}
 				continue;
 			}
 			Matcher boolM = BOOL_PATTERN.matcher(logicalLine);
@@ -228,6 +325,9 @@ public final class PersonnalWorldConfig {
 					case "shareInventory" -> share = value;
 					case "allowPassiveIslandVisit" -> allowPassive = value;
 					case "enableDebugCommands" -> debug = value;
+					case "syncGamerules" -> syncRules = value;
+					case "actionBarMessages" -> actionBar = value;
+					case "syncDarchitectMaxSimultaneous" -> syncDaMax = value;
 					default -> {
 					}
 				}
@@ -240,7 +340,11 @@ public final class PersonnalWorldConfig {
 				cooldown,
 				share,
 				allowPassive,
-				debug);
+				debug,
+				maxIslands,
+				syncRules,
+				actionBar,
+				syncDaMax);
 	}
 
 	/** Drop # comments; keep quoted strings intact. */

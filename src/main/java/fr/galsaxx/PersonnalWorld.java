@@ -3,6 +3,7 @@ package fr.galsaxx;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import fr.galsaxx.network.BookReadingPayload;
 import fr.galsaxx.network.CloseAdventureBookPayload;
 import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.darchitect.api.ext.DArchitectServices;
@@ -40,6 +41,7 @@ public final class PersonnalWorld {
 	public static void init() {
 		DArchitectServices.registerMod(MOD_ID, DARCHITECT_QUOTA);
 		DArchitectServices.registerSpawnResolver(new PersonnalWorldSpawnResolver());
+		DArchitectServices.registerAccessPolicyProvider(new fr.galsaxx.invite.IslandVisitorAccess());
 		PersonnalWorldContent.register();
 		registerNetwork();
 	}
@@ -47,8 +49,10 @@ public final class PersonnalWorld {
 	private static void registerNetwork() {
 		// S2C : type côté serveur uniquement — le client l'enregistre via registerReceiver
 		// (sinon double register → crash « already registered »).
-		EnvExecutor.runInEnv(Env.SERVER, () -> () ->
-				NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC));
+		EnvExecutor.runInEnv(Env.SERVER, () -> () -> {
+			NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC);
+			NetworkManager.registerS2CPayloadType(BookReadingPayload.ID, BookReadingPayload.CODEC);
+		});
 		// C2S : fermeture GUI → anim close (via Class.forName, pas d'import GeckoLib)
 		NetworkManager.registerReceiver(
 				NetworkManager.Side.C2S,

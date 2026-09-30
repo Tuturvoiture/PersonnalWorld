@@ -6,6 +6,33 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-beta.2 — Passage en beta : carnet d’îles, invitations, droits visiteur, alignement `max_simultaneous` DimensionArchitect (depuis 1.4.0-alpha.42).
+- 1.4.0-alpha.42 — Au démarrage, PersonnalWorld aligne `max_simultaneous` de DimensionArchitect sur son quota (64). Désactivable : `syncDarchitectMaxSimultaneous = false` dans `personnalworld.toml`.
+- 1.4.0-alpha.41 — Ouvrir le carnet n’ouvre plus les autres carnets : seule la pile en lecture change de forme.
+- 1.4.0-alpha.40 — Un visiteur ne blesse plus les entités de l’île (animaux, projectiles, familiers, entité qui porte son pseudo). Ouvrir le carnet n’anime que le carnet de celui qui l’ouvre.
+- 1.4.0-alpha.39 — Dans Îles invitées, le pseudo du propriétaire s’affiche sous le nom du monde.
+- 1.4.0-alpha.38 — Changer un rôle dans le carnet n’écrit plus dans le tchat à chaque clic. Une seule ligne apparaît en quittant Invitations ou le livre, et seulement s’il y a eu un changement.
+- 1.4.0-alpha.37 — Invitations : la liste montre les invités et leur rôle. Ajouter ouvre les joueurs connectés, un clic remplit le champ, puis Rafraîchir ou Ajouter.
+- 1.4.0-alpha.36 — L’invitation reçue s’affiche dans le tchat. Les messages de téléportation restent dans la barre d’action.
+- 1.4.0-alpha.35 — Un visiteur peut entrer sur l’île. Les messages de téléportation et l’avis d’invitation s’affichent dans la barre d’action (`actionBarMessages`, désactivable). Rejoindre une île enregistre la position comme le bâton.
+- 1.4.0-alpha.34 — Rejoindre et `/pw visit` n’ouvrent qu’une île déjà créée, et seulement si vous êtes invité. Les deux livres se mettent à jour après une invitation, un retrait ou un changement de rôle.
+- 1.4.0-alpha.34 — Un visiteur ne casse pas, ne pose pas, n’ouvre pas les coffres et ne frappe pas les joueurs. Le bâton, sur l’île de quelqu’un d’autre, ramène à la position d’origine.
+- 1.4.0-alpha.34 — Un co-créateur gère les invitations de l’île affichée. Retirer et changer un rôle visent le joueur, pas un pseudo périmé.
+- 1.4.0-alpha.33 — Une invitation ouvre un bouton Rejoindre. Le livre n’affiche plus l’île de quelqu’un d’autre après une simple visite.
+- 1.4.0-alpha.32 — Les phrases du carnet restent blanches, sans bandeau noir : seul un contour les détache du parchemin.
+- 1.4.0-alpha.31 — Tous les textes du parchemin (noms d’îles, page, consignes, réglages) sont blancs sur un fond noir, dessinés au-dessus des icônes.
+- 1.4.0-alpha.30 — Les noms sous les îles sont blancs, entourés de noir, pour rester lisibles sur le parchemin.
+- 1.4.0-alpha.29 — Le texte des boutons du carnet est noir, sans ombre, sur un fond clair.
+- 1.4.0-alpha.28 — Les textes posés sur le parchemin (noms d’îles, consignes, spawn) sont crème avec une ombre, plus lisibles sur le fond sombre.
+- 1.4.0-alpha.27 — Le carnet explique chaque écran (liste, réglages, invitations, types d’île). Les boutons montrent l’état (terrain, feu, PvP) et tiennent dans le cadre. Toutes les langues du mod couvrent l’interface et les messages qui restaient en anglais.
+- 1.4.0-alpha.26 — Rejoindre un monde ne plante plus : les droits d’île sont envoyés à DimensionArchitect au premier tick, une fois son instance créée.
+- 1.4.0-alpha.24 — Le cube de spawn se déplace sous les pieds (confirmation, bouton inactif hors de l’île, bloc plein seulement, l’ancien bloc revient). Le premier monde du bâton s’appelle Monde 1 / World 1. Le carnet a un panneau Droits par île.
+- 1.4.0-alpha.23 — Le client démarre à nouveau : la liste des membres du carnet n’est plus enregistrée deux fois au lancement.
+- 1.4.0-alpha.22 — Chaque build copie le jar vers `builds/<version>/<version>-<loader>.jar`. Ces jars ne sont pas suivis par Git.
+- 1.4.0-alpha.21 — `/pw invite`, `visit` et le transfert de propriétaire suivent l'île active, pas seulement `perso_<uuid>`. Un JSON d'accès ancien sans champ `active` reste actif.
+- 1.4.0-alpha.20 — Le carnet s'ouvre sur la page de l'île active une fois la liste reçue. Le bâton suit le flag `active` du JSON, y compris après redémarrage.
+- 1.4.0-alpha.19 — Carnet : onglets Mes îles et Îles invitées (liste par 3, presets, réglages). Plafond `maxIslandsPerPlayer` avec message, aussi sur `/pw create`.
+- 1.4.0-alpha.19 — Gamerules d’île recopiées depuis l’Overworld au chargement et au reload, sauf surcouche (terrain, feu). PvP d’île coupe les dégâts entre joueurs.
 - 1.4.0-alpha.18 — Fusion `cursor/island-invites-permissions-73e0` → `feature/livre-interface-iles` : invitations/droits + DA ≥ 0.1.2 + façade `IslandMembersApi` avec le carnet.
 - 1.4.0-alpha.17 — Carnet onglet Îles : 3 boutons logo cliquables en V (`island_button.png`).
 - 1.4.0-alpha.16 — Icône mod : `docs/reference/personnalworld-logo.png` → `assets/personnalworld/icon.png` (Fabric + NeoForge).

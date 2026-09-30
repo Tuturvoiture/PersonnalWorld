@@ -2,6 +2,7 @@
 
 | Date | Version | Titre | Statut | Fichier |
 |------|---------|-------|--------|---------|
+| 2026-09-23 | 1.4.0-alpha.19 | GUI îles fonctionnel | done | [2026-09-23_island-ui-alpha19.md](2026-09-23_island-ui-alpha19.md) |
 | 2026-09-22 | 1.4.0-alpha.18 | Merge invites → livre (base gros GUI) | done | [2026-09-22_merge-invites-livre-alpha18.md](2026-09-22_merge-invites-livre-alpha18.md) |
 | 2026-09-20 | 1.4.0-beta.0 | Passage beta 1.4.0 | done | [2026-09-20_1.4.0-beta.0.md](2026-09-20_1.4.0-beta.0.md) |
 | 2026-09-19 | 1.4.0-alpha.1 | DA 0.1.2 access sync + offline | done | [2026-09-19_darchitect-0.1.2-access-sync.md](2026-09-19_darchitect-0.1.2-access-sync.md) |

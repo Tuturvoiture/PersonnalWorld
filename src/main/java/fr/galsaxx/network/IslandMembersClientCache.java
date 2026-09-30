@@ -12,11 +12,17 @@ import java.util.Optional;
  */
 public final class IslandMembersClientCache {
 	private static volatile SyncIslandMembersPayload last;
+	private static volatile int generation;
 
 	private IslandMembersClientCache() {}
 
 	public static void accept(SyncIslandMembersPayload payload) {
 		last = payload;
+		generation++;
+	}
+
+	public static int generation() {
+		return generation;
 	}
 
 	public static Optional<SyncIslandMembersPayload> last() {

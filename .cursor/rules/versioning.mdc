@@ -16,4 +16,6 @@ Après **chaque** correction / amélioration fonctionnelle livrée :
 3. Ne **pas** coller le suffixe `+1.21.1` dans `mod.version`.
 4. Ajouter 1–3 bullets dans [`docs/CHANGELOG_WIP.md`](docs/CHANGELOG_WIP.md).
 
+Chaque `build` Gradle (Fabric ou NeoForge) copie le jar joueur vers `builds/<mod.version>/<mod.version>-<loader>.jar`. Ce jar n'est pas versionné (`.gitignore` : `builds/**/*.jar`). Les notes `PATCHNOTES.md` / `META.md` restent dans Git.
+
 Ne pas sauter de patch « pour plus tard ». La majeure `2.0` uniquement sur demande explicite.

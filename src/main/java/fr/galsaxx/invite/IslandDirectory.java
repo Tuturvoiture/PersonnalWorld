@@ -36,8 +36,8 @@ public final class IslandDirectory {
 		byDimensionId.put(record.dimensionId(), meta);
 		if (record.active()) {
 			activeByOwner.put(record.ownerUuid(), record.dimensionId());
-		} else {
-			activeByOwner.putIfAbsent(record.ownerUuid(), record.dimensionId());
+		} else if (record.dimensionId().equals(activeByOwner.get(record.ownerUuid()))) {
+			activeByOwner.remove(record.ownerUuid());
 		}
 	}
 
@@ -50,18 +50,35 @@ public final class IslandDirectory {
 	}
 
 	public Optional<String> activeDimensionForOwner(UUID ownerUuid) {
-		String dim = activeByOwner.get(ownerUuid);
-		if (dim != null) {
-			return Optional.of(dim);
+		if (ownerUuid == null) {
+			return Optional.empty();
 		}
-		return Optional.of(IslandIds.dimensionIdForPlayer(ownerUuid));
+		String first = null;
+		for (IslandMeta meta : byDimensionId.values()) {
+			if (!ownerUuid.equals(meta.ownerUuid())) {
+				continue;
+			}
+			if (first == null || IslandIds.slotIndex(meta.dimensionId()) < IslandIds.slotIndex(first)) {
+				first = meta.dimensionId();
+			}
+			if (meta.active()) {
+				return Optional.of(meta.dimensionId());
+			}
+		}
+		String mapped = activeByOwner.get(ownerUuid);
+		if (mapped != null && byDimensionId.containsKey(mapped)) {
+			return Optional.of(mapped);
+		}
+		return Optional.ofNullable(first);
 	}
 
 	/**
 	 * Resolve visit target: no name → active island; with name → match displayName (case-insensitive).
 	 */
 	public Optional<ResolveResult> resolveVisitTarget(UUID hostOwnerUuid, String optionalIslandName) {
-		String active = activeDimensionForOwner(hostOwnerUuid).orElse(IslandIds.dimensionIdForPlayer(hostOwnerUuid));
+		String active = activeDimensionForOwner(hostOwnerUuid)
+				.or(() -> AccessFileStore.get().activeOrFirstOwned(hostOwnerUuid))
+				.orElse(IslandIds.dimensionIdForPlayer(hostOwnerUuid));
 		if (optionalIslandName == null || optionalIslandName.isBlank()) {
 			IslandMeta meta = byDimensionId.getOrDefault(active,
 					new IslandMeta(active, hostOwnerUuid, "", true, false));

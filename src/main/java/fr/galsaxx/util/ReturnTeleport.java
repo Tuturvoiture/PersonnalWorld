@@ -1,5 +1,7 @@
 package fr.galsaxx.util;
 
+import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.invite.IslandIds;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -22,6 +24,43 @@ public final class ReturnTeleport {
 	/**
 	 * @return {@code true} si un téléport a été effectué
 	 */
+	/**
+	 * Same rules as the staff: skip dimensions listed in {@code noDimensionSavePosition},
+	 * and never store a personal island (own or someone else's).
+	 */
+	public static void rememberIfAllowed(ServerPlayerEntity player) {
+		String current = player.getServerWorld().getRegistryKey().getValue().toString();
+		if (PersonnalWorldConfig.get().isNoSavePosition(current) || IslandIds.isPersonalIsland(current)) {
+			return;
+		}
+		NbtCompound posNbt = new NbtCompound();
+		posNbt.putDouble("x", player.getX());
+		posNbt.putDouble("y", player.getY());
+		posNbt.putDouble("z", player.getZ());
+		posNbt.putFloat("yaw", player.getYaw());
+		posNbt.putFloat("pitch", player.getPitch());
+		posNbt.putString("dim", current);
+		((ReturnPositionSaver) player).setReturnPosition(posNbt);
+	}
+
+	public static void actionBar(ServerPlayerEntity player, Text text) {
+		if (!PersonnalWorldConfig.get().actionBarMessages()) {
+			return;
+		}
+		player.sendMessage(text, true);
+	}
+
+	/** Drops a saved return that points at {@code dimensionId}, so a kick cannot walk back onto that island. */
+	public static void forgetIfDimension(ServerPlayerEntity player, String dimensionId) {
+		if (player == null || dimensionId == null) {
+			return;
+		}
+		NbtCompound posNbt = ((ReturnPositionSaver) player).getReturnPosition();
+		if (posNbt != null && posNbt.contains("dim") && dimensionId.equals(posNbt.getString("dim"))) {
+			((ReturnPositionSaver) player).setReturnPosition(new NbtCompound());
+		}
+	}
+
 	public static boolean teleportHome(ServerPlayerEntity player) {
 		MinecraftServer server = player.getServer();
 		if (server == null) {
@@ -44,7 +83,7 @@ public final class ReturnTeleport {
 							posNbt.getFloat("yaw"),
 							posNbt.getFloat("pitch")
 					);
-					player.sendMessage(Text.translatable("message.personnalworld.return_to_origin"), false);
+					actionBar(player, Text.translatable("message.personnalworld.return_to_origin"));
 					return true;
 				}
 			}
@@ -52,7 +91,7 @@ public final class ReturnTeleport {
 
 		TeleportTarget target = player.getRespawnTarget(true, TeleportTarget.NO_OP);
 		player.teleportTo(target);
-		player.sendMessage(Text.translatable("message.personnalworld.returned_to_player_spawn"), false);
+		actionBar(player, Text.translatable("message.personnalworld.returned_to_player_spawn"));
 		return true;
 	}
 }

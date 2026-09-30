@@ -69,13 +69,15 @@ public final class TransferOwnershipService {
 		ServerPlayerEntity online = server.getPlayerManager().getPlayer(raw);
 		if (online != null) {
 			return IslandDirectory.get().activeDimensionForOwner(online.getUuid())
+					.or(() -> AccessFileStore.get().activeOrFirstOwned(online.getUuid()))
 					.orElse(IslandIds.dimensionIdForPlayer(online.getUuid()));
 		}
 		// Treat as player name of offline — cannot resolve UUID easily without user cache;
 		// try path perso_<raw> only if raw is UUID.
 		try {
 			UUID uuid = UUID.fromString(raw);
-			return IslandIds.dimensionIdForPlayer(uuid);
+			return AccessFileStore.get().activeOrFirstOwned(uuid)
+					.orElse(IslandIds.dimensionIdForPlayer(uuid));
 		} catch (IllegalArgumentException ignored) {
 			return normalized != null && IslandIds.isPersonalIsland(normalized) ? normalized : null;
 		}

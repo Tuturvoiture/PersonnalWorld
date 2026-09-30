@@ -147,6 +147,15 @@ public final class PersonnalWorldCommand {
 					return r.ok() ? Command.SINGLE_SUCCESS : 0;
 				}));
 
+		root.then(literal("create")
+				.requires(source -> source.hasPermissionLevel(2))
+				.then(argument("player", StringArgumentType.word())
+						.executes(ctx -> createIsland(ctx.getSource(), StringArgumentType.getString(ctx, "player"), "classic"))
+						.then(argument("preset", StringArgumentType.word())
+								.executes(ctx -> createIsland(ctx.getSource(),
+										StringArgumentType.getString(ctx, "player"),
+										StringArgumentType.getString(ctx, "preset"))))));
+
 		root.then(literal("debug")
 				.requires(source -> source.hasPermissionLevel(4))
 				.then(literal("setowner")
@@ -166,6 +175,28 @@ public final class PersonnalWorldCommand {
 										StringArgumentType.getString(ctx, "target"))))));
 
 		dispatcher.register(root);
+	}
+
+	private static int createIsland(ServerCommandSource source, String rawPlayer, String presetId) {
+		PlayerRef target = resolvePlayer(source.getServer(), rawPlayer);
+		if (target == null) {
+			source.sendError(Text.translatable("message.personnalworld.pw.player_not_found"));
+			return 0;
+		}
+		ServerPlayerEntity notify = source.getEntity() instanceof ServerPlayerEntity actor ? actor : null;
+		var outcome = fr.galsaxx.island.IslandLifecycle.create(
+				source.getServer(),
+				target.uuid(),
+				target.name(),
+				presetId,
+				target.name(),
+				notify);
+		if (outcome.ok()) {
+			source.sendFeedback(() -> Text.translatable(outcome.messageKey()), false);
+			return Command.SINGLE_SUCCESS;
+		}
+		source.sendError(Text.translatable(outcome.messageKey()));
+		return 0;
 	}
 
 	/** Nom online / cache, ou UUID (même hors cache). */
