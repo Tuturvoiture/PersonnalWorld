@@ -72,12 +72,31 @@ Dossier **durable** à la racine, séparé de `build/` Gradle :
 builds/
   INDEX.md
   <mod.version>/
-    PATCHNOTES.md    # snapshot du WIP au build
-    META.md          # date, rev Git, loaders
-    jars/            # copies locales (gitignore)
+    PATCHNOTES.md
+    META.md
+    <mod.version>-<loader>.jar   # copie locale à chaque build (gitignore)
 ```
 
-Produit automatiquement par la tâche Gradle `writePendingPatchNotes` (branchée sur `build` et `buildAndCollect`).
+Exemple : `builds/1.4.0-alpha.22/1.4.0-alpha.22-fabric.jar`.
+
+Chaque tâche Gradle `build` d'un loader (Fabric ou NeoForge) copie le jar remappé à cet emplacement. Les notes restent dans Git. Les `.jar` sous `builds/` ne sont pas versionnés.
+
+Même `PATCHNOTES.md` + `META.md` sont aussi écrits sous `build/libs/<mod.version>/`.
+
+### Contenu des PATCHNOTES
+
+| Canal | Contenu |
+|-------|---------|
+| **alpha** | Bullets WIP de **cette** version seulement |
+| **beta** | Agrégat depuis la **dernière beta** ; thèmes similaires fusionnés (1 ligne = dernière occurrence) |
+| **stable / official** | Agrégat depuis la **dernière stable** ; même dédoublonnage thématique |
+
+Tâches Gradle :
+
+- `writePendingPatchNotes` — version courante (`mod.version`) ; branchée après `buildAndCollect`
+- `generateAllLibsPatchNotes` — **toutes** les versions déjà présentes sous `build/libs/`
+
+Source des bullets : [`docs/CHANGELOG_WIP.md`](CHANGELOG_WIP.md) (`## Pending`).
 
 ## Hors scope
 

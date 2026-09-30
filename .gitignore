@@ -45,3 +45,10 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# jars de build locaux — PATCHNOTES.md, META.md et INDEX restent suivis
+builds/**/*.jar
+
+# Kotlin daemon / buildSrc noise
+buildSrc/.kotlin/
+

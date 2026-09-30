@@ -13,7 +13,7 @@
 		"issues": "https://github.com/Tuturvoiture/PersonnalWorld/issues"
 	},
 	"license": "LGPL-3.0-or-later",
-	"icon": "assets/personnalworld/icon.jpg",
+	"icon": "assets/personnalworld/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -32,7 +32,7 @@
 		"java": ">=21",
 		"fabric-api": ">=0.116.0",
 		"architectury": ">=13.0.8",
-		"darchitect": ">=0.0.59"
+		"darchitect": ">=0.1.2"
 	},
 	"suggests": {
 		"geckolib": "*"

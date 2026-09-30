@@ -2,6 +2,11 @@ package fr.galsaxx.util;
 
 import fr.galsaxx.PersonnalWorld;
 import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.invite.AccessFileStore;
+import fr.galsaxx.invite.AccessRecord;
+import fr.galsaxx.invite.DArchitectAccess;
+import fr.galsaxx.invite.IslandDirectory;
+import net.darchitect.api.AccessMode;
 import net.darchitect.api.DimensionAlreadyExistsException;
 import net.darchitect.api.DimensionArchitectRuntime;
 import net.darchitect.api.ModCallContext;
@@ -22,6 +27,9 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 
+import java.util.UUID;
+import java.nio.file.Path;
+
 /**
  * Demande la dimension perso à DimensionArchitect (VOID), puis pose l’île NBT une seule fois.
  */
@@ -32,13 +40,34 @@ public final class PersonnalWorldUtil {
      * Assure l’existence et l’initialisation du monde perso.
      * Si le monde existe déjà, ne refait PAS la génération grâce au PersistentState.
      */
+    /** True when the dimension is already loaded or already registered. Does not create one. */
+    public static boolean personalDimensionExists(MinecraftServer server, String dimensionId) {
+        Identifier id = Identifier.tryParse(dimensionId);
+        if (id == null) {
+            return false;
+        }
+        if (server.getWorld(RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, id)) != null) {
+            return true;
+        }
+        try {
+            boolean[] present = {false};
+            ModCallContext.runAs(PersonnalWorld.MOD_ID, () ->
+                    present[0] = DimensionArchitectRuntime.get().hasDimension(dimensionId));
+            return present[0];
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
     public static ServerWorld ensurePersonalWorld(MinecraftServer server,
                                                   RegistryKey<World> worldKey,
                                                   Identifier dimId,
                                                   ServerPlayerEntity owner) {
+		AccessFileStore.get().bindServer(server);
         ServerWorld existing = server.getWorld(worldKey);
         if (existing != null) {
             runOneTimeInitIfNeeded(existing, owner);
+			ensureAccessForWorld(server, dimId.toString(), owner);
             return existing;
         }
 
@@ -47,16 +76,26 @@ public final class PersonnalWorldUtil {
                 var api = DimensionArchitectRuntime.get();
                 String id = dimId.toString();
                 if (!api.hasDimension(id)) {
-                    api.builder(id)
+					UUID ownerUuid = owner != null
+							? owner.getUuid()
+							: fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(id).orElse(null);
+                    var builder = api.builder(id)
                             .type(WorldType.VOID)
                             // shareInventory=true → isolatePlayerData(false) (DArchitect ≥ 0.0.58).
                             .isolatePlayerData(!PersonnalWorldConfig.get().shareInventory())
+							.accessMode(AccessMode.MANAGED)
+							.permissions(net.darchitect.access.RolePermissionMatrix.builder()
+									.grant(net.darchitect.access.DimensionRole.GUEST, net.darchitect.access.DimensionPermission.JOIN)
+									.build())
                             // VOID API 0.0.44 : Optional.empty() = structures vanilla. SKYBLOCK les coupe.
                             .worldProfile(WorldProfile.builder()
                                     .preset(WorldPreset.SKYBLOCK)
                                     .structures(StructureGenerationRules.none())
-                                    .build())
-                            .build();
+                                    .build());
+					if (ownerUuid != null) {
+						builder.owner(ownerUuid);
+					}
+					builder.build();
                 }
             });
         } catch (DimensionAlreadyExistsException ignored) {
@@ -85,12 +124,94 @@ public final class PersonnalWorldUtil {
         }
 
         runOneTimeInitIfNeeded(persoWorld, owner);
+		ensureAccessForWorld(server, dimId.toString(), owner);
         return persoWorld;
     }
 
-    static PWWorldState getWorldState(ServerWorld world) {
+	private static void ensureAccessForWorld(MinecraftServer server, String dimensionId, ServerPlayerEntity ownerHint) {
+		UUID ownerUuid = ownerHint != null
+				? ownerHint.getUuid()
+				: fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(dimensionId).orElse(null);
+		String nameHint = ownerHint != null ? ownerHint.getGameProfile().getName() : "";
+		Path accessFile = AccessFileStore.get().accessRoot()
+				.resolve(fr.galsaxx.invite.IslandIds.fileKey(dimensionId) + ".json");
+		AccessRecord record;
+		if (AccessFileStore.get().getCached(dimensionId).isEmpty() && !java.nio.file.Files.isRegularFile(accessFile)) {
+			record = AccessFileStore.createInitial(dimensionId, ownerUuid, nameHint);
+			// First persist: keep revision at 1 (saveMutation bumps).
+			record.setRevision(0L);
+			applyDefaultDisplayName(record, ownerHint);
+			AccessFileStore.get().saveMutation(record);
+		} else {
+			record = AccessFileStore.get().loadOrRecover(dimensionId, ownerUuid, nameHint);
+			if (applyDefaultDisplayName(record, ownerHint)) {
+				AccessFileStore.get().saveMutation(record);
+			}
+			DArchitectAccess.applyRecord(record);
+		}
+		IslandDirectory.get().registerOrUpdate(record);
+
+		Identifier id = Identifier.tryParse(dimensionId);
+		if (id == null) {
+			return;
+		}
+		ServerWorld world = server.getWorld(RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, id));
+		PWWorldState state = PWWorldState.get(world);
+		if (state != null && !state.accessMigrated) {
+			if (record.ownerUuid() != null) {
+				DArchitectAccess.migrateManaged(dimensionId, record.ownerUuid());
+				state.ownerUuid = record.ownerUuid().toString();
+			}
+			DArchitectAccess.applyRecord(record);
+			state.accessMigrated = true;
+			state.markDirty();
+		}
+	}
+
+	private static boolean applyDefaultDisplayName(AccessRecord record, ServerPlayerEntity ownerHint) {
+		if (record == null || ownerHint == null || (record.displayName() != null && !record.displayName().isBlank())) {
+			return false;
+		}
+		int slot = fr.galsaxx.invite.IslandIds.slotIndex(record.dimensionId());
+		String language = ownerHint.getClientOptions().language();
+		record.setDisplayName(fr.galsaxx.island.IslandDefaultName.of(language, slot < 0 ? 0 : slot));
+		return true;
+	}
+
+	static PWWorldState getWorldState(ServerWorld world) {
         return PWWorldState.get(world);
     }
+
+	public static void setIslandProfile(ServerWorld world, String profile) {
+		PWWorldState state = PWWorldState.get(world);
+		if (state == null) {
+			return;
+		}
+		state.islandProfile = profile == null ? "" : profile;
+		state.markDirty();
+	}
+
+	public static String getIslandProfile(ServerWorld world) {
+		PWWorldState state = PWWorldState.get(world);
+		return state == null ? "" : state.islandProfile;
+	}
+
+	public static java.util.Map<String, String> getGameruleOverlay(ServerWorld world) {
+		PWWorldState state = PWWorldState.get(world);
+		if (state == null) {
+			return java.util.Map.of();
+		}
+		return java.util.Map.copyOf(state.gameruleOverlay);
+	}
+
+	public static void putGameruleOverlay(ServerWorld world, String rule, String value) {
+		PWWorldState state = PWWorldState.get(world);
+		if (state == null || rule == null) {
+			return;
+		}
+		state.gameruleOverlay.put(rule, value);
+		state.markDirty();
+	}
 
 	/** Génère l’île NBT une seule fois par monde (synchrone — avant le TP). */
 	private static void runOneTimeInitIfNeeded(ServerWorld world, ServerPlayerEntity owner) {
@@ -131,8 +252,16 @@ public final class PersonnalWorldUtil {
         private int spawnMarkerX;
         private int spawnMarkerY;
         private int spawnMarkerZ;
+		/** Bloc recouvert par le cube, remis en place au prochain déplacement. */
+		private String replacedBlockId = "";
+		private String replacedBlockProps = "";
         /** Réservé : profil d’île pour futures dims (non utilisé en MVP). */
         private String islandProfile = "";
+		private final java.util.Map<String, String> gameruleOverlay = new java.util.LinkedHashMap<>();
+		/** Soft migration MANAGED / access file done. */
+		boolean accessMigrated = false;
+		/** Logical owner UUID string (may differ from path uuid after debug setowner). */
+		String ownerUuid = "";
 
         static final Type<PWWorldState> TYPE = new Type<>(
                 PWWorldState::new,
@@ -157,6 +286,19 @@ public final class PersonnalWorldUtil {
             spawnMarkerZ = pos.getZ();
         }
 
+		String replacedBlockId() {
+			return replacedBlockId == null ? "" : replacedBlockId;
+		}
+
+		String replacedBlockProps() {
+			return replacedBlockProps == null ? "" : replacedBlockProps;
+		}
+
+		void setReplacedBlock(String blockId, String props) {
+			replacedBlockId = blockId == null ? "" : blockId;
+			replacedBlockProps = props == null ? "" : props;
+		}
+
         String getIslandProfile() {
             return islandProfile;
         }
@@ -170,9 +312,23 @@ public final class PersonnalWorldUtil {
                 s.spawnMarkerY = nbt.getInt("spawnMarkerY");
                 s.spawnMarkerZ = nbt.getInt("spawnMarkerZ");
             }
+			if (nbt.contains("replacedBlockId")) {
+				s.replacedBlockId = nbt.getString("replacedBlockId");
+				s.replacedBlockProps = nbt.contains("replacedBlockProps") ? nbt.getString("replacedBlockProps") : "";
+			}
             if (nbt.contains("islandProfile")) {
                 s.islandProfile = nbt.getString("islandProfile");
             }
+			if (nbt.contains("gameruleOverlay")) {
+				NbtCompound overlay = nbt.getCompound("gameruleOverlay");
+				for (String key : overlay.getKeys()) {
+					s.gameruleOverlay.put(key, overlay.getString(key));
+				}
+			}
+			s.accessMigrated = nbt.contains("accessMigrated") && nbt.getBoolean("accessMigrated");
+			if (nbt.contains("ownerUuid")) {
+				s.ownerUuid = nbt.getString("ownerUuid");
+			}
             return s;
         }
 
@@ -185,13 +341,29 @@ public final class PersonnalWorldUtil {
                 nbt.putInt("spawnMarkerY", spawnMarkerY);
                 nbt.putInt("spawnMarkerZ", spawnMarkerZ);
             }
+			if (replacedBlockId != null && !replacedBlockId.isEmpty()) {
+				nbt.putString("replacedBlockId", replacedBlockId);
+				nbt.putString("replacedBlockProps", replacedBlockProps == null ? "" : replacedBlockProps);
+			}
             if (!islandProfile.isEmpty()) {
                 nbt.putString("islandProfile", islandProfile);
             }
+			if (!gameruleOverlay.isEmpty()) {
+				NbtCompound overlay = new NbtCompound();
+				gameruleOverlay.forEach(overlay::putString);
+				nbt.put("gameruleOverlay", overlay);
+			}
+			nbt.putBoolean("accessMigrated", accessMigrated);
+			if (ownerUuid != null && !ownerUuid.isEmpty()) {
+				nbt.putString("ownerUuid", ownerUuid);
+			}
             return nbt;
         }
 
         static PWWorldState get(ServerWorld world) {
+			if (world == null) {
+				return null;
+			}
             PersistentStateManager mgr = world.getPersistentStateManager();
             return mgr.getOrCreate(TYPE, "personnalworld_init");
         }

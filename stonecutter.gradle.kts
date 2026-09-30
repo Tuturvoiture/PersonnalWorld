@@ -21,3 +21,16 @@ for (branch in stonecutter.tree.branches) {
 		ofTask("buildAndCollect")
 	}
 }
+
+fr.galsaxx.build.VersionArchive.registerRootTasks(rootProject)
+
+subprojects {
+	if (name != "fabric") {
+		return@subprojects
+	}
+	tasks.register("test") {
+		group = "verification"
+		description = "Unit tests of the active Fabric version."
+		dependsOn(subprojects.map { "${it.path}:test" })
+	}
+}

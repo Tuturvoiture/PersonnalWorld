@@ -1,0 +1,49 @@
+{
+	"parent": "builtin/entity",
+	"gui_light": "front",
+	"textures": {
+		"particle": "personnalworld:item/adventure_book"
+	},
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [33.53, -81.81, 41.05],
+			"translation": [0.25, -5.25, -0.25],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [138.82, -85.33, 130.21],
+			"translation": [0.5, -5, -0.75],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"firstperson_righthand": {
+			"rotation": [-11.75, -86.64, 1.36],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-12.25, -4.15, -1.41],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"head": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [1, 1, 1]
+		},
+		"gui": {
+			"rotation": [-22, -17.75, 0],
+			"translation": [0, -5.25, 0],
+			"scale": [0.7, 0.7, 0.7]
+		},
+		"ground": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"fixed": {
+			"rotation": [-180, 0, -168.5],
+			"translation": [0, -6.5, -1.75],
+			"scale": [0.8, 0.8, 0.8]
+		}
+	}
+}

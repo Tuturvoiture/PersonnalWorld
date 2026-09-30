@@ -1,9 +1,16 @@
 package fr.galsaxx;
 
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import fr.galsaxx.network.BookReadingPayload;
+import fr.galsaxx.network.CloseAdventureBookPayload;
+import fr.galsaxx.network.OpenAdventureBookPayload;
 import net.darchitect.api.ext.DArchitectServices;
 import net.darchitect.api.ext.SpawnPoint;
 import net.darchitect.api.ext.SpawnRequest;
 import net.darchitect.api.ext.SpawnResolver;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +41,34 @@ public final class PersonnalWorld {
 	public static void init() {
 		DArchitectServices.registerMod(MOD_ID, DARCHITECT_QUOTA);
 		DArchitectServices.registerSpawnResolver(new PersonnalWorldSpawnResolver());
+		DArchitectServices.registerAccessPolicyProvider(new fr.galsaxx.invite.IslandVisitorAccess());
 		PersonnalWorldContent.register();
+		registerNetwork();
+	}
+
+	private static void registerNetwork() {
+		// S2C : type côté serveur uniquement — le client l'enregistre via registerReceiver
+		// (sinon double register → crash « already registered »).
+		EnvExecutor.runInEnv(Env.SERVER, () -> () -> {
+			NetworkManager.registerS2CPayloadType(OpenAdventureBookPayload.ID, OpenAdventureBookPayload.CODEC);
+			NetworkManager.registerS2CPayloadType(BookReadingPayload.ID, BookReadingPayload.CODEC);
+		});
+		// C2S : fermeture GUI → anim close (via Class.forName, pas d'import GeckoLib)
+		NetworkManager.registerReceiver(
+				NetworkManager.Side.C2S,
+				CloseAdventureBookPayload.ID,
+				CloseAdventureBookPayload.CODEC,
+				(payload, ctx) -> ctx.queue(() -> {
+					if (ctx.getPlayer() instanceof ServerPlayerEntity sp) {
+						try {
+							Class<?> clazz = Class.forName("fr.galsaxx.compat.geckolib.AdventureBookGeoItem");
+							clazz.getMethod("handleCloseFromClient", ServerPlayerEntity.class).invoke(null, sp);
+						} catch (Throwable ignored) {
+							// GeckoLib absent ou classe non chargée : pas d'anim close
+						}
+					}
+				})
+		);
 	}
 
 	/**
