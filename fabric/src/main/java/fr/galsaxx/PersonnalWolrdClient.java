@@ -37,16 +37,29 @@ public class PersonnalWolrdClient implements ClientModInitializer {
 				BookReadingPayload.ID,
 				BookReadingPayload.CODEC,
 				(payload, ctx) -> ctx.queue(() -> {
-					fr.galsaxx.client.AdventureBookClientPose.setReading(payload.playerId(), payload.reading());
-					if (MinecraftClient.getInstance().player != null
-							&& MinecraftClient.getInstance().player.getUuid().equals(payload.playerId())) {
-						fr.galsaxx.client.AdventureBookClientPose.setLocalReading(payload.reading());
+					var player = MinecraftClient.getInstance().player;
+					boolean local = player != null && player.getUuid().equals(payload.playerId());
+					if (payload.reading()) {
+						fr.galsaxx.client.AdventureBookClientPose.setReading(payload.playerId(), true);
+						if (local) {
+							fr.galsaxx.client.AdventureBookClientPose.setLocalReading(true);
+						}
+					} else if (local) {
+						// Déjà engagé via notifyLeave : ne pas couper la pose bras / closing.
+						if (!fr.galsaxx.client.AdventureBookClientPose.isClosing(payload.playerId())) {
+							fr.galsaxx.client.AdventureBookClientPose.beginClosing(payload.playerId(), true);
+						}
+					} else {
+						fr.galsaxx.client.AdventureBookClientPose.beginClosing(payload.playerId(), false);
 					}
 				})
 		);
 		fr.galsaxx.network.IslandBookNetworking.registerClient(
 				payload -> fr.galsaxx.client.IslandBookClient.acceptSync(payload),
 				payload -> fr.galsaxx.client.IslandBookClient.acceptDetail(payload));
+
+		net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(client ->
+				fr.galsaxx.client.AdventureBookClientPose.tickClient());
 
 		if (!GeckoLibHooks.animationsActive()) {
 			return;

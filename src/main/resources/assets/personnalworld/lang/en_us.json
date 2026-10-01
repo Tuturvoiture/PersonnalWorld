@@ -80,6 +80,7 @@
   "message.personnalworld.pw.max_islands": "Island limit reached.",
   "message.personnalworld.pw.island_name_empty": "Island name cannot be empty.",
   "message.personnalworld.pw.preset_unknown": "Unknown preset.",
+  "message.personnalworld.pw.preset_locked": "This island type is not available yet.",
   "message.personnalworld.pw.island_created": "Island created.",
   "message.personnalworld.spawn.wrong_dim": "You must be inside this island to move the spawn point.",
   "message.personnalworld.spawn.in_air": "Stand on a solid block. The cube cannot be placed in mid-air.",
@@ -144,5 +145,7 @@
   "screen.personnalworld.adventure_book.join": "Join",
   "preset.personnalworld.classic": "Classic",
   "preset.personnalworld.forest": "Forest",
-  "preset.personnalworld.rock": "Rock"
+  "preset.personnalworld.rock": "Rock",
+  "preset.personnalworld.desert": "Desert",
+  "preset.personnalworld.locked_overlay": "Soon"
 }

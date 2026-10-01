@@ -1,3 +1,15 @@
+## PersonnalWorld 1.4.0-beta.7
+
+> CurseForge paste-ready copy: [`builds/1.4.0-beta.7/CURSEFORGE_EN.md`](../builds/1.4.0-beta.7/CURSEFORGE_EN.md)
+
+### Highlights
+
+- Changes since **1.4.0-beta.2**: locked unfinished island types, preset row polish, book close animation fixes.
+- Forest / Rock / Desert show a diagonal **Soon** badge and are not selectable; Classic only.
+- DimensionArchitect **≥ 0.1.2** still required.
+
+---
+
 ## PersonnalWorld 1.4.0-beta.2
 
 > CurseForge paste-ready copy: [`builds/1.4.0-beta.2/CURSEFORGE_EN.md`](../builds/1.4.0-beta.2/CURSEFORGE_EN.md)

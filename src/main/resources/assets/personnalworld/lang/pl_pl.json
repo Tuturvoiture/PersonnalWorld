@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "Osiągnięto limit wysp.",
   "message.personnalworld.pw.island_name_empty": "Nazwa wyspy nie może być pusta.",
   "message.personnalworld.pw.preset_unknown": "Nieznany preset.",
+  "message.personnalworld.pw.preset_locked": "Ten typ wyspy nie jest jeszcze dostępny.",
   "message.personnalworld.pw.island_created": "Wyspa utworzona.",
   "message.personnalworld.spawn.wrong_dim": "Musisz być na tej wyspie, aby przesunąć punkt spawnu.",
   "message.personnalworld.spawn.in_air": "Stań na pełnym bloku. Sześcian nie może wisieć w powietrzu.",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "Wejdź",
   "preset.personnalworld.classic": "Klasyczna",
   "preset.personnalworld.forest": "Las",
-  "preset.personnalworld.rock": "Skała"
+  "preset.personnalworld.rock": "Skała",
+  "preset.personnalworld.desert": "Pustynia",
+  "preset.personnalworld.locked_overlay": "Wkrótce"
 }

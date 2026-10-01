@@ -34,7 +34,7 @@ public final class IslandBookNetworking {
 
 	public record Card(String dimensionId, String displayName, boolean active, String presetId, int slotIndex, String ownerName, String role) {}
 
-	public record PresetInfo(String id, String name, String icon) {}
+	public record PresetInfo(String id, String name, String icon, boolean unlocked) {}
 
 	public record SyncPayload(List<Card> owned, List<Card> invited, int maxIslands, List<PresetInfo> presets) implements CustomPayload {
 		public static final Id<SyncPayload> ID = new Id<>(Identifier.of(PersonnalWorld.MOD_ID, "sync_island_book"));
@@ -49,6 +49,7 @@ public final class IslandBookNetworking {
 				buf.writeString(preset.id);
 				buf.writeString(preset.name);
 				buf.writeString(preset.icon);
+				buf.writeBoolean(preset.unlocked);
 			}
 		}
 
@@ -59,7 +60,7 @@ public final class IslandBookNetworking {
 			int n = buf.readVarInt();
 			List<PresetInfo> presets = new ArrayList<>(n);
 			for (int i = 0; i < n; i++) {
-				presets.add(new PresetInfo(buf.readString(), buf.readString(), buf.readString()));
+				presets.add(new PresetInfo(buf.readString(), buf.readString(), buf.readString(), buf.readBoolean()));
 			}
 			return new SyncPayload(owned, invited, max, presets);
 		}
@@ -301,7 +302,7 @@ public final class IslandBookNetworking {
 		}
 		List<PresetInfo> presets = new ArrayList<>();
 		for (IslandPresetRegistry.IslandPreset preset : IslandLifecycle.currentPresets(server)) {
-			presets.add(new PresetInfo(preset.id(), preset.name(), preset.icon()));
+			presets.add(new PresetInfo(preset.id(), preset.name(), preset.icon(), preset.unlocked()));
 		}
 		NetworkManager.sendToPlayer(player, new SyncPayload(owned, invited, fr.galsaxx.config.PersonnalWorldConfig.get().maxIslandsPerPlayer(), presets));
 	}

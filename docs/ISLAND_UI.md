@@ -34,7 +34,7 @@ Taille toujours 3. `pageCount = max(1, ceil(n/3))` sur les îles **créées**, j
 
 ## Presets
 
-Défauts `classic`, `forest`, `rock` (structure `ile_1`, icône `textures/gui/island_button.png`). Fichiers supplémentaires : `config/personnalworld/island_presets/*.json` (`id`, `name`, `icon`), lus au moment de la création / du sync. Icône vide ou inconnue → `island_button`. Le client n’invente pas un preset absent du S2C. Le nom sous l’icône est éditable et devient `displayName`. Annuler ne crée rien. Nom vide ou preset inconnu : message, aucune dimension.
+Défauts `classic` (déverrouillé, structure `ile_1`), `forest` / `rock` / `desert` (verrouillés, non cliquables). Structure absente → retombe sur `ile_1`. Fichiers supplémentaires : `config/personnalworld/island_presets/*.json` (`id`, `name`, `icon`, `structure`, `unlocked`), lus au moment de la création / du sync. Icône vide ou inconnue → `island_button`. Le client n’invente pas un preset absent du S2C. Le nom sous l’icône est éditable et devient `displayName`. Annuler ne crée rien. Nom vide, preset inconnu ou verrouillé : message, aucune dimension.
 
 ## Plafond
 

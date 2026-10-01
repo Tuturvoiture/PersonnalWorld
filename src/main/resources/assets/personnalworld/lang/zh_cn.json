@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "已达到岛屿上限。",
   "message.personnalworld.pw.island_name_empty": "岛屿名称不能为空。",
   "message.personnalworld.pw.preset_unknown": "未知预设。",
+  "message.personnalworld.pw.preset_locked": "该岛屿类型尚未开放。",
   "message.personnalworld.pw.island_created": "岛屿已创建。",
   "message.personnalworld.spawn.wrong_dim": "必须身在这座岛上才能移动出生点。",
   "message.personnalworld.spawn.in_air": "请站在完整方块上。方块不能放在空中。",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "进入",
   "preset.personnalworld.classic": "经典",
   "preset.personnalworld.forest": "森林",
-  "preset.personnalworld.rock": "岩石"
+  "preset.personnalworld.rock": "岩石",
+  "preset.personnalworld.desert": "沙漠",
+  "preset.personnalworld.locked_overlay": "即将"
 }

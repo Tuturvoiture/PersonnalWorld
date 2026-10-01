@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "Limite de ilhas atingido.",
   "message.personnalworld.pw.island_name_empty": "O nome da ilha não pode ficar vazio.",
   "message.personnalworld.pw.preset_unknown": "Preset desconhecido.",
+  "message.personnalworld.pw.preset_locked": "Este tipo de ilha ainda não está disponível.",
   "message.personnalworld.pw.island_created": "Ilha criada.",
   "message.personnalworld.spawn.wrong_dim": "Você precisa estar nesta ilha para mover o ponto de spawn.",
   "message.personnalworld.spawn.in_air": "Fique sobre um bloco sólido. O cubo não pode ficar no ar.",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "Entrar",
   "preset.personnalworld.classic": "Clássica",
   "preset.personnalworld.forest": "Floresta",
-  "preset.personnalworld.rock": "Rocha"
+  "preset.personnalworld.rock": "Rocha",
+  "preset.personnalworld.desert": "Deserto",
+  "preset.personnalworld.locked_overlay": "Em breve"
 }

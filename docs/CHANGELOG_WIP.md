@@ -6,6 +6,11 @@ Journal vivant des changements fonctionnels **non encore archivés** dans [`CHAN
 
 ## Pending
 
+- 1.4.0-beta.7 — Fermeture du carnet : plus de flash ouvert ni de « hop » de resélection en fin d’anim (état close hors NBT).
+- 1.4.0-beta.6 — Fermer le carnet rejoue l’animation de fermeture (le rendu ne forçait plus la couverture fermée trop tôt).
+- 1.4.0-beta.5 — Les 4 types d’île du carnet sont sur une seule ligne, espacés également avec les mêmes marges à gauche et à droite.
+- 1.4.0-beta.4 — Types verrouillés : « bientôt » en diagonale sur l’icône ; grille des presets plus espacée pour ne plus couper les noms.
+- 1.4.0-beta.3 — Types d’île non prêts (forêt, roche, désert…) verrouillés dans le carnet. Si le NBT du type manque, génération avec `ile_1`.
 - 1.4.0-beta.2 — Passage en beta : carnet d’îles, invitations, droits visiteur, alignement `max_simultaneous` DimensionArchitect (depuis 1.4.0-alpha.42).
 - 1.4.0-alpha.42 — Au démarrage, PersonnalWorld aligne `max_simultaneous` de DimensionArchitect sur son quota (64). Désactivable : `syncDarchitectMaxSimultaneous = false` dans `personnalworld.toml`.
 - 1.4.0-alpha.41 — Ouvrir le carnet n’ouvre plus les autres carnets : seule la pile en lecture change de forme.

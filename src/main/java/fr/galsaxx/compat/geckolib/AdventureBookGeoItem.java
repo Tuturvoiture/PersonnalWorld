@@ -81,8 +81,9 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "book", 0, state -> {
-			java.util.UUID holder = AdventureBookClientPose.renderHolder();
+			UUID holder = AdventureBookClientPose.renderHolder();
 			boolean open = AdventureBookClientPose.isReading(holder);
+			boolean closing = AdventureBookClientPose.isClosing(holder);
 			RawAnimation current = state.getController().getCurrentRawAnimation();
 			if (open) {
 				if (current != OPEN) {
@@ -90,10 +91,17 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 				}
 				return PlayState.CONTINUE;
 			}
-			if (current == OPEN) {
-				return state.setAndContinue(CLOSE);
+			if (closing || current == OPEN) {
+				if (current != CLOSE) {
+					return state.setAndContinue(CLOSE);
+				}
+				return PlayState.CONTINUE;
 			}
-			if (current == null) {
+			if (current == CLOSE) {
+				// Close terminé côté pose : bascule propre sur idle_closed (évite un flash open).
+				return state.setAndContinue(IDLE_CLOSED);
+			}
+			if (current == null || current != IDLE_CLOSED) {
 				return state.setAndContinue(IDLE_CLOSED);
 			}
 			return PlayState.CONTINUE;
@@ -111,23 +119,26 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 			return;
 		}
 		GeoItem.getOrAssignId(stack, serverWorld);
+		if (stack != player.getMainHandStack()) {
+			return;
+		}
 
-		Integer left = PENDING_GUI_OPEN.get(player.getUuid());
+		UUID id = player.getUuid();
+		Integer left = PENDING_GUI_OPEN.get(id);
 		if (left == null) {
 			return;
 		}
 		if (left <= 0) {
-			PENDING_GUI_OPEN.remove(player.getUuid());
+			PENDING_GUI_OPEN.remove(id);
 			NetworkManager.sendToPlayer(player, new OpenAdventureBookPayload());
 			return;
 		}
-		PENDING_GUI_OPEN.put(player.getUuid(), left - 1);
+		PENDING_GUI_OPEN.put(id, left - 1);
 	}
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
-		setVisuallyOpen(stack, true);
 		user.setCurrentHand(hand);
 		EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
 			AdventureBookClientPose.setLocalReading(true);
@@ -143,8 +154,6 @@ public final class AdventureBookGeoItem extends AdventureBookItem implements Geo
 	public static void handleCloseFromClient(ServerPlayerEntity player) {
 		PENDING_GUI_OPEN.remove(player.getUuid());
 		player.clearActiveItem();
-		setVisuallyOpen(player.getMainHandStack(), false);
-		setVisuallyOpen(player.getOffHandStack(), false);
 		broadcastReading(player, false);
 	}
 

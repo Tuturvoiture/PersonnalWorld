@@ -3,18 +3,23 @@
 Ce qui est **jouable** / disponible pour une version donnée.  
 Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pas à chaque patch cosmétique).
 
-## Courante — `1.4.0-beta.1`
+## Courante — `1.4.0-beta.7`
 
 | Capacité | Détail |
 |----------|--------|
-| Item monde perso | `personnal_world_item` — dim VOID DArchitect, île NBT |
-| Bloc spawn | `spawn_marker` Y=88 ; pieds Y=89 |
-| Animations bâton | GeckoLib optionnel |
+| Item monde perso | `personnal_world_item` — dim VOID DArchitect, île NBT ; suit l’île **active** |
+| Multi-îles | Plusieurs îles / joueur ; plafond `maxIslandsPerPlayer` (défaut 3) ; ids `perso_<uuid>` / `perso_<uuid>_<n>` |
+| Bloc spawn | `spawn_marker` Y=88 ; pieds Y=89 ; déplaçable via carnet (owner) |
+| Carnet d’aventurier | Item + GUI parchemin (Mes îles / Îles invitées, presets, réglages, invitations) |
+| Presets | `classic` déverrouillé (`ile_1`) ; `forest` / `rock` / `desert` verrouillés (« bientôt ») ; fallback structure `ile_1` |
+| Animations | GeckoLib optionnel (bâton + carnet) ; close via état `closing` (pas de NBT en fin d’anim) |
 | `/returnworld` | Retour depuis monde perso |
-| Invitations / droits | `/pw` via façade `IslandMembersApi` ; cibles **online/offline** (`PlayerRef`) |
-| Sync DA | DArchitect **≥ 0.1.2** ; TEMP préservés dans `applyRecord` |
-| UI ready | `IslandMembersApi` + S2C `SyncIslandMembersPayload` + `IslandMembersClientCache` (pas encore d’écran livre / C2S) |
+| Invitations / droits | `/pw` + carnet via `IslandMembersApi` ; cibles **online/offline** (`PlayerRef`) |
+| Rôles | Owner, co-créateur, builder, visitor, TEMP ; co-créateur gère invites de l’île affichée |
+| Visiteur | JOIN OK ; pas casse / pose / coffres / dégâts entités ; bâton chez hôte → retour sans sauver l’île |
+| Sync DA | DArchitect **≥ 0.1.2** ; TEMP préservés ; `max_simultaneous` aligné sur 64 (`syncDarchitectMaxSimultaneous`) |
 | Whitelist fichiers | `<world>/personnalworld/access/*.json` |
+| Messages | TP en barre d’action (`actionBarMessages`) ; invite reçue en tchat |
 | Debug ops | `/pw debug …` si `enableDebugCommands` |
 | BANNED | Enum prêt ; **pas** branché |
 | Inventaire | Partagé par défaut (`shareInventory`) |
@@ -24,6 +29,10 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 
 | Version | Notes |
 |----------|--------|
+| 1.4.0-beta.7 | Close carnet sans flash / hop (état `closing`) |
+| 1.4.0-beta.5 | 4 presets sur une ligne |
+| 1.4.0-beta.3 | Presets non prêts verrouillés ; fallback `ile_1` |
+| 1.4.0-beta.2 | Beta carnet + invites + droits + sync DA max |
 | 1.4.0-beta.1 | PATCHNOTES auto libs (agrégat beta/stable) |
 | 1.4.0-beta.0 | Première beta 1.4 (invites / droits) |
 | 1.4.0-alpha.5 | Façade UI + S2C sync membres |

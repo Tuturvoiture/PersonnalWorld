@@ -45,6 +45,7 @@ Regarder ici **avant** un grep projet.
 - Texture GUI : `textures/gui/adventure_book_parchment.png` (256×192) ; `island_button.png` (logo île, boutons V)
 - Pose 3P lecture : `client/AdventureBookClientPose.java` + `mixin/client/PlayerEntityRendererMixin.java`
 - Sens open main : `compat/geckolib/client/AdventureBookGeoRenderer.java`
+- Vérif delta 1.3.1→beta.7 : `docs/historique/sessions/2026-10-01_verif-depuis-1.3.1.md`
 
 - Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
 - Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`
