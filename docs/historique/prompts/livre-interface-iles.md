@@ -511,6 +511,12 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `builds/1.4.0-beta.7/`, `gradle.properties`  
 **Suite :** Push / PR si demandé.
 
+## P089 — Patch notes EN depuis beta.2
+**Demande :** Patch note EN pour les versions depuis 1.4.0-beta.2.  
+**Livré :** `builds/1.4.0-beta.7/CURSEFORGE_EN.md` (delta beta.3→beta.7) ; lien dans `RELEASE_NOTES_EN.md`.  
+**Pointeurs :** `builds/1.4.0-beta.7/CURSEFORGE_EN.md`  
+**Suite :** —
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |
