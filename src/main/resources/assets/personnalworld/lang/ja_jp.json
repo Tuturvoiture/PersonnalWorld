@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "島の上限に達しました。",
   "message.personnalworld.pw.island_name_empty": "島の名前は空にできません。",
   "message.personnalworld.pw.preset_unknown": "不明なプリセットです。",
+  "message.personnalworld.pw.preset_locked": "この島タイプはまだ利用できません。",
   "message.personnalworld.pw.island_created": "島を作成しました。",
   "message.personnalworld.spawn.wrong_dim": "スポーン地点を動かすには、この島の中にいる必要があります。",
   "message.personnalworld.spawn.in_air": "固体ブロックの上に立ってください。立方体は空中に置けません。",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "入る",
   "preset.personnalworld.classic": "クラシック",
   "preset.personnalworld.forest": "森",
-  "preset.personnalworld.rock": "岩"
+  "preset.personnalworld.rock": "岩",
+  "preset.personnalworld.desert": "砂漠",
+  "preset.personnalworld.locked_overlay": "近日"
 }

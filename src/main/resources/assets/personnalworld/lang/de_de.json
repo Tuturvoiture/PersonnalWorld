@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "Inselgrenze erreicht.",
   "message.personnalworld.pw.island_name_empty": "Der Inselname darf nicht leer sein.",
   "message.personnalworld.pw.preset_unknown": "Unbekannte Vorlage.",
+  "message.personnalworld.pw.preset_locked": "Dieser Inseltyp ist noch nicht verfügbar.",
   "message.personnalworld.pw.island_created": "Insel erstellt.",
   "message.personnalworld.spawn.wrong_dim": "Du musst auf dieser Insel sein, um den Spawnpunkt zu verschieben.",
   "message.personnalworld.spawn.in_air": "Steh auf einem festen Block. Der Würfel kann nicht in der Luft stehen.",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "Beitreten",
   "preset.personnalworld.classic": "Klassisch",
   "preset.personnalworld.forest": "Wald",
-  "preset.personnalworld.rock": "Fels"
+  "preset.personnalworld.rock": "Fels",
+  "preset.personnalworld.desert": "Wüste",
+  "preset.personnalworld.locked_overlay": "Bald"
 }

@@ -469,6 +469,48 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `builds/1.4.0-beta.2/CURSEFORGE_EN.md`  
 **Suite :** —
 
+## P082 — Presets verrouillés + fallback ile_1
+**Demande :** Verrouiller les types d’île non faits (désert etc.), non cliquables ; si NBT absent, lancer `ile_1` par défaut.  
+**Livré :** `1.4.0-beta.3`. `unlocked` sur presets ; forêt/roche/désert locked ; `IslandGenerator` retombe sur `ile_1`.  
+**Pointeurs :** `IslandPresetRegistry`, `IslandGenerator`, `AdventureBookScreen.buildPreset`  
+**Suite :** —
+
+## P083 — Badge bientôt + espacement presets
+**Demande :** Pas « bientôt » dans le nom ; texte en diagonale sur l’image ; plus d’espace (désert chevauchait Classique).  
+**Livré :** `1.4.0-beta.4`. Badge diagonal + grille 58×56.  
+**Pointeurs :** `AdventureBookImageButton`, `AdventureBookScreen.buildPreset`  
+**Suite :** —
+
+## P084 — Quatre presets sur une ligne
+**Demande :** Désert caché sous « Nom du monde » ; les 4 types sur la même ligne, espacés également, marges latérales égales.  
+**Livré :** `1.4.0-beta.5`. Grille 1×N avec `step = (panelW - 2*sidePad) / count`.  
+**Pointeurs :** `AdventureBookScreen.buildPreset`  
+**Suite :** —
+
+## P085 — Anim fermeture carnet cassée
+**Demande :** L’animation de fermeture du livre ne marche pas.  
+**Livré :** `1.4.0-beta.6`. `pw_book_open` gardé ~9 ticks après close (le reset osseux alpha.41 coupait l’anim).  
+**Pointeurs :** `AdventureBookGeoItem`, `AdventureBookScreen.notifyLeave`  
+**Suite :** —
+
+## P086 — Flash ouvert + hop fin de close
+**Demande :** Après une 1re ouverture, flash livre ouvert ~0,5 s en fin de close ; hop comme un changement de case.  
+**Livré :** `1.4.0-beta.7`. Close via `closing` (pas de NBT) ; bascule IDLE_CLOSED propre.  
+**Pointeurs :** `AdventureBookClientPose`, `AdventureBookGeoRenderer`, `AdventureBookGeoItem`  
+**Suite :** —
+
+## P087 — Vérif intégrale depuis 1.3.1
+**Demande :** Vérifier l’intégralité des ajouts depuis 1.3.1 (checklist plan).  
+**Livré :** Audit doc↔code OK ; CAPABILITIES + HORS_SCOPE mis à jour ; rapport session. Smoke live/duo = N/A cette session.  
+**Pointeurs :** `docs/historique/sessions/2026-10-01_verif-depuis-1.3.1.md`  
+**Suite :** Smoke B2/B3/E/F en jeu si besoin.
+
+## P088 — Build + commit beta.7
+**Demande :** Build + commit pour sortie nouvelle beta.  
+**Livré :** Rebuild Fabric `1.4.0-beta.7` ; commit branche `feature/livre-interface-iles`.  
+**Pointeurs :** `builds/1.4.0-beta.7/`, `gradle.properties`  
+**Suite :** Push / PR si demandé.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

@@ -10,6 +10,8 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
+import java.util.UUID;
+
 /**
  * Les anims JSON restent <strong>identiques</strong> à Blockbench (Y− = ouvrir, close = miroir).
  * Le display main (~−90° Y) inverse le sens perçu : on annule uniquement le Y de {@code cover_front}
@@ -46,8 +48,10 @@ public final class AdventureBookGeoRenderer extends GeoItemRenderer<AdventureBoo
 	) {
 		boolean cover = "cover_front".equals(bone.getName());
 		boolean pages = "pages_front".equals(bone.getName());
-		boolean open = fr.galsaxx.AdventureBookItem.isVisuallyOpen(this.getCurrentItemStack());
-		if ((cover || pages) && !open) {
+		UUID holder = AdventureBookClientPose.renderHolder();
+		// Pas de NBT pw_book_open : lecture / closing pilotent l’anim (évite hop + flash en fin de close).
+		boolean animate = AdventureBookClientPose.allowCoverAnim(holder);
+		if ((cover || pages) && !animate) {
 			var rest = bone.getInitialSnapshot();
 			bone.setRotX(rest.getRotX());
 			bone.setRotY(rest.getRotY());

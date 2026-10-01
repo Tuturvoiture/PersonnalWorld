@@ -1,9 +1,9 @@
 # État courant
 
-- **mod.version :** `1.4.0-beta.2` (`gradle.properties`)
+- **mod.version :** `1.4.0-beta.7` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
 - **Branche active :** `feature/livre-interface-iles` → `origin/feature/livre-interface-iles`
-- **Jar :** non buildé (alpha en cours)
+- **Jar :** `builds/1.4.0-beta.7/1.4.0-beta.7-fabric.jar` (vérif doc↔code 2026-10-01)
 - **API :** DimensionArchitect `darchitect` ≥ **0.1.2** (`access()` public)
 - **GeckoLib :** optionnel 4.7.5.1
 

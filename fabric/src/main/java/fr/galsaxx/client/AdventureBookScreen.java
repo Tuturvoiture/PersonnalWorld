@@ -169,7 +169,11 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 					capped,
 					b -> {
 						this.mode = Mode.PRESET;
-						this.selectedPreset = IslandBookClient.presets.isEmpty() ? "classic" : IslandBookClient.presets.get(0).id();
+						this.selectedPreset = IslandBookClient.presets.stream()
+								.filter(IslandBookNetworking.PresetInfo::unlocked)
+								.map(IslandBookNetworking.PresetInfo::id)
+								.findFirst()
+								.orElse("classic");
 						this.init();
 					}));
 		}
@@ -181,26 +185,46 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 
 	private void buildPreset() {
 		String typed = this.nameFieldMode == Mode.PRESET && this.nameField != null ? this.nameField.getText() : null;
-		int x = this.panelX + 16;
+		final int icon = 32;
+		final int sidePad = 12;
+		int count = Math.max(1, IslandBookClient.presets.size());
+		int usable = this.panelW - 2 * sidePad;
+		int step = usable / count;
 		int i = 0;
 		for (IslandBookNetworking.PresetInfo preset : IslandBookClient.presets) {
-			int col = i % 3;
-			int row = i / 3;
 			IslandBookNetworking.PresetInfo current = preset;
-			this.addDrawableChild(new AdventureBookImageButton(
-					x + col * 48, this.panelY + 36 + row * 40, 32, 32,
+			boolean unlocked = preset.unlocked();
+			Text badge = unlocked ? null : Text.translatable("preset.personnalworld.locked_overlay");
+			int slotX = this.panelX + sidePad + i * step;
+			int btnX = slotX + (step - icon) / 2;
+			AdventureBookImageButton btn = new AdventureBookImageButton(
+					btnX, this.panelY + 34, icon, icon,
 					presetLabel(preset),
 					presetIcon(preset.icon()), ISLAND_TEX, ISLAND_TEX,
 					AdventureBookImageButton.Style.ICON_ONLY,
-					preset.id().equals(this.selectedPreset),
+					unlocked && preset.id().equals(this.selectedPreset),
+					badge,
+					step - 4,
 					b -> {
+						if (!current.unlocked()) {
+							return;
+						}
 						this.selectedPreset = current.id();
 						if (this.nameField != null) {
 							this.nameField.setText(presetLabel(current).getString());
 						}
 						this.init();
-					}));
+					});
+			btn.active = unlocked;
+			this.addDrawableChild(btn);
 			i++;
+		}
+		if (IslandBookClient.presets.stream().noneMatch(p -> p.id().equals(this.selectedPreset) && p.unlocked())) {
+			this.selectedPreset = IslandBookClient.presets.stream()
+					.filter(IslandBookNetworking.PresetInfo::unlocked)
+					.map(IslandBookNetworking.PresetInfo::id)
+					.findFirst()
+					.orElse("classic");
 		}
 		this.nameField = new TextFieldWidget(this.textRenderer, this.panelX + 16, this.panelY + this.panelH - 58, this.panelW - 32, 16, Text.empty());
 		String presetName = IslandBookClient.presets.stream()
@@ -800,11 +824,10 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 			return;
 		}
 		this.leaveNotified = true;
-		AdventureBookClientPose.setLocalReading(false);
 		if (MinecraftClient.getInstance().player != null) {
-			AdventureBookClientPose.setReading(MinecraftClient.getInstance().player.getUuid(), false);
-			fr.galsaxx.AdventureBookItem.setVisuallyOpen(MinecraftClient.getInstance().player.getMainHandStack(), false);
-			fr.galsaxx.AdventureBookItem.setVisuallyOpen(MinecraftClient.getInstance().player.getOffHandStack(), false);
+			AdventureBookClientPose.beginClosing(MinecraftClient.getInstance().player.getUuid(), true);
+		} else {
+			AdventureBookClientPose.setLocalReading(false);
 		}
 		NetworkManager.sendToServer(new CloseAdventureBookPayload());
 	}

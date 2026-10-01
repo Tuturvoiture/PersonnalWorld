@@ -44,8 +44,12 @@ public final class IslandLifecycle {
 		}
 		AccessFileStore.get().bindServer(server);
 		List<IslandPresetRegistry.IslandPreset> presets = currentPresets(server);
-		if (IslandPresetRegistry.find(presets, presetId).isEmpty()) {
+		var presetOpt = IslandPresetRegistry.find(presets, presetId);
+		if (presetOpt.isEmpty()) {
 			return new Outcome(false, "message.personnalworld.pw.preset_unknown");
+		}
+		if (!presetOpt.get().unlocked()) {
+			return new Outcome(false, "message.personnalworld.pw.preset_locked");
 		}
 		List<AccessRecord> owned = AccessFileStore.get().listByOwner(ownerUuid);
 		IslandCreationPolicy.Decision decision = IslandCreationPolicy.evaluate(

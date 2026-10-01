@@ -80,6 +80,7 @@
   "message.personnalworld.pw.max_islands": "Nombre maximum d'îles atteint.",
   "message.personnalworld.pw.island_name_empty": "Le nom de l'île ne peut pas être vide.",
   "message.personnalworld.pw.preset_unknown": "Preset inconnu.",
+  "message.personnalworld.pw.preset_locked": "Ce type d'île n'est pas encore disponible.",
   "message.personnalworld.pw.island_created": "Île créée.",
   "message.personnalworld.spawn.wrong_dim": "Tu dois être dans cette île pour déplacer le point de spawn.",
   "message.personnalworld.spawn.in_air": "Pose-toi sur un bloc solide. Le cube ne se place pas dans le vide.",
@@ -144,5 +145,7 @@
   "screen.personnalworld.adventure_book.join": "Rejoindre",
   "preset.personnalworld.classic": "Classique",
   "preset.personnalworld.forest": "Forêt",
-  "preset.personnalworld.rock": "Roche"
+  "preset.personnalworld.rock": "Roche",
+  "preset.personnalworld.desert": "Désert",
+  "preset.personnalworld.locked_overlay": "Bientôt"
 }

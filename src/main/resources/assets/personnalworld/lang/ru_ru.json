@@ -81,6 +81,7 @@
   "message.personnalworld.pw.max_islands": "Достигнут предел островов.",
   "message.personnalworld.pw.island_name_empty": "Имя острова не может быть пустым.",
   "message.personnalworld.pw.preset_unknown": "Неизвестный пресет.",
+  "message.personnalworld.pw.preset_locked": "Этот тип острова пока недоступен.",
   "message.personnalworld.pw.island_created": "Остров создан.",
   "message.personnalworld.spawn.wrong_dim": "Чтобы сдвинуть точку спавна, нужно находиться на этом острове.",
   "message.personnalworld.spawn.in_air": "Встаньте на полный блок. Куб нельзя поставить в воздухе.",
@@ -146,5 +147,7 @@
   "screen.personnalworld.adventure_book.join": "Войти",
   "preset.personnalworld.classic": "Классика",
   "preset.personnalworld.forest": "Лес",
-  "preset.personnalworld.rock": "Скала"
+  "preset.personnalworld.rock": "Скала",
+  "preset.personnalworld.desert": "Пустыня",
+  "preset.personnalworld.locked_overlay": "Скоро"
 }

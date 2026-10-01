@@ -21,6 +21,7 @@
 - GeckoLib **optionnel** : sans le mod, modèle JSON statique, pas de crash.
 - Bâton : JSON classique = display sans GeckoLib ; avec GeckoLib → `personnal_world_item_geckolib.json` (displays espace `builtin/entity`) + geo/anims.
 - Carnet : anims JSON = Blockbench (Y− ouvrir, close = miroir) ; sens main via `AdventureBookGeoRenderer` (negate Y `cover_front`) — ne plus inverser les keyframes à la main.
+- Anim close : phase `closing` côté client (pas de NBT `pw_book_open` en fin de close — sinon hop de resélection) ; `clearActiveItem` différé ~9 ticks.
 - `mod.version` sans suffixe `+1.21.1` ; `${version}` dans les métadonnées loader.
 - Always-apply Cursor : `git-attribution.mdc`, `versioning.mdc`, `prompt-bdd.mdc` (BDD seulement en tour d’implémentation). WIP / sessions / release-cut / DArchitect = glob ou agent-requested.
 - Nouveaux dépôts Cursor : copier / remplir `docs/kit-nouveau-projet.md` (process générique). Ne pas recopier Gradle / GeckoLib / DArchitect hors mod MC.

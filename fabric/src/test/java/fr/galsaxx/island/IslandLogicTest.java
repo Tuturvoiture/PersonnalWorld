@@ -73,11 +73,16 @@ class IslandLogicTest {
 
 	@Test
 	void presetsMergeAndFallback() {
-		var extra = List.of(new IslandPresetRegistry.IslandPreset("custom", "Custom", ""));
+		var extra = List.of(new IslandPresetRegistry.IslandPreset("custom", "Custom", "", IslandPresetRegistry.DEFAULT_STRUCTURE, true));
 		var merged = IslandPresetRegistry.merge(IslandPresetRegistry.defaults(), extra);
-		assertEquals(4, merged.size());
+		assertEquals(5, merged.size());
 		assertEquals(IslandPresetRegistry.FALLBACK_ICON, IslandPresetRegistry.find(merged, "custom").orElseThrow().icon());
 		assertTrue(IslandPresetRegistry.find(merged, "missing").isEmpty());
+		assertTrue(IslandPresetRegistry.find(merged, "classic").orElseThrow().unlocked());
+		assertFalse(IslandPresetRegistry.find(merged, "desert").orElseThrow().unlocked());
+		assertEquals(IslandPresetRegistry.DEFAULT_STRUCTURE, IslandPresetRegistry.preferredStructure("classic"));
+		assertEquals(IslandPresetRegistry.DEFAULT_STRUCTURE, IslandPresetRegistry.preferredStructure(""));
+		assertEquals("ile_forest", IslandPresetRegistry.preferredStructure("forest"));
 	}
 
 	@Test
