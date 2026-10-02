@@ -226,7 +226,8 @@ public final class IslandAccessService {
 		}
 		RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, id);
 		ServerPlayerEntity hostOnline = server.getPlayerManager().getPlayer(record.ownerUuid());
-		ServerWorld world = PersonnalWorldUtil.ensurePersonalWorld(server, key, id, hostOnline);
+		// Never create on visit — reload persisted dim if unloaded (host may be offline).
+		ServerWorld world = PersonnalWorldUtil.openExistingPersonalWorld(server, key, id, hostOnline);
 		if (world == null) {
 			return Result.fail("message.personnalworld.personal_world_unavailable");
 		}

@@ -4,6 +4,7 @@ Historique durable par `mod.version` — **hors** `build/` Gradle (éphémère).
 
 | Version | Dernier build (UTC) | Notes |
 |---------|---------------------|-------|
+| 1.4.0 | 2026-10-02 | [PATCHNOTES](1.4.0/PATCHNOTES.md) · [META](1.4.0/META.md) · [CURSEFORGE_EN](1.4.0/CURSEFORGE_EN.md) |
 | 1.4.0-beta.2 | 2026-09-30T04:44:53.726312700Z | [PATCHNOTES](1.4.0-beta.2/PATCHNOTES.md) · [META](1.4.0-beta.2/META.md) |
 | 1.4.0-beta.1 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.4.0-beta.1/PATCHNOTES.md) / [META](1.4.0-beta.1/META.md) |
 | 1.4.0-beta.0 | 2026-09-21T02:25:55.2730878Z | [PATCHNOTES](1.4.0-beta.0/PATCHNOTES.md) / [META](1.4.0-beta.0/META.md) |

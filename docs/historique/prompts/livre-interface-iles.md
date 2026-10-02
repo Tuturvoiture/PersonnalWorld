@@ -517,6 +517,12 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `builds/1.4.0-beta.7/CURSEFORGE_EN.md`  
 **Suite :** —
 
+## P090 — Peaufinage / cut 1.4.0
+**Demande :** Implémenter plan peaufinage 1.4.0 (visit offline + TEMP, notes EN, bump, commit).  
+**Livré :** `openExistingPersonalWorld` ; packaging `1.4.0` ; CURSEFORGE_EN agrégat depuis 1.3.1 ; CHANGELOG archivé.  
+**Pointeurs :** `builds/1.4.0/CURSEFORGE_EN.md`, `docs/historique/sessions/2026-10-02_cut-1.4.0.md`  
+**Suite :** Tag `v1.4.0` / push sur demande.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

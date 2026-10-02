@@ -20,7 +20,8 @@ Regarder ici **avant** un grep projet.
 - Île / TP / commande : `util/IslandGenerator.java`, `util/PersonalWorldSpawnReference.java`, `util/PersonalWorldSpawnSafety.java`, `util/ReturnTeleport.java`, `PersonnalWorldUtil.java`, `ReturnPositionSaver.java`, `command/ReturnWorldCommand.java`, `command/PersonnalWorldCommand.java`
 - Invitations / droits : `invite/` — façade UI `IslandMembersApi` → `IslandAccessService` / `AccessFileStore` / `DArchitectAccess` ; garde `PresenceAndRightsGuard` ; visiteur `island/IslandRoleGuard.java` ; fichiers `<world>/personnalworld/access/`
 - Réseau UI : `network/SyncIslandMembersPayload` (membres) ; `network/IslandBookNetworking` (listes îles, presets, réglages) + `fabric/…/client/IslandBookClient`
-- Offline / TEMP : `PlayerRef.resolve` ; TEMP réinjectés dans `DArchitectAccess.applyRecord`
+- Offline / TEMP : `PlayerRef.resolve` ; visit → `PersonnalWorldUtil.openExistingPersonalWorld` (reload DA si dim déchargée) ; TEMP réinjectés dans `DArchitectAccess.applyRecord` ; `TempVisitorStore.clearAll` au start
+- Vérif delta 1.3.1→1.4.0 : `docs/historique/sessions/2026-10-01_verif-depuis-1.3.1.md` ; cut : `builds/1.4.0/CURSEFORGE_EN.md`
 - Mixin : `mixin/PlayerEntityMixin.java`, `personnalworld.mixins.json` ; NBT `data/personnalworld/structure/ile_1.nbt`
 - Loaders : `fabric/…/PersonnalWorldFabric.java`, `PersonnalWolrdClient.java` ; `neoforge/…/PersonnalWorldNeoForge.java`
 
@@ -45,9 +46,9 @@ Regarder ici **avant** un grep projet.
 - Texture GUI : `textures/gui/adventure_book_parchment.png` (256×192) ; `island_button.png` (logo île, boutons V)
 - Pose 3P lecture : `client/AdventureBookClientPose.java` + `mixin/client/PlayerEntityRendererMixin.java`
 - Sens open main : `compat/geckolib/client/AdventureBookGeoRenderer.java`
-- Vérif delta 1.3.1→beta.7 : `docs/historique/sessions/2026-10-01_verif-depuis-1.3.1.md`
 
-- Kit : `docs/kit-nouveau-projet.md` ; pont `AGENTS.md`
+## Docs / process
+
 - Version / WIP / capacités : `docs/VERSIONING.md`, `CHANGELOG_WIP.md`, `CHANGELOG.md`, `RELEASE_NOTES_EN.md`, `CAPABILITIES.md`
 - DoD / hors-scope / commandes / env : `docs/DEFINITION_OF_DONE.md`, `HORS_SCOPE.md`, `COMMANDS.md`, `ENVIRONMENTS.md`
 - Scripts : `script/` (`build-all.bat`, `build-fabric.bat`, `build-neoforge.bat`, `run-client.bat`, `run-client-rebuild.bat`, `fix-minecraft-cache.bat`, `_env.bat`)

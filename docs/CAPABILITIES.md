@@ -3,7 +3,7 @@
 Ce qui est **jouable** / disponible pour une version donnée.  
 Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pas à chaque patch cosmétique).
 
-## Courante — `1.4.0-beta.7`
+## Courante — `1.4.0`
 
 | Capacité | Détail |
 |----------|--------|
@@ -16,9 +16,11 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 | `/returnworld` | Retour depuis monde perso |
 | Invitations / droits | `/pw` + carnet via `IslandMembersApi` ; cibles **online/offline** (`PlayerRef`) |
 | Rôles | Owner, co-créateur, builder, visitor, TEMP ; co-créateur gère invites de l’île affichée |
+| Visite | Whitelist + île déjà créée ; hôte offline OK (recharge dim persistée si déchargée) ; pas de création via visit |
 | Visiteur | JOIN OK ; pas casse / pose / coffres / dégâts entités ; bâton chez hôte → retour sans sauver l’île |
-| Sync DA | DArchitect **≥ 0.1.2** ; TEMP préservés ; `max_simultaneous` aligné sur 64 (`syncDarchitectMaxSimultaneous`) |
-| Whitelist fichiers | `<world>/personnalworld/access/*.json` |
+| TEMP | RAM only ; drop leave / quit / change dim / restart (`TempVisitorStore.clearAll`) |
+| Sync DA | DArchitect **≥ 0.1.2** ; TEMP préservés dans `applyRecord` ; `max_simultaneous` aligné sur 64 |
+| Whitelist fichiers | `<world>/personnalworld/access/*.json` (survit au restart) |
 | Messages | TP en barre d’action (`actionBarMessages`) ; invite reçue en tchat |
 | Debug ops | `/pw debug …` si `enableDebugCommands` |
 | BANNED | Enum prêt ; **pas** branché |
@@ -29,6 +31,7 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 
 | Version | Notes |
 |----------|--------|
+| 1.4.0 | Stable 1.4 ; visit offline recharge dim ; notes EN storefront |
 | 1.4.0-beta.7 | Close carnet sans flash / hop (état `closing`) |
 | 1.4.0-beta.5 | 4 presets sur une ligne |
 | 1.4.0-beta.3 | Presets non prêts verrouillés ; fallback `ile_1` |

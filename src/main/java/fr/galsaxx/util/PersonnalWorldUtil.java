@@ -40,7 +40,10 @@ public final class PersonnalWorldUtil {
      * Assure l’existence et l’initialisation du monde perso.
      * Si le monde existe déjà, ne refait PAS la génération grâce au PersistentState.
      */
-    /** True when the dimension is already loaded or already registered. Does not create one. */
+    /**
+     * True when the dimension is loaded, registered in DA, or already known via access JSON
+     * (persisted island that may be unloaded after idle / restart).
+     */
     public static boolean personalDimensionExists(MinecraftServer server, String dimensionId) {
         Identifier id = Identifier.tryParse(dimensionId);
         if (id == null) {
@@ -53,8 +56,81 @@ public final class PersonnalWorldUtil {
             boolean[] present = {false};
             ModCallContext.runAs(PersonnalWorld.MOD_ID, () ->
                     present[0] = DimensionArchitectRuntime.get().hasDimension(dimensionId));
-            return present[0];
+            if (present[0]) {
+                return true;
+            }
         } catch (RuntimeException ignored) {
+            // fall through to access-file check
+        }
+        AccessFileStore.get().bindServer(server);
+        if (AccessFileStore.get().getCached(dimensionId).isPresent()) {
+            return true;
+        }
+        Path accessRoot = AccessFileStore.get().accessRoot();
+        if (accessRoot == null) {
+            return false;
+        }
+        return java.nio.file.Files.isRegularFile(
+                accessRoot.resolve(fr.galsaxx.invite.IslandIds.fileKey(dimensionId) + ".json"));
+    }
+
+    /**
+     * Opens an island that already exists (access JSON / DA persistence). Never creates a new dim.
+     * Safe for {@code /pw visit} with host offline when the world was unloaded.
+     */
+    public static ServerWorld openExistingPersonalWorld(MinecraftServer server,
+                                                        RegistryKey<World> worldKey,
+                                                        Identifier dimId,
+                                                        ServerPlayerEntity ownerHint) {
+        AccessFileStore.get().bindServer(server);
+        ServerWorld existing = server.getWorld(worldKey);
+        if (existing != null) {
+            runOneTimeInitIfNeeded(existing, ownerHint);
+            ensureAccessForWorld(server, dimId.toString(), ownerHint);
+            return existing;
+        }
+
+        String id = dimId.toString();
+        try {
+            ModCallContext.runAs(PersonnalWorld.MOD_ID, () -> {
+                var api = DimensionArchitectRuntime.get();
+                if (api.hasDimension(id)) {
+                    return;
+                }
+                tryLoadPersistedDimension(api, id);
+            });
+        } catch (RuntimeException e) {
+            PersonnalWorld.LOGGER.warn("Failed to open existing personal world {}: {}", id, e.toString());
+            return null;
+        }
+
+        ServerWorld world = server.getWorld(worldKey);
+        if (world == null) {
+            return null;
+        }
+        runOneTimeInitIfNeeded(world, ownerHint);
+        ensureAccessForWorld(server, id, ownerHint);
+        return world;
+    }
+
+    /**
+     * Best-effort reload from DA disk snapshot when the dim was unregistered (idle unload).
+     * Uses {@code DimensionManagerImpl.loadDimension} until a public load API exists.
+     */
+    private static boolean tryLoadPersistedDimension(net.darchitect.api.DimensionArchitect api, String id) {
+        if (!(api instanceof net.darchitect.impl.DimensionManagerImpl manager)) {
+            return false;
+        }
+        try {
+            manager.loadDimension(id);
+            return manager.hasDimension(id);
+        } catch (DimensionAlreadyExistsException already) {
+            return true;
+        } catch (IllegalArgumentException | IllegalStateException missing) {
+            PersonnalWorld.LOGGER.debug("No persisted DA snapshot for {}: {}", id, missing.toString());
+            return false;
+        } catch (RuntimeException e) {
+            PersonnalWorld.LOGGER.warn("DA loadDimension failed for {}: {}", id, e.toString());
             return false;
         }
     }
@@ -76,6 +152,10 @@ public final class PersonnalWorldUtil {
                 var api = DimensionArchitectRuntime.get();
                 String id = dimId.toString();
                 if (!api.hasDimension(id)) {
+					// Prefer reloading a persisted island over creating a blank VOID world.
+					if (tryLoadPersistedDimension(api, id)) {
+						return;
+					}
 					UUID ownerUuid = owner != null
 							? owner.getUuid()
 							: fr.galsaxx.invite.IslandIds.creatorUuidFromDimensionId(id).orElse(null);
