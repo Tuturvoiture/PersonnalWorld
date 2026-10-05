@@ -76,7 +76,7 @@ public final class PersonnalWorldUtil {
 
     /**
      * Opens an island that already exists (access JSON / DA persistence). Never creates a new dim.
-     * Safe for {@code /pw visit} with host offline when the world was unloaded.
+     * For owner activation / staff — visitors must use an already-loaded world.
      */
     public static ServerWorld openExistingPersonalWorld(MinecraftServer server,
                                                         RegistryKey<World> worldKey,
@@ -104,19 +104,87 @@ public final class PersonnalWorldUtil {
             return null;
         }
 
-        ServerWorld world = server.getWorld(worldKey);
-        if (world == null) {
-            return null;
-        }
-        runOneTimeInitIfNeeded(world, ownerHint);
-        ensureAccessForWorld(server, id, ownerHint);
-        return world;
-    }
+		ServerWorld world = server.getWorld(worldKey);
+		if (world == null) {
+			return null;
+		}
+		runOneTimeInitIfNeeded(world, ownerHint);
+		ensureAccessForWorld(server, id, ownerHint);
+		return world;
+	}
 
-    /**
-     * Best-effort reload from DA disk snapshot when the dim was unregistered (idle unload).
-     * Uses {@code DimensionManagerImpl.loadDimension} until a public load API exists.
-     */
+	/**
+	 * Best-effort unload of a personal dimension (impl DA or command fallback).
+	 * Callers must evict players first. Returns true when the world is no longer loaded.
+	 */
+	public static boolean tryUnloadPersonalWorld(MinecraftServer server, String dimensionId) {
+		Identifier parsed = Identifier.tryParse(dimensionId);
+		if (parsed == null) {
+			return true;
+		}
+		RegistryKey<World> key = RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, parsed);
+		if (server.getWorld(key) == null) {
+			return true;
+		}
+		boolean unloaded = false;
+		try {
+			boolean[] ok = {false};
+			ModCallContext.runAs(PersonnalWorld.MOD_ID, () -> {
+				var api = DimensionArchitectRuntime.get();
+				if (api instanceof net.darchitect.impl.DimensionManagerImpl manager) {
+					ok[0] = net.darchitect.impl.DimensionLifecycleService.unload(manager, dimensionId, true);
+				}
+			});
+			unloaded = ok[0];
+		} catch (RuntimeException e) {
+			PersonnalWorld.LOGGER.warn("DA unload failed for {}: {}", dimensionId, e.toString());
+		}
+		if (server.getWorld(key) == null) {
+			return true;
+		}
+		if (!unloaded) {
+			unloaded = tryUnloadViaCommand(server, dimensionId);
+		}
+		if (server.getWorld(key) != null) {
+			PersonnalWorld.LOGGER.warn("Personal world {} still loaded after unload attempt", dimensionId);
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean tryUnloadViaCommand(MinecraftServer server, String dim) {
+		var source = server.getCommandSource();
+		String[] candidates = {
+				"darchitect unload " + dim,
+				"da unload " + dim,
+				"dimensionarchitect unload " + dim
+		};
+		for (String cmd : candidates) {
+			try {
+				int result = server.getCommandManager().getDispatcher().execute(cmd, source);
+				if (result >= 0) {
+					return true;
+				}
+			} catch (Exception ignored) {
+				// try next
+			}
+		}
+		return false;
+	}
+
+	/** True when Minecraft already has the ServerWorld in memory (no load attempt). */
+	public static boolean isPersonalWorldLoaded(MinecraftServer server, String dimensionId) {
+		Identifier id = Identifier.tryParse(dimensionId);
+		if (id == null) {
+			return false;
+		}
+		return server.getWorld(RegistryKey.of(net.minecraft.registry.RegistryKeys.WORLD, id)) != null;
+	}
+
+	/**
+	 * Best-effort reload from DA disk snapshot when the dim was unregistered (idle unload).
+	 * Uses {@code DimensionManagerImpl.loadDimension} until a public load API exists.
+	 */
     private static boolean tryLoadPersistedDimension(net.darchitect.api.DimensionArchitect api, String id) {
         if (!(api instanceof net.darchitect.impl.DimensionManagerImpl manager)) {
             return false;
@@ -332,6 +400,8 @@ public final class PersonnalWorldUtil {
         private int spawnMarkerX;
         private int spawnMarkerY;
         private int spawnMarkerZ;
+		/** Yaw Minecraft (0=S, 90=W, 180=N, 270=E), snappé à 90°. */
+		private float spawnMarkerYaw = 0.0F;
 		/** Bloc recouvert par le cube, remis en place au prochain déplacement. */
 		private String replacedBlockId = "";
 		private String replacedBlockProps = "";
@@ -366,6 +436,14 @@ public final class PersonnalWorldUtil {
             spawnMarkerZ = pos.getZ();
         }
 
+		float getSpawnMarkerYaw() {
+			return spawnMarkerYaw;
+		}
+
+		void setSpawnMarkerYaw(float yaw) {
+			spawnMarkerYaw = yaw;
+		}
+
 		String replacedBlockId() {
 			return replacedBlockId == null ? "" : replacedBlockId;
 		}
@@ -392,6 +470,9 @@ public final class PersonnalWorldUtil {
                 s.spawnMarkerY = nbt.getInt("spawnMarkerY");
                 s.spawnMarkerZ = nbt.getInt("spawnMarkerZ");
             }
+			if (nbt.contains("spawnMarkerYaw")) {
+				s.spawnMarkerYaw = nbt.getFloat("spawnMarkerYaw");
+			}
 			if (nbt.contains("replacedBlockId")) {
 				s.replacedBlockId = nbt.getString("replacedBlockId");
 				s.replacedBlockProps = nbt.contains("replacedBlockProps") ? nbt.getString("replacedBlockProps") : "";
@@ -420,6 +501,7 @@ public final class PersonnalWorldUtil {
                 nbt.putInt("spawnMarkerX", spawnMarkerX);
                 nbt.putInt("spawnMarkerY", spawnMarkerY);
                 nbt.putInt("spawnMarkerZ", spawnMarkerZ);
+				nbt.putFloat("spawnMarkerYaw", spawnMarkerYaw);
             }
 			if (replacedBlockId != null && !replacedBlockId.isEmpty()) {
 				nbt.putString("replacedBlockId", replacedBlockId);

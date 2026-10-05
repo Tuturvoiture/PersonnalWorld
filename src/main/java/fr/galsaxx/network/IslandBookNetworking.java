@@ -4,10 +4,12 @@ import dev.architectury.networking.NetworkManager;
 import fr.galsaxx.PersonnalWorld;
 import fr.galsaxx.invite.AccessFileStore;
 import fr.galsaxx.invite.AccessRecord;
+import fr.galsaxx.invite.IslandAccessService;
 import fr.galsaxx.invite.IslandIds;
 import fr.galsaxx.invite.IslandMembersApi;
 import fr.galsaxx.invite.IslandRole;
 import fr.galsaxx.invite.PlayerRef;
+import fr.galsaxx.island.IslandActivationService;
 import fr.galsaxx.island.IslandGameruleSync;
 import fr.galsaxx.island.IslandLifecycle;
 import fr.galsaxx.island.IslandPresetRegistry;
@@ -202,11 +204,19 @@ public final class IslandBookNetworking {
 				record.setDisplayName(payload.name().trim());
 				store.saveMutation(record);
 			}
-			case "setActive" -> setActive(store, player.getUuid(), payload.dimensionId());
+			case "setActive" -> {
+				IslandAccessService.Result result = IslandActivationService.activate(
+						server, player, payload.dimensionId());
+				result.send(player);
+				if (!result.ok()) {
+					sendSync(player);
+					return;
+				}
+			}
 			case "refreshSpawn" -> {
 				ServerWorld world = world(server, payload.dimensionId());
-				String key = PersonalWorldSpawnReference.relocate(world, player);
-				player.sendMessage(net.minecraft.text.Text.translatable(key), false);
+				var outcome = PersonalWorldSpawnReference.relocate(world, player);
+				player.sendMessage(net.minecraft.text.Text.translatable(outcome.messageKey(), outcome.args()), false);
 			}
 			case "setOverlay" -> setOverlay(server, payload.dimensionId(), payload.rule(), payload.value());
 			default -> {
@@ -215,16 +225,6 @@ public final class IslandBookNetworking {
 		}
 		sendSync(player);
 		sendDetail(player, payload.dimensionId());
-	}
-
-	private static void setActive(AccessFileStore store, java.util.UUID owner, String dimensionId) {
-		for (AccessRecord record : store.listByOwner(owner)) {
-			boolean active = record.dimensionId().equals(dimensionId);
-			if (record.active() != active) {
-				record.setActive(active);
-				store.saveMutation(record);
-			}
-		}
 	}
 
 	private static boolean isMemberAction(String action) {

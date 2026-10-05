@@ -3,20 +3,22 @@
 Ce qui est **jouable** / disponible pour une version donnée.  
 Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pas à chaque patch cosmétique).
 
-## Courante — `1.4.0`
+## Courante — `1.4.4`
 
 | Capacité | Détail |
 |----------|--------|
 | Item monde perso | `personnal_world_item` — dim VOID DArchitect, île NBT ; suit l’île **active** |
 | Multi-îles | Plusieurs îles / joueur ; plafond `maxIslandsPerPlayer` (défaut 3) ; ids `perso_<uuid>` / `perso_<uuid>_<n>` |
-| Bloc spawn | `spawn_marker` Y=88 ; pieds Y=89 ; déplaçable via carnet (owner) |
-| Carnet d’aventurier | Item + GUI parchemin (Mes îles / Îles invitées, presets, réglages, invitations) |
+| Bloc spawn | `spawn_marker` ; « Changer le spawn » sous les pieds (yaw 90° silencieux) |
+| Carnet d’aventurier | Item + GUI parchemin ; tooltips FR/EN sur les boutons |
 | Presets | `classic` déverrouillé (`ile_1`) ; `forest` / `rock` / `desert` verrouillés (« bientôt ») ; fallback structure `ile_1` |
 | Animations | GeckoLib optionnel (bâton + carnet) ; close via état `closing` (pas de NBT en fin d’anim) |
 | `/returnworld` | Retour depuis monde perso |
 | Invitations / droits | `/pw` + carnet via `IslandMembersApi` ; cibles **online/offline** (`PlayerRef`) |
 | Rôles | Owner, co-créateur, builder, visitor, TEMP ; co-créateur gère invites de l’île affichée |
-| Visite | Whitelist + île déjà créée ; hôte offline OK (recharge dim persistée si déchargée) ; pas de création via visit |
+| Île active | Switch carnet : cooldown 2 min ; load nouvelle ; unload des autres îles du owner |
+| Visite | Whitelist + dim **déjà chargée** ; sinon message activation owner ; pas de création via visit |
+| Spawn / login île | Île inactive ou sans JOIN → renvoi position sauvegardée |
 | Visiteur | JOIN OK ; pas casse / pose / coffres / dégâts entités ; bâton chez hôte → retour sans sauver l’île |
 | TEMP | RAM only ; drop leave / quit / change dim / restart (`TempVisitorStore.clearAll`) |
 | Sync DA | DArchitect **≥ 0.1.2** ; TEMP préservés dans `applyRecord` ; `max_simultaneous` aligné sur 64 |
@@ -24,6 +26,7 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 | Messages | TP en barre d’action (`actionBarMessages`) ; invite reçue en tchat |
 | Debug ops | `/pw debug …` si `enableDebugCommands` |
 | BANNED | Enum prêt ; **pas** branché |
+| Réserve chargée | Affichée « bientôt » dans le carnet ; logique keep-loaded **pas** encore codée |
 | Inventaire | Partagé par défaut (`shareInventory`) |
 | Loader | Fabric 1.21.1 (NeoForge reporté) |
 
@@ -31,6 +34,10 @@ Mettre à jour seulement quand une capacité apparaît, disparaît ou change (pa
 
 | Version | Notes |
 |----------|--------|
+| 1.4.4 | Spawn textes sans N/E/S/O |
+| 1.4.3 | Spawn facing N/E/S/O ; tooltips carnet |
+| 1.4.2 | Messages clairs ; rename spawn ; bouton Réserve bientôt |
+| 1.4.1 | Unload au switch active + cooldown ; visit si dim chargée ; réserve doc-only |
 | 1.4.0 | Stable 1.4 ; visit offline recharge dim ; notes EN storefront |
 | 1.4.0-beta.7 | Close carnet sans flash / hop (état `closing`) |
 | 1.4.0-beta.5 | 4 presets sur une ligne |

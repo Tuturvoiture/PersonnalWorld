@@ -1,22 +1,23 @@
 # État courant
 
-- **mod.version :** `1.4.0` (`gradle.properties`)
+- **mod.version :** `1.4.4` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
 - **Branche active :** `feature/livre-interface-iles`
-- **Jar :** `builds/1.4.0/1.4.0-fabric.jar` (cut packaging)
 - **API :** DimensionArchitect `darchitect` ≥ **0.1.2** (`access()` public)
 - **GeckoLib :** optionnel 4.7.5.1
+- **Dernière en ligne :** `1.4.4` (cut 2026-10-04)
 
-## Cut 1.4.0
+## Livré 1.4.4 (cut)
 
-- Visit hôte offline : `openExistingPersonalWorld` + reload DA persisté (pas de création).
-- TEMP : RAM only ; clearAll au start ; leave/quit/change dim → revokeTemp.
-- Notes EN : `builds/1.4.0/CURSEFORGE_EN.md` ; WIP archivé dans `CHANGELOG.md`.
+- Unload îles non actives au switch + cooldown 2 min ; visit si dim chargée ; login → position sav.
+- Spawn « Changer le spawn » + tooltips carnet ; textes sans N/E/S/O.
+- Packaging : `builds/1.4.4/` + CHANGELOG + CURSEFORGE_EN.
 
 ## Ouvert (ne pas redécouvrir)
 
-- Refonte graphique du carnet : lot à part. Pas fait.
-- Unload/load public DA (0.1.3) pour `reload-island` complet
-- Comportement **BANNED** (enum prêt)
-- Tag / push / upload Modrinth-CurseForge — sur demande
+- **Réserve d’îles chargées** : bouton « bientôt » ; logique keep-loaded **pas** codée.
+- Refonte graphique du carnet : lot à part.
+- Unload/load public DA (0.1.3)
+- Comportement **BANNED**
+- Tag `v1.4.4` / push / upload storefront — sur demande
 - NeoForge : pas maintenant

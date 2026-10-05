@@ -61,11 +61,11 @@ public final class PersonalWorldSpawnReference {
 
 	/**
 	 * Pose le cube sous les pieds du joueur, dans la dimension affichée.
-	 * Rend la clé de message à afficher.
+	 * Enregistre aussi l’orientation (N/E/S/O à 90°).
 	 */
-	public static String relocate(ServerWorld world, ServerPlayerEntity player) {
+	public static RelocateOutcome relocate(ServerWorld world, ServerPlayerEntity player) {
 		if (world == null || player == null) {
-			return "message.personnalworld.spawn.wrong_dim";
+			return RelocateOutcome.fail("message.personnalworld.spawn.wrong_dim");
 		}
 		String islandId = world.getRegistryKey().getValue().toString();
 		String standing = player.getServerWorld().getRegistryKey().getValue().toString();
@@ -75,6 +75,13 @@ public final class PersonalWorldSpawnReference {
 		PersonnalWorldUtil.PWWorldState state = PersonnalWorldUtil.getWorldState(world);
 		boolean samePos = state.hasSpawnMarker() && state.getSpawnMarkerPos().equals(floorPos);
 		String markerKey = Registries.BLOCK.getId(PersonnalWorldContent.SPAWN_MARKER.get()).toString();
+		float yaw = fr.galsaxx.island.SpawnFacing.snapYaw(player.getYaw());
+		if (samePos && islandId.equals(standing) && player.isOnGround()) {
+			state.setSpawnMarkerYaw(yaw);
+			state.markDirty();
+			world.setSpawnPos(floorPos.up(), yaw);
+			return RelocateOutcome.ok("message.personnalworld.spawn.moved");
+		}
 		SpawnMove.Result plan = SpawnMove.plan(
 				islandId.equals(standing),
 				player.isOnGround(),
@@ -84,7 +91,7 @@ public final class PersonalWorldSpawnReference {
 				Registries.BLOCK.getId(floor.getBlock()).toString(),
 				markerKey);
 		if (!plan.ok()) {
-			return plan.messageKey();
+			return RelocateOutcome.fail(plan.messageKey());
 		}
 		if (state.hasSpawnMarker()) {
 			BlockPos old = state.getSpawnMarkerPos();
@@ -93,8 +100,28 @@ public final class PersonalWorldSpawnReference {
 		rememberReplaced(state, floor);
 		world.setBlockState(floorPos, PersonnalWorldContent.SPAWN_MARKER.get().getDefaultState(), 3);
 		state.setSpawnMarker(floorPos);
+		state.setSpawnMarkerYaw(yaw);
 		state.markDirty();
-		return plan.messageKey();
+		world.setSpawnPos(floorPos.up(), yaw);
+		return RelocateOutcome.ok("message.personnalworld.spawn.moved");
+	}
+
+	public static float getSpawnYaw(ServerWorld world) {
+		PersonnalWorldUtil.PWWorldState state = PersonnalWorldUtil.getWorldState(world);
+		if (state == null || !state.hasSpawnMarker()) {
+			return 0.0F;
+		}
+		return state.getSpawnMarkerYaw();
+	}
+
+	public record RelocateOutcome(boolean ok, String messageKey, Object[] args) {
+		public static RelocateOutcome ok(String key, Object... args) {
+			return new RelocateOutcome(true, key, args);
+		}
+
+		public static RelocateOutcome fail(String key) {
+			return new RelocateOutcome(false, key, new Object[0]);
+		}
 	}
 
 	public static Optional<BlockPos> getMarkerPos(ServerWorld world) {

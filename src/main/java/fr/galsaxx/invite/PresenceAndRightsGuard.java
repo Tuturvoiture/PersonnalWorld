@@ -24,6 +24,7 @@ public final class PresenceAndRightsGuard {
 
 	public static void register() {
 		PlayerEvent.PLAYER_QUIT.register(PresenceAndRightsGuard::onQuit);
+		PlayerEvent.PLAYER_JOIN.register(PresenceAndRightsGuard::onJoin);
 		TickEvent.SERVER_POST.register(PresenceAndRightsGuard::onServerTick);
 		PersonnalWorld.LOGGER.info("PresenceAndRightsGuard registered");
 	}
@@ -35,9 +36,49 @@ public final class PresenceAndRightsGuard {
 		TempVisitorStore.get().clearAll();
 	}
 
+	private static void onJoin(ServerPlayerEntity player) {
+		MinecraftServer server = player.getServer();
+		if (server == null) {
+			return;
+		}
+		// After vanilla places the player (dim may have been auto-loaded from last logout).
+		server.execute(() -> redirectHomeIfCannotStay(player));
+	}
+
 	private static void onQuit(ServerPlayerEntity player) {
 		IslandAccessService.get().onPlayerDisconnect(player);
 		LAST_DIM.remove(player.getUuid());
+	}
+
+	/**
+	 * Île perso inactive ou sans JOIN : renvoi à la position sauvegardée (login / dim déchargée puis rechargée).
+	 */
+	static boolean redirectHomeIfCannotStay(ServerPlayerEntity player) {
+		if (player == null || player.isRemoved() || player.getServer() == null) {
+			return false;
+		}
+		String dim = player.getServerWorld().getRegistryKey().getValue().toString();
+		if (!IslandIds.isPersonalIsland(dim)) {
+			return false;
+		}
+		AccessFileStore.get().bindServer(player.getServer());
+		UUID ownerFallback = IslandIds.creatorUuidFromDimensionId(dim).orElse(null);
+		AccessRecord record = AccessFileStore.get().ensureFresh(dim, ownerFallback, "");
+		if (!record.active()) {
+			player.sendMessage(Text.translatable("message.personnalworld.pw.island_not_activated"), false);
+			fr.galsaxx.util.ReturnTeleport.forgetIfDimension(player, dim);
+			fr.galsaxx.util.ReturnTeleport.teleportHome(player);
+			LAST_DIM.put(player.getUuid(), player.getServerWorld().getRegistryKey().getValue().toString());
+			return true;
+		}
+		if (!IslandAccessService.get().hasJoin(record, player.getUuid())) {
+			player.sendMessage(Text.translatable("message.personnalworld.pw.evicted"), false);
+			fr.galsaxx.util.ReturnTeleport.forgetIfDimension(player, dim);
+			fr.galsaxx.util.ReturnTeleport.teleportHome(player);
+			LAST_DIM.put(player.getUuid(), player.getServerWorld().getRegistryKey().getValue().toString());
+			return true;
+		}
+		return false;
 	}
 
 	private static void onServerTick(MinecraftServer server) {
@@ -53,26 +94,13 @@ public final class PresenceAndRightsGuard {
 			String previous = LAST_DIM.put(player.getUuid(), current);
 			if (previous != null && !previous.equals(current)) {
 				IslandAccessService.get().onPlayerLeaveDimension(player, previous);
-				if (IslandIds.isPersonalIsland(previous)) {
-					// Leaving an island drops TEMP for that island.
-				}
 			}
 		}
 		if (tickCounter % CHECK_INTERVAL_TICKS != 0) {
 			return;
 		}
 		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-			String dim = player.getServerWorld().getRegistryKey().getValue().toString();
-			if (!IslandIds.isPersonalIsland(dim)) {
-				continue;
-			}
-			UUID ownerFallback = IslandIds.creatorUuidFromDimensionId(dim).orElse(null);
-			AccessRecord record = AccessFileStore.get().ensureFresh(dim, ownerFallback, "");
-			if (!IslandAccessService.get().hasJoin(record, player.getUuid())) {
-				player.sendMessage(Text.translatable("message.personnalworld.pw.evicted"), false);
-				fr.galsaxx.util.ReturnTeleport.forgetIfDimension(player, dim);
-				fr.galsaxx.util.ReturnTeleport.teleportHome(player);
-			}
+			redirectHomeIfCannotStay(player);
 		}
 	}
 }

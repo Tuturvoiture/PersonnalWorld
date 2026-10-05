@@ -1,3 +1,21 @@
+## PersonnalWorld 1.4.4
+
+> CurseForge paste-ready copy: [`builds/1.4.4/CURSEFORGE_EN.md`](../builds/1.4.4/CURSEFORGE_EN.md)
+
+### Highlights
+
+- Patch **1.4.4** on Fabric 1.21.1: active-island unload, visit only if loaded, spawn UX + book tooltips.
+- Changes since **1.4.0**.
+- Reserve keep-loaded still **Soon** (UI only).
+
+### Requirements
+
+- Minecraft 1.21.1 · Fabric Loader ≥ 0.18.4 · Fabric API ≥ 0.116.0 · Architectury ≥ 13.0.8
+- DimensionArchitect **≥ 0.1.2**
+- Optional: GeckoLib 4.7.5.1
+
+---
+
 ## PersonnalWorld 1.4.0
 
 > CurseForge paste-ready copy: [`builds/1.4.0/CURSEFORGE_EN.md`](../builds/1.4.0/CURSEFORGE_EN.md)

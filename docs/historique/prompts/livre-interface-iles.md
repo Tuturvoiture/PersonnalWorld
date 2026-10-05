@@ -523,6 +523,48 @@ Conversation Cursor sur la branche `feature/livre-interface-iles`.
 **Pointeurs :** `builds/1.4.0/CURSEFORGE_EN.md`, `docs/historique/sessions/2026-10-02_cut-1.4.0.md`  
 **Suite :** Tag `v1.4.0` / push sur demande.
 
+## P091 — Unload active + cooldown + visit chargée
+**Demande :** Décharger îles non actives au switch ; cooldown 2 min ; visit si non chargée → message activation ; réserve = doc à faire seulement.  
+**Livré :** `IslandActivationService` ; `tryUnloadPersonalWorld` ; visit `island_not_activated` ; docs réserve ; bump `1.4.1`.  
+**Pointeurs :** `src/main/java/fr/galsaxx/island/IslandActivationService.java`, `docs/ISLAND_UI.md`  
+**Suite :** Smoke switch active / visit dim déchargée.
+
+## P092 — Spawn dim non chargée → position sav
+**Demande :** Si joueur spawn / se trouve sur île inactive ou non joignable, renvoi position sauvegardée.  
+**Livré :** `PresenceAndRightsGuard.redirectHomeIfCannotStay` (join + tick) ; visit non chargée n’envoie plus dans le vide.  
+**Pointeurs :** `PresenceAndRightsGuard.java`  
+**Suite :** —
+
+## P093 — Messages clairs + spawn rename + réserve bientôt
+**Demande :** Messages incompréhensibles ; réserve pas affichée ; bouton cube opaque.  
+**Livré :** `island_deactivated` au switch ; textes FR/EN clarifiés ; « Spawn sous mes pieds » ; bouton Réserve « bientôt » ; bump `1.4.2`.  
+**Pointeurs :** `AdventureBookScreen.java`, lang `fr_fr`/`en_us`  
+**Suite :** Implémenter la réserve keep-loaded si demandé.
+
+## P094 — Spawn sous pieds + direction + tooltips
+**Demande :** « Changer le spawn » + message sous les pieds + N/E/S/O (90°) + descriptions au survol FR/EN.  
+**Livré :** `SpawnFacing` ; yaw NBT ; message `spawn.moved` ; tipButtons carnet ; bump `1.4.3`.  
+**Pointeurs :** `island/SpawnFacing.java`, `PersonalWorldSpawnReference.relocate`, `AdventureBookScreen`  
+**Suite :** Smoke en jeu (spawn + hover).
+
+## P095 — Retirer N/E/S/O des textes
+**Demande :** Ne plus afficher N/E/S/O dans le tchat ni le livre.  
+**Livré :** Textes spawn/confirm/tip sans direction ; yaw toujours snap 90° ; bump `1.4.4`.  
+**Pointeurs :** lang `spawn.moved` / `spawn.confirm` / `tip.spawn` ; `PersonalWorldSpawnReference`  
+**Suite :** —
+
+## P096 — Build + sortie officielle 1.4.4
+**Demande :** Build puis sortie officielle de la version.  
+**Livré :** Build Fabric ; cut `1.4.4` (CHANGELOG, WIP vidé, CURSEFORGE_EN, PATCHNOTES/META, session).  
+**Pointeurs :** `builds/1.4.4/`, `docs/CHANGELOG.md`, `docs/historique/sessions/2026-10-04_cut-1.4.4.md`  
+**Suite :** Commit + tag `v1.4.4` / push / upload storefront sur demande.
+
+## P097 — Patch notes CurseForge
+**Demande :** Patch notes pour sortie CurseForge.  
+**Livré :** Fichier déjà prêt `builds/1.4.4/CURSEFORGE_EN.md` (coller tel quel).  
+**Pointeurs :** `builds/1.4.4/CURSEFORGE_EN.md`  
+**Suite :** Upload + commit/tag sur demande.
+
 ## Grille Demandes vs Livré
 
 | Demande | Livré | Statut |

@@ -1,6 +1,7 @@
 package fr.galsaxx.invite;
 
 import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.util.PersonalWorldSpawnReference;
 import fr.galsaxx.util.PersonalWorldSpawnSafety;
 import fr.galsaxx.util.PersonnalWorldUtil;
 import fr.galsaxx.util.ReturnTeleport;
@@ -225,16 +226,19 @@ public final class IslandAccessService {
 			return Result.fail("message.personnalworld.pw.visit_denied");
 		}
 		RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, id);
-		ServerPlayerEntity hostOnline = server.getPlayerManager().getPlayer(record.ownerUuid());
-		// Never create on visit — reload persisted dim if unloaded (host may be offline).
-		ServerWorld world = PersonnalWorldUtil.openExistingPersonalWorld(server, key, id, hostOnline);
+		ServerWorld world = server.getWorld(key);
 		if (world == null) {
-			return Result.fail("message.personnalworld.personal_world_unavailable");
+			// Dim non chargée : rester / revenir à la position sauvegardée (pas de TP dans le vide).
+			if (IslandIds.isPersonalIsland(visitor.getServerWorld().getRegistryKey().getValue().toString())) {
+				ReturnTeleport.teleportHome(visitor);
+			}
+			return Result.fail("message.personnalworld.pw.island_not_activated");
 		}
 		DArchitectAccess.applyRecord(record);
 		ReturnTeleport.rememberIfAllowed(visitor);
 		Vec3d spawn = PersonalWorldSpawnSafety.resolveTeleportPosition(world);
-		visitor.teleport(world, spawn.x, spawn.y, spawn.z, Set.of(), 0.0F, 0.0F);
+		float yaw = PersonalWorldSpawnReference.getSpawnYaw(world);
+		visitor.teleport(world, spawn.x, spawn.y, spawn.z, Set.of(), yaw, 0.0F);
 		String ownerName = !record.ownerNameHint().isBlank()
 				? record.ownerNameHint()
 				: (hostLabel != null && !hostLabel.isBlank() ? hostLabel : record.ownerUuid().toString());
@@ -340,6 +344,10 @@ public final class IslandAccessService {
 	}
 
 	public void evictEveryone(MinecraftServer server, String dimensionId) {
+		evictEveryone(server, dimensionId, "message.personnalworld.pw.island_reloading");
+	}
+
+	public void evictEveryone(MinecraftServer server, String dimensionId, String messageKey) {
 		Identifier id = Identifier.tryParse(dimensionId);
 		if (id == null) {
 			return;
@@ -348,8 +356,11 @@ public final class IslandAccessService {
 		if (world == null) {
 			return;
 		}
+		String key = messageKey == null || messageKey.isBlank()
+				? "message.personnalworld.pw.island_reloading"
+				: messageKey;
 		for (ServerPlayerEntity player : List.copyOf(world.getPlayers())) {
-			player.sendMessage(Text.translatable("message.personnalworld.pw.island_reloading"), false);
+			player.sendMessage(Text.translatable(key), false);
 			ReturnTeleport.forgetIfDimension(player, dimensionId);
 			ReturnTeleport.teleportHome(player);
 		}

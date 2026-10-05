@@ -4,6 +4,18 @@ Notes de version archivées (effet joueur). Les changements **non encore publié
 
 Format : plus récent en haut. Chaque section correspond à une version mise en ligne (Modrinth / CurseForge / tag `vX.Y.Z`).
 
+## [1.4.4] — 2026-10-04
+
+Patch Fabric 1.4 (unload île active, spawn UX, tooltips). Notes EN : [`builds/1.4.4/CURSEFORGE_EN.md`](../builds/1.4.4/CURSEFORGE_EN.md).
+
+- 1.4.4 — Messages spawn / carnet sans mention N/E/S/O (orientation toujours enregistrée en coulisse).
+- 1.4.3 — Bouton « Changer le spawn » : message sous les pieds ; tooltips FR/EN sur les boutons du carnet.
+- 1.4.2 — Messages d’île plus clairs (désactivation ≠ rechargement) ; bouton Réserve visible « bientôt ».
+- 1.4.1 — Changer d’île active décharge les autres îles du propriétaire (éviction + unload) ; cooldown 2 min (`activeIslandSwitchCooldownSeconds`).
+- 1.4.1 — Visiter / rejoindre une île non chargée est refusé : le propriétaire doit l’activer d’abord.
+- 1.4.1 — Login ou présence sur une île inactive / sans droit : renvoi à la position sauvegardée.
+- 1.4.1 — Réserve d’îles chargées documentée « à faire » (en plus de l’active) — pas de code.
+
 ## [1.4.0] — 2026-10-02
 
 Sortie stable Fabric 1.4 (carnet, multi-îles, invitations / droits). Notes EN storefront : [`builds/1.4.0/CURSEFORGE_EN.md`](../builds/1.4.0/CURSEFORGE_EN.md).

@@ -2,8 +2,8 @@
 
 Journal vivant des changements fonctionnels **non encore archivés** dans [`CHANGELOG.md`](CHANGELOG.md).
 
-**Dernière version en ligne :** aucune (cut local `1.4.0` prêt — tag / storefront sur demande)
+**Dernière version en ligne :** `1.4.4`
 
 ## Pending
 
-_(vide — archivé dans `CHANGELOG.md` section `[1.4.0]`)_
+_(vide — cut `1.4.4` du 2026-10-04)_

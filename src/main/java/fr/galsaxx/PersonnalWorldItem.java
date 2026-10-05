@@ -1,6 +1,7 @@
 package fr.galsaxx;
 
 import fr.galsaxx.config.PersonnalWorldConfig;
+import fr.galsaxx.util.PersonalWorldSpawnReference;
 import fr.galsaxx.util.PersonalWorldSpawnSafety;
 import fr.galsaxx.util.PersonnalWorldUtil;
 import fr.galsaxx.util.ReturnTeleport;
@@ -88,13 +89,14 @@ public class PersonnalWorldItem extends Item {
 
 			if (persoWorld != null) {
 				Vec3d safeSpawn = PersonalWorldSpawnSafety.resolveTeleportPosition(persoWorld);
+				float yaw = PersonalWorldSpawnReference.getSpawnYaw(persoWorld);
 				serverPlayer.teleport(
 						persoWorld,
 						safeSpawn.x,
 						safeSpawn.y,
 						safeSpawn.z,
 						Set.of(),
-						0.0F,
+						yaw,
 						0.0F
 				);
 				ReturnTeleport.actionBar(serverPlayer, Text.translatable("message.personnalworld.welcome_island"));
