@@ -4,10 +4,12 @@ import dev.architectury.networking.NetworkManager;
 import fr.galsaxx.PersonnalWorld;
 import fr.galsaxx.invite.AccessFileStore;
 import fr.galsaxx.invite.AccessRecord;
+import fr.galsaxx.invite.IslandAccessService;
 import fr.galsaxx.invite.IslandIds;
 import fr.galsaxx.invite.IslandMembersApi;
 import fr.galsaxx.invite.IslandRole;
 import fr.galsaxx.invite.PlayerRef;
+import fr.galsaxx.island.IslandActivationService;
 import fr.galsaxx.island.IslandGameruleSync;
 import fr.galsaxx.island.IslandLifecycle;
 import fr.galsaxx.island.IslandPresetRegistry;
@@ -34,7 +36,7 @@ public final class IslandBookNetworking {
 
 	public record Card(String dimensionId, String displayName, boolean active, String presetId, int slotIndex, String ownerName, String role) {}
 
-	public record PresetInfo(String id, String name, String icon) {}
+	public record PresetInfo(String id, String name, String icon, boolean unlocked) {}
 
 	public record SyncPayload(List<Card> owned, List<Card> invited, int maxIslands, List<PresetInfo> presets) implements CustomPayload {
 		public static final Id<SyncPayload> ID = new Id<>(Identifier.of(PersonnalWorld.MOD_ID, "sync_island_book"));
@@ -49,6 +51,7 @@ public final class IslandBookNetworking {
 				buf.writeString(preset.id);
 				buf.writeString(preset.name);
 				buf.writeString(preset.icon);
+				buf.writeBoolean(preset.unlocked);
 			}
 		}
 
@@ -59,7 +62,7 @@ public final class IslandBookNetworking {
 			int n = buf.readVarInt();
 			List<PresetInfo> presets = new ArrayList<>(n);
 			for (int i = 0; i < n; i++) {
-				presets.add(new PresetInfo(buf.readString(), buf.readString(), buf.readString()));
+				presets.add(new PresetInfo(buf.readString(), buf.readString(), buf.readString(), buf.readBoolean()));
 			}
 			return new SyncPayload(owned, invited, max, presets);
 		}
@@ -201,11 +204,19 @@ public final class IslandBookNetworking {
 				record.setDisplayName(payload.name().trim());
 				store.saveMutation(record);
 			}
-			case "setActive" -> setActive(store, player.getUuid(), payload.dimensionId());
+			case "setActive" -> {
+				IslandAccessService.Result result = IslandActivationService.activate(
+						server, player, payload.dimensionId());
+				result.send(player);
+				if (!result.ok()) {
+					sendSync(player);
+					return;
+				}
+			}
 			case "refreshSpawn" -> {
 				ServerWorld world = world(server, payload.dimensionId());
-				String key = PersonalWorldSpawnReference.relocate(world, player);
-				player.sendMessage(net.minecraft.text.Text.translatable(key), false);
+				var outcome = PersonalWorldSpawnReference.relocate(world, player);
+				player.sendMessage(net.minecraft.text.Text.translatable(outcome.messageKey(), outcome.args()), false);
 			}
 			case "setOverlay" -> setOverlay(server, payload.dimensionId(), payload.rule(), payload.value());
 			default -> {
@@ -214,16 +225,6 @@ public final class IslandBookNetworking {
 		}
 		sendSync(player);
 		sendDetail(player, payload.dimensionId());
-	}
-
-	private static void setActive(AccessFileStore store, java.util.UUID owner, String dimensionId) {
-		for (AccessRecord record : store.listByOwner(owner)) {
-			boolean active = record.dimensionId().equals(dimensionId);
-			if (record.active() != active) {
-				record.setActive(active);
-				store.saveMutation(record);
-			}
-		}
 	}
 
 	private static boolean isMemberAction(String action) {
@@ -301,7 +302,7 @@ public final class IslandBookNetworking {
 		}
 		List<PresetInfo> presets = new ArrayList<>();
 		for (IslandPresetRegistry.IslandPreset preset : IslandLifecycle.currentPresets(server)) {
-			presets.add(new PresetInfo(preset.id(), preset.name(), preset.icon()));
+			presets.add(new PresetInfo(preset.id(), preset.name(), preset.icon(), preset.unlocked()));
 		}
 		NetworkManager.sendToPlayer(player, new SyncPayload(owned, invited, fr.galsaxx.config.PersonnalWorldConfig.get().maxIslandsPerPlayer(), presets));
 	}

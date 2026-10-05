@@ -27,6 +27,19 @@ Le pseudo affiché est `ownerNameHint` (pas un nouveau champ). À la connexion, 
 - L’île active est le record `active`, sinon la première du catalogue. Le catalogue non vide n’invente pas un `perso_<uuid>` absent.
 - Le bâton ouvre l’île active. S’il n’y a aucune île, il crée le slot 0. Sur l’île de quelqu’un d’autre, il ramène à la position d’origine sans enregistrer cette île. Un nom vide devient « Monde 1 » ou « World 1 » selon la langue du client (aussi à l’ouverture du carnet si le nom est encore vide).
 - Première île d’un owner : active. Les suivantes : non.
+- **Activer** une île (bouton carnet) : cooldown TOML `activeIslandSwitchCooldownSeconds` (défaut 120) ; charge la nouvelle ; **décharge** les autres îles du owner (éviction puis unload DA best-effort).
+- **Visite / Rejoindre** : uniquement si la dim est **déjà chargée** en mémoire. Sinon message « le propriétaire doit activer l’île ». Pas d’auto-load pour un visiteur.
+- **Login / spawn** sur une île perso inactive (ou sans JOIN) : renvoi à la position sauvegardée (`ReturnTeleport.teleportHome`).
+
+## À faire — réserve d’îles chargées
+
+**Pas implémenté.** Conception actée pour plus tard :
+
+- Slots TOML futurs `loadedIslandReserveSlots` (défaut **1**), **en plus** de l’île active.
+- Marquer jusqu’à N îles « réserve » : restent chargées si le propriétaire est offline ; reload au `SERVER_STARTED`.
+- Au `setActive`, unload des non-actives **sauf** réservées.
+- Visit OK si déjà en mémoire (active ou réserve) ; sinon message d’activation.
+- Pas de stub Java tant que le lot n’est pas planifié.
 
 ## Pages
 
@@ -34,7 +47,7 @@ Taille toujours 3. `pageCount = max(1, ceil(n/3))` sur les îles **créées**, j
 
 ## Presets
 
-Défauts `classic`, `forest`, `rock` (structure `ile_1`, icône `textures/gui/island_button.png`). Fichiers supplémentaires : `config/personnalworld/island_presets/*.json` (`id`, `name`, `icon`), lus au moment de la création / du sync. Icône vide ou inconnue → `island_button`. Le client n’invente pas un preset absent du S2C. Le nom sous l’icône est éditable et devient `displayName`. Annuler ne crée rien. Nom vide ou preset inconnu : message, aucune dimension.
+Défauts `classic` (déverrouillé, structure `ile_1`), `forest` / `rock` / `desert` (verrouillés, non cliquables). Structure absente → retombe sur `ile_1`. Fichiers supplémentaires : `config/personnalworld/island_presets/*.json` (`id`, `name`, `icon`, `structure`, `unlocked`), lus au moment de la création / du sync. Icône vide ou inconnue → `island_button`. Le client n’invente pas un preset absent du S2C. Le nom sous l’icône est éditable et devient `displayName`. Annuler ne crée rien. Nom vide, preset inconnu ou verrouillé : message, aucune dimension.
 
 ## Plafond
 
@@ -42,7 +55,7 @@ Défauts `classic`, `forest`, `rock` (structure `ile_1`, icône `textures/gui/is
 
 ## Réglages (owner seulement)
 
-Nom, spawn, **Déplacer le cube** (inactif hors de l’île, confirmation, bloc plein seulement). Météo affichée « bientôt ». Toggles Terrain / Feu / PvP avec oui ou non sur le bouton. **Invitations** : liste des invités (rôle cliquable, retirer). **Ajouter** ouvre les joueurs connectés : un clic remplit le champ du bas, **Rafraîchir** relit la liste, **Ajouter** envoie l’invitation. Retirer envoie l’UUID tout de suite. Le rôle se change dans la page sans message : au retour ou à la fermeture du livre, une seule ligne de tchat, et seulement si le rôle final diffère du rôle d’arrivée (le dernier joueur modifié). Le co-créateur ouvre ce panneau depuis la fiche Îles invitées, pas les autres réglages. Pas de ban. Retour conserve la page d’où l’on vient. Les types Classique / Forêt / Roche suivent la langue du client (`preset.personnalworld.*`).
+Nom, **Changer le spawn** (inactif hors de l’île, confirmation, bloc plein seulement ; message « sous tes pieds »). Tooltips au survol sur les boutons. Météo « bientôt ». Toggles Terrain / Feu / PvP. **Invitations** : liste des invités (rôle cliquable, retirer). **Ajouter** ouvre les joueurs connectés. Retirer envoie l’UUID tout de suite. Le rôle se change sans spam tchat (une ligne au retour si changement). Co-créateur : panneau depuis Îles invitées. Pas de ban. Types d’île via `preset.personnalworld.*`.
 
 Un visiteur entre sur l’île (JOIN), mais ne casse pas, ne pose pas, n’ouvre pas coffre / baril / shulker / coffre de l’Ender, et ne blesse aucune entité (joueurs, animaux, projectiles, familier, entité à son pseudo). Builder et co-créateur construisent. Rejoindre enregistre la position actuelle comme le bâton (`noDimensionSavePosition`). Les avis de téléportation passent dans la barre d’action ; `actionBarMessages = false` les cache. L’invitation reçue reste dans le tchat.
 

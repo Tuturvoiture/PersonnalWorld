@@ -1,5 +1,6 @@
 package fr.galsaxx.util;
 
+import fr.galsaxx.island.IslandPresetRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.NbtCompound;
@@ -16,12 +17,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.InputStream;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class IslandGenerator {
-	private static final String[] CLASSPATH_NBT = {
-			"/data/personnalworld/structures/ile_1.nbt",
-			"/data/personnalworld/structure/ile_1.nbt"
+	private static final String[] CLASSPATH_SUFFIXES = {
+			"/data/personnalworld/structures/%s.nbt",
+			"/data/personnalworld/structure/%s.nbt"
 	};
 
 	public static void generateIsland(ServerWorld world, ServerPlayerEntity player) {
@@ -33,10 +36,11 @@ public class IslandGenerator {
 			return;
 		}
 
-		StructureTemplateManager mgr = world.getServer().getStructureTemplateManager();
-		Optional<StructureTemplate> optionalTemplate = mgr.getTemplate(Identifier.of("personnalworld", "ile_1"));
-		if (optionalTemplate.isEmpty()) {
-			optionalTemplate = loadFromClasspath(world);
+		String profile = PersonnalWorldUtil.getIslandProfile(world);
+		String preferred = IslandPresetRegistry.preferredStructure(profile);
+		Optional<StructureTemplate> optionalTemplate = loadStructure(world, preferred);
+		if (optionalTemplate.isEmpty() && !IslandPresetRegistry.DEFAULT_STRUCTURE.equals(preferred)) {
+			optionalTemplate = loadStructure(world, IslandPresetRegistry.DEFAULT_STRUCTURE);
 		}
 
 		if (optionalTemplate.isPresent()) {
@@ -67,8 +71,24 @@ public class IslandGenerator {
 		}
 	}
 
-	private static Optional<StructureTemplate> loadFromClasspath(ServerWorld world) {
-		for (String res : CLASSPATH_NBT) {
+	private static Optional<StructureTemplate> loadStructure(ServerWorld world, String structureId) {
+		if (structureId == null || structureId.isBlank()) {
+			return Optional.empty();
+		}
+		StructureTemplateManager mgr = world.getServer().getStructureTemplateManager();
+		Optional<StructureTemplate> fromManager = mgr.getTemplate(Identifier.of("personnalworld", structureId));
+		if (fromManager.isPresent()) {
+			return fromManager;
+		}
+		return loadFromClasspath(world, structureId);
+	}
+
+	private static Optional<StructureTemplate> loadFromClasspath(ServerWorld world, String structureId) {
+		Set<String> paths = new LinkedHashSet<>();
+		for (String pattern : CLASSPATH_SUFFIXES) {
+			paths.add(String.format(pattern, structureId));
+		}
+		for (String res : paths) {
 			try (InputStream in = IslandGenerator.class.getResourceAsStream(res)) {
 				if (in == null) {
 					continue;

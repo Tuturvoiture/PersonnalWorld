@@ -5,8 +5,10 @@
 - Breaking 1.3 : **pas** de migrateur auto DimLib ; doc manuelle « monde neuf + copie builds » : `docs/MIGRATION_DIMLIB.md`.
 - Île : classpath NBT ; spawn **0 90 0** ; pas de plateforme SKYBLOCK 3×3 (`SpawnResolver`) ; preset SKYBLOCK pour couper les structures vanilla.
 - Inventaire mondes perso : **partagé par défaut** (`shareInventory = true` → `isolatePlayerData(false)` à la création ; configurable dans `personnalworld.toml` ; DArchitect ≥ 0.0.58).
-- Config serveur : `config/personnalworld.toml` via `PersonnalWorldConfig` (`noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory`, `allowPassiveIslandVisit`, `enableDebugCommands`).
-- Accès îles : JSON hors îles `<world>/personnalworld/access/` = source de vérité PW ; DArchitect ≥ **0.1.2** = enforcer via `access()` (`setRolesForDimension` / `clearRole`) ; TEMP jamais persisté ; **BANNED** enum/mapping seulement (pas de commandes). Rejoindre et `/pw visit` = whitelist et dimension déjà là. Visiteur : pas de casse, pose, coffre, ni PvP.
+- Config serveur : `config/personnalworld.toml` via `PersonnalWorldConfig` (`noDimensionSavePosition`, `noDimensionTeleport`, `staffCooldownTicks`, `shareInventory`, `allowPassiveIslandVisit`, `enableDebugCommands`, `activeIslandSwitchCooldownSeconds`).
+- Accès îles : JSON hors îles `<world>/personnalworld/access/` = source de vérité PW ; DArchitect ≥ **0.1.2** = enforcer via `access()` (`setRolesForDimension` / `clearRole`) ; TEMP jamais persisté ; **BANNED** enum/mapping seulement (pas de commandes). Rejoindre et `/pw visit` = whitelist + dimension **déjà chargée** (sinon message activation owner). Visiteur : pas de casse, pose, coffre, ni PvP.
+- Switch île active (`IslandActivationService`) : cooldown ; load nouvelle ; unload best-effort des autres îles du owner.
+- **À faire (pas codé)** : réserve d’îles chargées — TOML `loadedIslandReserveSlots` défaut 1, **en plus** de l’active ; keep-loaded offline + reload au start ; unload setActive saute les réservées. Voir `docs/ISLAND_UI.md`.
 - Owner logique distinct du path `perso_<uuid>` ; transfert via `/pw debug setowner` seulement.
 - Kick/visit/invite/role : joueur **online ou offline** (`PlayerRef.resolve` : online / user cache / UUID brut).
 - `DArchitectAccess.applyRecord` : OWNER + whitelist + TEMP RAM (sinon visit wipe le GUEST DA).
@@ -21,6 +23,7 @@
 - GeckoLib **optionnel** : sans le mod, modèle JSON statique, pas de crash.
 - Bâton : JSON classique = display sans GeckoLib ; avec GeckoLib → `personnal_world_item_geckolib.json` (displays espace `builtin/entity`) + geo/anims.
 - Carnet : anims JSON = Blockbench (Y− ouvrir, close = miroir) ; sens main via `AdventureBookGeoRenderer` (negate Y `cover_front`) — ne plus inverser les keyframes à la main.
+- Anim close : phase `closing` côté client (pas de NBT `pw_book_open` en fin de close — sinon hop de resélection) ; `clearActiveItem` différé ~9 ticks.
 - `mod.version` sans suffixe `+1.21.1` ; `${version}` dans les métadonnées loader.
 - Always-apply Cursor : `git-attribution.mdc`, `versioning.mdc`, `prompt-bdd.mdc` (BDD seulement en tour d’implémentation). WIP / sessions / release-cut / DArchitect = glob ou agent-requested.
 - Nouveaux dépôts Cursor : copier / remplir `docs/kit-nouveau-projet.md` (process générique). Ne pas recopier Gradle / GeckoLib / DArchitect hors mod MC.

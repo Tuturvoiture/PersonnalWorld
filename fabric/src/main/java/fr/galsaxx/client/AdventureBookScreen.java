@@ -155,52 +155,91 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 		}
 		int foot = this.panelY + this.panelH - 22;
 		boolean single = pages <= 1;
-		this.addDrawableChild(button(this.panelX + 8, foot, 36, Text.translatable("screen.personnalworld.adventure_book.prev"), single, b -> changePage(-1)));
-		this.addDrawableChild(button(this.panelX + 46, foot, 36, Text.translatable("screen.personnalworld.adventure_book.next"), single, b -> changePage(1)));
+		this.addDrawableChild(tipButton(this.panelX + 8, foot, 36,
+				"screen.personnalworld.adventure_book.prev",
+				"screen.personnalworld.adventure_book.tip.prev", single, b -> changePage(-1)));
+		this.addDrawableChild(tipButton(this.panelX + 46, foot, 36,
+				"screen.personnalworld.adventure_book.next",
+				"screen.personnalworld.adventure_book.tip.next", single, b -> changePage(1)));
 		this.jumpField = new TextFieldWidget(this.textRenderer, this.panelX + 84, foot, 24, 16, Text.empty());
 		this.jumpField.setText(Integer.toString(page));
 		this.jumpField.setEditable(!single);
+		this.jumpField.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
+				Text.translatable("screen.personnalworld.adventure_book.tip.jump_field")));
 		this.addDrawableChild(this.jumpField);
-		this.addDrawableChild(button(this.panelX + 110, foot, 36, Text.translatable("screen.personnalworld.adventure_book.jump"), single, b -> jump()));
+		this.addDrawableChild(tipButton(this.panelX + 110, foot, 36,
+				"screen.personnalworld.adventure_book.jump",
+				"screen.personnalworld.adventure_book.tip.jump", single, b -> jump()));
 		if (owned) {
 			boolean capped = IslandBookClient.maxIslands > 0 && IslandBookClient.owned.size() >= IslandBookClient.maxIslands;
-			this.addDrawableChild(button(this.panelX + this.panelW - 78, foot, 70,
-					Text.translatable("screen.personnalworld.adventure_book.create"),
+			this.addDrawableChild(tipButton(this.panelX + this.panelW - 78, foot, 70,
+					"screen.personnalworld.adventure_book.create",
+					capped
+							? "screen.personnalworld.adventure_book.tip.create_capped"
+							: "screen.personnalworld.adventure_book.tip.create",
 					capped,
 					b -> {
 						this.mode = Mode.PRESET;
-						this.selectedPreset = IslandBookClient.presets.isEmpty() ? "classic" : IslandBookClient.presets.get(0).id();
+						this.selectedPreset = IslandBookClient.presets.stream()
+								.filter(IslandBookNetworking.PresetInfo::unlocked)
+								.map(IslandBookNetworking.PresetInfo::id)
+								.findFirst()
+								.orElse("classic");
 						this.init();
 					}));
 		}
-		this.addDrawableChild(button(this.panelX + this.panelW - 52, this.panelY + 6, 44,
-				Text.translatable("screen.personnalworld.adventure_book.close"), false, b -> this.close()));
+		this.addDrawableChild(tipButton(this.panelX + this.panelW - 52, this.panelY + 6, 44,
+				"screen.personnalworld.adventure_book.close",
+				"screen.personnalworld.adventure_book.tip.close", false, b -> this.close()));
 	}
 
 	private Mode nameFieldMode;
 
 	private void buildPreset() {
 		String typed = this.nameFieldMode == Mode.PRESET && this.nameField != null ? this.nameField.getText() : null;
-		int x = this.panelX + 16;
+		final int icon = 32;
+		final int sidePad = 12;
+		int count = Math.max(1, IslandBookClient.presets.size());
+		int usable = this.panelW - 2 * sidePad;
+		int step = usable / count;
 		int i = 0;
 		for (IslandBookNetworking.PresetInfo preset : IslandBookClient.presets) {
-			int col = i % 3;
-			int row = i / 3;
 			IslandBookNetworking.PresetInfo current = preset;
-			this.addDrawableChild(new AdventureBookImageButton(
-					x + col * 48, this.panelY + 36 + row * 40, 32, 32,
+			boolean unlocked = preset.unlocked();
+			Text badge = unlocked ? null : Text.translatable("preset.personnalworld.locked_overlay");
+			int slotX = this.panelX + sidePad + i * step;
+			int btnX = slotX + (step - icon) / 2;
+			AdventureBookImageButton btn = new AdventureBookImageButton(
+					btnX, this.panelY + 34, icon, icon,
 					presetLabel(preset),
 					presetIcon(preset.icon()), ISLAND_TEX, ISLAND_TEX,
 					AdventureBookImageButton.Style.ICON_ONLY,
-					preset.id().equals(this.selectedPreset),
+					unlocked && preset.id().equals(this.selectedPreset),
+					badge,
+					step - 4,
 					b -> {
+						if (!current.unlocked()) {
+							return;
+						}
 						this.selectedPreset = current.id();
 						if (this.nameField != null) {
 							this.nameField.setText(presetLabel(current).getString());
 						}
 						this.init();
-					}));
+					});
+			btn.active = unlocked;
+			btn.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(unlocked
+					? Text.translatable("screen.personnalworld.adventure_book.tip.preset", presetLabel(preset))
+					: Text.translatable("screen.personnalworld.adventure_book.tip.preset_locked")));
+			this.addDrawableChild(btn);
 			i++;
+		}
+		if (IslandBookClient.presets.stream().noneMatch(p -> p.id().equals(this.selectedPreset) && p.unlocked())) {
+			this.selectedPreset = IslandBookClient.presets.stream()
+					.filter(IslandBookNetworking.PresetInfo::unlocked)
+					.map(IslandBookNetworking.PresetInfo::id)
+					.findFirst()
+					.orElse("classic");
 		}
 		this.nameField = new TextFieldWidget(this.textRenderer, this.panelX + 16, this.panelY + this.panelH - 58, this.panelW - 32, 16, Text.empty());
 		String presetName = IslandBookClient.presets.stream()
@@ -210,15 +249,19 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 				.orElse("");
 		this.nameField.setText(typed != null ? typed : presetName);
 		this.nameFieldMode = Mode.PRESET;
+		this.nameField.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
+				Text.translatable("screen.personnalworld.adventure_book.tip.island_name")));
 		this.addDrawableChild(this.nameField);
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 36, 70,
-				Text.translatable("screen.personnalworld.adventure_book.confirm"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 36, 70,
+				"screen.personnalworld.adventure_book.confirm",
+				"screen.personnalworld.adventure_book.tip.confirm_create", false, b -> {
 					IslandBookNetworking.request("create", "", this.selectedPreset, this.nameField.getText(), "", "");
 					this.mode = Mode.OWNED;
 					this.init();
 				}));
-		this.addDrawableChild(button(this.panelX + 96, this.panelY + this.panelH - 36, 70,
-				Text.translatable("screen.personnalworld.adventure_book.back"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 96, this.panelY + this.panelH - 36, 70,
+				"screen.personnalworld.adventure_book.back",
+				"screen.personnalworld.adventure_book.tip.back", false, b -> {
 					this.mode = Mode.OWNED;
 					this.init();
 				}));
@@ -230,64 +273,80 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 		this.nameField = new TextFieldWidget(this.textRenderer, this.panelX + 16, this.panelY + 28, this.panelW - 112, 16, Text.empty());
 		this.nameField.setText(typed != null ? typed : (info == null ? "" : info.displayName()));
 		this.nameFieldMode = Mode.SETTINGS;
+		this.nameField.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
+				Text.translatable("screen.personnalworld.adventure_book.tip.island_name")));
 		this.addDrawableChild(this.nameField);
-		this.addDrawableChild(button(this.panelX + this.panelW - 92, this.panelY + 28, 76,
-				Text.translatable("screen.personnalworld.adventure_book.rename"), false,
+		this.addDrawableChild(tipButton(this.panelX + this.panelW - 92, this.panelY + 28, 76,
+				"screen.personnalworld.adventure_book.rename",
+				"screen.personnalworld.adventure_book.tip.rename", false,
 				b -> IslandBookNetworking.request("rename", this.selectedDim, "", this.nameField.getText(), "", "")));
 		boolean here = inSelectedDimension();
 		if (this.spawnConfirm && here) {
-			this.addDrawableChild(button(this.panelX + 16, this.panelY + 80, 70,
-					Text.translatable("screen.personnalworld.adventure_book.confirm"), false, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + 80, 70,
+					"screen.personnalworld.adventure_book.confirm",
+					"screen.personnalworld.adventure_book.tip.spawn_confirm", false, b -> {
 						this.spawnConfirm = false;
 						IslandBookNetworking.request("refreshSpawn", this.selectedDim, "", "", "", "");
 					}));
-			this.addDrawableChild(button(this.panelX + 96, this.panelY + 80, 70,
-					Text.translatable("screen.personnalworld.adventure_book.cancel"), false, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 96, this.panelY + 80, 70,
+					"screen.personnalworld.adventure_book.cancel",
+					"screen.personnalworld.adventure_book.tip.spawn_cancel", false, b -> {
 						this.spawnConfirm = false;
 						this.init();
 					}));
 		} else {
 			this.spawnConfirm = false;
-			AdventureBookImageButton spawn = button(this.panelX + 16, this.panelY + 80, 150,
-					Text.translatable("screen.personnalworld.adventure_book.spawn.edit"), !here, b -> {
+			AdventureBookImageButton spawn = tipButton(this.panelX + 16, this.panelY + 80, 150,
+					"screen.personnalworld.adventure_book.spawn.edit",
+					here
+							? "screen.personnalworld.adventure_book.tip.spawn"
+							: "screen.personnalworld.adventure_book.spawn.need_dim",
+					!here, b -> {
 						this.spawnConfirm = true;
 						this.init();
 					});
-			if (!here) {
-				spawn.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
-						Text.translatable("screen.personnalworld.adventure_book.spawn.need_dim")));
-			}
 			this.addDrawableChild(spawn);
 		}
 		if (!(this.spawnConfirm && here)) {
-			AdventureBookImageButton weather = button(this.panelX + 16, this.panelY + 128, 110,
-					Text.translatable("screen.personnalworld.adventure_book.weather.label"), true, b -> {});
-			weather.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
-					Text.translatable("screen.personnalworld.adventure_book.weather.soon")));
+			AdventureBookImageButton weather = tipButton(this.panelX + 16, this.panelY + 128, 110,
+					"screen.personnalworld.adventure_book.weather.label",
+					"screen.personnalworld.adventure_book.weather.soon", true, b -> {});
 			this.addDrawableChild(weather);
 			boolean grief = info != null && info.mobGriefing();
 			boolean fire = info != null && info.fire();
 			boolean pvp = info != null && info.pvp();
 			this.addDrawableChild(button(this.panelX + 16, this.panelY + 108, 72,
-					Text.translatable("screen.personnalworld.adventure_book.protect.grief_state", stateWord(grief)), false,
+					Text.translatable("screen.personnalworld.adventure_book.protect.grief_state", stateWord(grief)),
+					false,
+					Text.translatable("screen.personnalworld.adventure_book.tip.grief"),
 					b -> IslandBookNetworking.request("setOverlay", this.selectedDim, "", "", "mobGriefing", Boolean.toString(!grief))));
 			this.addDrawableChild(button(this.panelX + 92, this.panelY + 108, 72,
-					Text.translatable("screen.personnalworld.adventure_book.protect.fire_state", stateWord(fire)), false,
+					Text.translatable("screen.personnalworld.adventure_book.protect.fire_state", stateWord(fire)),
+					false,
+					Text.translatable("screen.personnalworld.adventure_book.tip.fire"),
 					b -> IslandBookNetworking.request("setOverlay", this.selectedDim, "", "", "doFireTick", Boolean.toString(!fire))));
 			this.addDrawableChild(button(this.panelX + 168, this.panelY + 108, 72,
-					Text.translatable("screen.personnalworld.adventure_book.protect.pvp_state", stateWord(pvp)), false,
+					Text.translatable("screen.personnalworld.adventure_book.protect.pvp_state", stateWord(pvp)),
+					false,
+					Text.translatable("screen.personnalworld.adventure_book.tip.pvp"),
 					b -> IslandBookNetworking.request("setOverlay", this.selectedDim, "", "", "pvp", Boolean.toString(!pvp))));
 		}
 		boolean active = IslandBookClient.owned.stream().anyMatch(card -> card.dimensionId().equals(this.selectedDim) && card.active());
 		if (!active) {
-			this.addDrawableChild(button(this.panelX + 132, this.panelY + 128, 108,
-					Text.translatable("screen.personnalworld.adventure_book.set_active"), false,
+			this.addDrawableChild(tipButton(this.panelX + 132, this.panelY + 128, 108,
+					"screen.personnalworld.adventure_book.set_active",
+					"screen.personnalworld.adventure_book.tip.set_active", false,
 					b -> IslandBookNetworking.request("setActive", this.selectedDim, "", "", "", "")));
 		}
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + 150, 110,
-				Text.translatable("screen.personnalworld.adventure_book.rights"), false, b -> openRights()));
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 22, 70,
-				Text.translatable("screen.personnalworld.adventure_book.back"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + 150, 110,
+				"screen.personnalworld.adventure_book.rights",
+				"screen.personnalworld.adventure_book.tip.rights", false, b -> openRights()));
+		this.addDrawableChild(tipButton(this.panelX + 132, this.panelY + 150, 108,
+				"screen.personnalworld.adventure_book.reserve.label",
+				"screen.personnalworld.adventure_book.reserve.soon", true, b -> {}));
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 22, 70,
+				"screen.personnalworld.adventure_book.back",
+				"screen.personnalworld.adventure_book.tip.back", false, b -> {
 					this.mode = Mode.OWNED;
 					this.init();
 				}));
@@ -322,38 +381,43 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 			boolean locked = shown == fr.galsaxx.invite.IslandRole.TEMP_VISITOR
 					|| shown == fr.galsaxx.invite.IslandRole.BANNED;
 			if (!locked) {
-				this.addDrawableChild(button(this.panelX + 100, y, 76,
-						Text.translatable("screen.personnalworld.adventure_book.role." + shown.name().toLowerCase(java.util.Locale.ROOT)),
-						false, b -> {
+				this.addDrawableChild(tipButton(this.panelX + 100, y, 76,
+						"screen.personnalworld.adventure_book.role." + shown.name().toLowerCase(java.util.Locale.ROOT),
+						"screen.personnalworld.adventure_book.tip.role_cycle", false, b -> {
 							this.roleChosen.put(entry.uuid(), nextRole(shownRole(entry)));
 							this.roleNames.put(entry.uuid(), entry.nameHint().isBlank() ? targetId : entry.nameHint());
 							this.init();
 						}));
 			}
-			this.addDrawableChild(button(this.panelX + 180, y, 60,
-					Text.translatable("screen.personnalworld.adventure_book.rights.kick"), false,
+			this.addDrawableChild(tipButton(this.panelX + 180, y, 60,
+					"screen.personnalworld.adventure_book.rights.kick",
+					"screen.personnalworld.adventure_book.tip.kick", false,
 					b -> IslandBookNetworking.request("kick", this.selectedDim, "", targetId, "", "")));
 		}
 		if (pages > 1) {
-			this.addDrawableChild(button(this.panelX + 16, this.panelY + 108, 40,
-					Text.translatable("screen.personnalworld.adventure_book.prev"), this.memberPage <= 1, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + 108, 40,
+					"screen.personnalworld.adventure_book.prev",
+					"screen.personnalworld.adventure_book.tip.prev", this.memberPage <= 1, b -> {
 						this.memberPage--;
 						this.init();
 					}));
-			this.addDrawableChild(button(this.panelX + 60, this.panelY + 108, 40,
-					Text.translatable("screen.personnalworld.adventure_book.next"), this.memberPage >= pages, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 60, this.panelY + 108, 40,
+					"screen.personnalworld.adventure_book.next",
+					"screen.personnalworld.adventure_book.tip.next", this.memberPage >= pages, b -> {
 						this.memberPage++;
 						this.init();
 					}));
 		}
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 40, 90,
-				Text.translatable("screen.personnalworld.adventure_book.rights.add"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 40, 90,
+				"screen.personnalworld.adventure_book.rights.add",
+				"screen.personnalworld.adventure_book.tip.add_invite", false, b -> {
 					this.onlinePage = 1;
 					this.mode = Mode.ADD_INVITE;
 					this.init();
 				}));
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 22, 70,
-				Text.translatable("screen.personnalworld.adventure_book.back"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 22, 70,
+				"screen.personnalworld.adventure_book.back",
+				"screen.personnalworld.adventure_book.tip.back", false, b -> {
 					this.flushRoleEdits();
 					boolean ownedHere = IslandBookClient.owned.stream()
 							.anyMatch(card -> card.dimensionId().equals(this.selectedDim));
@@ -400,20 +464,23 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 		for (int i = 0; i < IslandPageLayout.PAGE_SIZE && from + i < online.size(); i++) {
 			String name = online.get(from + i);
 			int y = this.panelY + 28 + i * 22;
-			this.addDrawableChild(button(this.panelX + 16, y, this.panelW - 32, Text.literal(trim(name, 24)), false, b -> {
+			this.addDrawableChild(button(this.panelX + 16, y, this.panelW - 32, Text.literal(trim(name, 24)), false,
+					Text.translatable("screen.personnalworld.adventure_book.tip.pick_player"), b -> {
 				if (this.nameField != null) {
 					this.nameField.setText(name);
 				}
 			}));
 		}
 		if (pages > 1) {
-			this.addDrawableChild(button(this.panelX + 16, this.panelY + 96, 40,
-					Text.translatable("screen.personnalworld.adventure_book.prev"), this.onlinePage <= 1, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + 96, 40,
+					"screen.personnalworld.adventure_book.prev",
+					"screen.personnalworld.adventure_book.tip.prev", this.onlinePage <= 1, b -> {
 						this.onlinePage--;
 						this.init();
 					}));
-			this.addDrawableChild(button(this.panelX + 60, this.panelY + 96, 40,
-					Text.translatable("screen.personnalworld.adventure_book.next"), this.onlinePage >= pages, b -> {
+			this.addDrawableChild(tipButton(this.panelX + 60, this.panelY + 96, 40,
+					"screen.personnalworld.adventure_book.next",
+					"screen.personnalworld.adventure_book.tip.next", this.onlinePage >= pages, b -> {
 						this.onlinePage++;
 						this.init();
 					}));
@@ -423,18 +490,23 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 		this.nameField.setMaxLength(64);
 		this.nameField.setText(typed);
 		this.nameField.setPlaceholder(Text.translatable("screen.personnalworld.adventure_book.rights.player"));
+		this.nameField.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(
+				Text.translatable("screen.personnalworld.adventure_book.tip.player_field")));
 		this.nameFieldMode = Mode.ADD_INVITE;
 		this.addDrawableChild(this.nameField);
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 42, 90,
-				Text.translatable("screen.personnalworld.adventure_book.rights.refresh"), false, b -> this.init()));
-		this.addDrawableChild(button(this.panelX + 112, this.panelY + this.panelH - 42, 80,
-				Text.translatable("screen.personnalworld.adventure_book.rights.add"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 42, 90,
+				"screen.personnalworld.adventure_book.rights.refresh",
+				"screen.personnalworld.adventure_book.tip.refresh", false, b -> this.init()));
+		this.addDrawableChild(tipButton(this.panelX + 112, this.panelY + this.panelH - 42, 80,
+				"screen.personnalworld.adventure_book.rights.add",
+				"screen.personnalworld.adventure_book.tip.confirm_invite", false, b -> {
 					IslandBookNetworking.request("invite", this.selectedDim, "", this.nameField.getText(), this.inviteRole.name(), "");
 					this.mode = Mode.RIGHTS;
 					this.init();
 				}));
-		this.addDrawableChild(button(this.panelX + this.panelW - 78, this.panelY + 6, 62,
-				Text.translatable("screen.personnalworld.adventure_book.back"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + this.panelW - 78, this.panelY + 6, 62,
+				"screen.personnalworld.adventure_book.back",
+				"screen.personnalworld.adventure_book.tip.back", false, b -> {
 					this.mode = Mode.RIGHTS;
 					this.init();
 				}));
@@ -490,8 +562,9 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 	}
 
 	private void buildInvitedInfo() {
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + 110, 90,
-				Text.translatable("screen.personnalworld.adventure_book.join"), false,
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + 110, 90,
+				"screen.personnalworld.adventure_book.join",
+				"screen.personnalworld.adventure_book.tip.join", false,
 				b -> {
 					IslandBookNetworking.request("visit", this.selectedDim, "", "", "", "");
 					this.close();
@@ -499,11 +572,13 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 		boolean coCreator = IslandBookClient.invited.stream()
 				.anyMatch(card -> card.dimensionId().equals(this.selectedDim) && "CO_CREATOR".equals(card.role()));
 		if (coCreator) {
-			this.addDrawableChild(button(this.panelX + 112, this.panelY + 110, 110,
-					Text.translatable("screen.personnalworld.adventure_book.rights"), false, b -> openRights()));
+			this.addDrawableChild(tipButton(this.panelX + 112, this.panelY + 110, 110,
+					"screen.personnalworld.adventure_book.rights",
+					"screen.personnalworld.adventure_book.tip.rights", false, b -> openRights()));
 		}
-		this.addDrawableChild(button(this.panelX + 16, this.panelY + this.panelH - 22, 70,
-				Text.translatable("screen.personnalworld.adventure_book.back"), false, b -> {
+		this.addDrawableChild(tipButton(this.panelX + 16, this.panelY + this.panelH - 22, 70,
+				"screen.personnalworld.adventure_book.back",
+				"screen.personnalworld.adventure_book.tip.back", false, b -> {
 					this.mode = Mode.INVITED;
 					this.init();
 				}));
@@ -589,9 +664,22 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 	}
 
 	private AdventureBookImageButton button(int x, int y, int w, Text text, boolean inactive, net.minecraft.client.gui.widget.ButtonWidget.PressAction action) {
+		return button(x, y, w, text, inactive, null, action);
+	}
+
+	private AdventureBookImageButton button(int x, int y, int w, Text text, boolean inactive, Text tooltip,
+			net.minecraft.client.gui.widget.ButtonWidget.PressAction action) {
 		AdventureBookImageButton widget = new AdventureBookImageButton(x, y, w, 16, text, null, 0, action);
 		widget.active = !inactive;
+		if (tooltip != null) {
+			widget.setTooltip(net.minecraft.client.gui.tooltip.Tooltip.of(tooltip));
+		}
 		return widget;
+	}
+
+	private AdventureBookImageButton tipButton(int x, int y, int w, String labelKey, String tipKey, boolean inactive,
+			net.minecraft.client.gui.widget.ButtonWidget.PressAction action) {
+		return button(x, y, w, Text.translatable(labelKey), inactive, Text.translatable(tipKey), action);
 	}
 
 	private void layoutPanel() {
@@ -800,11 +888,10 @@ public class AdventureBookScreen extends net.minecraft.client.gui.screen.Screen 
 			return;
 		}
 		this.leaveNotified = true;
-		AdventureBookClientPose.setLocalReading(false);
 		if (MinecraftClient.getInstance().player != null) {
-			AdventureBookClientPose.setReading(MinecraftClient.getInstance().player.getUuid(), false);
-			fr.galsaxx.AdventureBookItem.setVisuallyOpen(MinecraftClient.getInstance().player.getMainHandStack(), false);
-			fr.galsaxx.AdventureBookItem.setVisuallyOpen(MinecraftClient.getInstance().player.getOffHandStack(), false);
+			AdventureBookClientPose.beginClosing(MinecraftClient.getInstance().player.getUuid(), true);
+		} else {
+			AdventureBookClientPose.setLocalReading(false);
 		}
 		NetworkManager.sendToServer(new CloseAdventureBookPayload());
 	}

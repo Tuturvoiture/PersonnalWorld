@@ -159,6 +159,16 @@ public final class PersonnalWorldConfig {
 			# Example:
 			# syncDarchitectMaxSimultaneous = false
 			syncDarchitectMaxSimultaneous = true
+
+			# -----------------------------------------------------------------------------
+			# activeIslandSwitchCooldownSeconds
+			# -----------------------------------------------------------------------------
+			# Minimum seconds between changing which island is active (book "Set active").
+			# Switching unloads the owner's other islands. Default: 120 (2 minutes). 0 = off.
+			#
+			# Example:
+			# activeIslandSwitchCooldownSeconds = 60
+			activeIslandSwitchCooldownSeconds = 120
 			""";
 
 	private static volatile PersonnalWorldConfig INSTANCE = defaults();
@@ -173,6 +183,7 @@ public final class PersonnalWorldConfig {
 	private final boolean syncGamerules;
 	private final boolean actionBarMessages;
 	private final boolean syncDarchitectMaxSimultaneous;
+	private final int activeIslandSwitchCooldownSeconds;
 
 	private PersonnalWorldConfig(
 			Set<String> noDimensionSavePosition,
@@ -184,7 +195,8 @@ public final class PersonnalWorldConfig {
 			int maxIslandsPerPlayer,
 			boolean syncGamerules,
 			boolean actionBarMessages,
-			boolean syncDarchitectMaxSimultaneous) {
+			boolean syncDarchitectMaxSimultaneous,
+			int activeIslandSwitchCooldownSeconds) {
 		this.noDimensionSavePosition = noDimensionSavePosition;
 		this.noDimensionTeleport = noDimensionTeleport;
 		this.staffCooldownTicks = Math.max(0, staffCooldownTicks);
@@ -195,6 +207,7 @@ public final class PersonnalWorldConfig {
 		this.syncGamerules = syncGamerules;
 		this.actionBarMessages = actionBarMessages;
 		this.syncDarchitectMaxSimultaneous = syncDarchitectMaxSimultaneous;
+		this.activeIslandSwitchCooldownSeconds = Math.max(0, activeIslandSwitchCooldownSeconds);
 	}
 
 	public static PersonnalWorldConfig get() {
@@ -225,6 +238,14 @@ public final class PersonnalWorldConfig {
 
 						# Align DimensionArchitect max_simultaneous with PersonnalWorld quota (64). Set false to leave DA alone.
 						syncDarchitectMaxSimultaneous = true
+						""";
+				Files.writeString(path, raw + "\n", StandardCharsets.UTF_8);
+			}
+			if (!raw.contains("activeIslandSwitchCooldownSeconds")) {
+				raw = raw.stripTrailing() + """
+
+						# Seconds between active-island switches (unload other islands). 0 = off. Default 120.
+						activeIslandSwitchCooldownSeconds = 120
 						""";
 				Files.writeString(path, raw + "\n", StandardCharsets.UTF_8);
 			}
@@ -276,8 +297,12 @@ public final class PersonnalWorldConfig {
 		return syncDarchitectMaxSimultaneous;
 	}
 
+	public int activeIslandSwitchCooldownSeconds() {
+		return activeIslandSwitchCooldownSeconds;
+	}
+
 	private static PersonnalWorldConfig defaults() {
-		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true, false, false, 3, true, true, true);
+		return new PersonnalWorldConfig(Set.of(), Set.of(), 40, true, false, false, 3, true, true, true, 120);
 	}
 
 	static PersonnalWorldConfig parse(String raw) {
@@ -291,6 +316,7 @@ public final class PersonnalWorldConfig {
 		boolean syncRules = true;
 		boolean actionBar = true;
 		boolean syncDaMax = true;
+		int activeSwitchCooldown = 120;
 
 		for (String logicalLine : splitLogicalLines(stripComments(raw))) {
 			Matcher list = LIST_PATTERN.matcher(logicalLine);
@@ -314,6 +340,8 @@ public final class PersonnalWorldConfig {
 					cooldown = value;
 				} else if ("maxIslandsPerPlayer".equals(key)) {
 					maxIslands = value;
+				} else if ("activeIslandSwitchCooldownSeconds".equals(key)) {
+					activeSwitchCooldown = value;
 				}
 				continue;
 			}
@@ -344,7 +372,8 @@ public final class PersonnalWorldConfig {
 				maxIslands,
 				syncRules,
 				actionBar,
-				syncDaMax);
+				syncDaMax,
+				activeSwitchCooldown);
 	}
 
 	/** Drop # comments; keep quoted strings intact. */

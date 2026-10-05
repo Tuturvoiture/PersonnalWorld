@@ -1,24 +1,23 @@
 # État courant
 
-- **mod.version :** `1.4.0-beta.2` (`gradle.properties`)
+- **mod.version :** `1.4.4` (`gradle.properties`)
 - **MC :** 1.21.1 — publication **Fabric seule** (NeoForge reporté)
-- **Branche active :** `feature/livre-interface-iles` → `origin/feature/livre-interface-iles`
-- **Jar :** non buildé (alpha en cours)
+- **Branche active :** `feature/livre-interface-iles`
 - **API :** DimensionArchitect `darchitect` ≥ **0.1.2** (`access()` public)
 - **GeckoLib :** optionnel 4.7.5.1
+- **Dernière en ligne :** `1.4.4` (cut 2026-10-04)
 
-## En cours — GUI îles fonctionnel (alpha.35)
+## Livré 1.4.4 (cut)
 
-- Visiteur : JOIN autorisé. Messages de TP : barre d’action (`actionBarMessages`). Invitation reçue : tchat. Rejoindre enregistre la position de retour comme le bâton.
-- Deux onglets carnet : Mes îles / Îles invitées. Pseudo = `ownerNameHint`, rafraîchi au login.
-- Ids `perso_<uuid>` et `perso_<uuid>_<index>`. Plafond TOML. Gamerules copiées au load/reload, surcouche prioritaire.
-- Continuité : `docs/ISLAND_UI.md`
+- Unload îles non actives au switch + cooldown 2 min ; visit si dim chargée ; login → position sav.
+- Spawn « Changer le spawn » + tooltips carnet ; textes sans N/E/S/O.
+- Packaging : `builds/1.4.4/` + CHANGELOG + CURSEFORGE_EN.
 
 ## Ouvert (ne pas redécouvrir)
 
-- Refonte graphique du carnet : l’écran actuel n’est pas beau. Lot à part (rendu, textures, mise en page). Pas fait.
-- Smoke multi-joueurs : kick → plus de build ; TEMP leave/restart ; visit hôte offline
-- Unload/load public DA (0.1.3) pour `reload-island` complet
-- Comportement **BANNED** (enum prêt) — plan futur
-- Upload Modrinth/CurseForge 1.3.1 / cut tag — hors priorité GUI
-- NeoForge / roadmap : pas maintenant
+- **Réserve d’îles chargées** : bouton « bientôt » ; logique keep-loaded **pas** codée.
+- Refonte graphique du carnet : lot à part.
+- Unload/load public DA (0.1.3)
+- Comportement **BANNED**
+- Tag `v1.4.4` / push / upload storefront — sur demande
+- NeoForge : pas maintenant

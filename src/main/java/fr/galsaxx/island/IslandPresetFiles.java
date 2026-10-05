@@ -26,8 +26,12 @@ public final class IslandPresetFiles {
 					String id = root.has("id") ? root.get("id").getAsString() : "";
 					String name = root.has("name") ? root.get("name").getAsString() : id;
 					String icon = root.has("icon") ? root.get("icon").getAsString() : "";
+					String structure = root.has("structure")
+							? root.get("structure").getAsString()
+							: IslandPresetRegistry.DEFAULT_STRUCTURE;
+					boolean unlocked = !root.has("unlocked") || root.get("unlocked").getAsBoolean();
 					if (!id.isBlank()) {
-						extra.add(new IslandPresetRegistry.IslandPreset(id, name, icon));
+						extra.add(new IslandPresetRegistry.IslandPreset(id, name, icon, structure, unlocked));
 					}
 				} catch (Exception e) {
 					PersonnalWorld.LOGGER.warn("Island preset ignored {}: {}", path.getFileName(), e.toString());
